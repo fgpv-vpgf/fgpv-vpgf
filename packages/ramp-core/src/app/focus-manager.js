@@ -126,6 +126,13 @@ class Viewer {
             this.setDialogAction(this.mdDialog.hide);
         }
 
+        // When the viewer status changes, update the label for the keyboard control button.
+        // If the viewer is not active, the button should say "activate keyboard controls".
+        const instructionsButton = this.rootElement.find('.rv-keyboard-controls-button');
+        var scope = angular.element(instructionsButton).scope();
+
+        scope.self.type = status;
+
         this.status = status;
         // add attribute to the rootElement so angular directives can be aware of their focus state
         this.rootElement.attr('rv-focus-status', status);
@@ -624,21 +631,12 @@ function onFocusin(event) {
         return;
     }
 
+    // force focus on the `open keyboard controls` button.
+    const keyControlsElem = viewer.rootElement.find('.rv-keyboard-controls-button > button')[0];
+    keyControlsElem.origfocus();
+
     history.push(targetEl);
     viewer.setStatus(statuses.WAITING);
-
-    viewer.setDialogAction(() =>
-        viewer.mdDialog
-            .show({
-                contentElement: viewer.rootElement.find('.rv-focus-dialog-content > div'),
-                clickOutsideToClose: false,
-                escapeToClose: false,
-                disableParentScroll: false,
-                parent: viewer.rootElement.find('rv-shell'),
-                focusOnOpen: false,
-            })
-            .then(() => viewer.clearTabindex())
-    );
 }
 
 /**
@@ -665,6 +663,8 @@ function onKeydown(event) {
         if (event.which === 9 && keys[27]) {
             // escape + tab keydown
             viewerActive.setStatus(statuses.INACTIVE);
+            viewerActive.clearTabindex();
+
             // Fixes an issue where keyup is not called in some cases causing focus manager to have an incorrect pressed key state
             delete keys[27];
         } else if (
@@ -691,10 +691,12 @@ function onKeydown(event) {
                 shiftFocus(event.which === 40);
             }
         }
-    } else if (viewerWaiting) {
+    }
+
+    // If the viewer is currently waiting (i.e., the keyboard instructions button is visible)
+    if (viewerWaiting) {
         if (event.which === 13 || event.which === 32) {
             // enter or spacebar
-            event.preventDefault(true);
             viewerWaiting.setStatus(statuses.ACTIVE);
         } else if (event.which === 9) {
             // tab key

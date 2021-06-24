@@ -394,12 +394,20 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,metadata.xslt.cataloguePage,Data Catalogue Page,1,Page des données du catalogue,1
 ,metadata.xslt.metadataPage,Raw Metadata,1,Métadonnées brutes,1
 ,metadata.xslt.metadata,Metadata,1,Métadonnées,1
+,focus.dialog.activateKeyboardControls,Activate Keyboard Controls,1,Activer les contrôles du clavier,0
+,focus.dialog.keyboardInstructions,View Keyboard Instructions,1,Voir les instructions du clavier,0
+,focus.dialog.movement,You can navigate around the map by using the arrow keys.,1,Vous pouvez naviguer autour de la carte en utilisant les touches fléchées.,0
+,focus.dialog.speedup,You can speed up navigation using ,1,Vous pouvez accélérer le moyen de navigation ,0
+,focus.dialog.slowdown,or slow down navigation using ,1,ou ralentir la navigation en utilisant,0
+,focus.dialog.features, to select a data point on the map.,1,pour sélectionner un point de données sur la carte,0
+,focus.dialog.control,Ctrl,1,Contrôle,0
+,focus.dialog.shift,Shift,1,Shift,0
 ,focus.dialog.press,Press,1,Appuyer,1
 ,focus.dialog.enter,Enter,1,Entrer,1
-,focus.dialog.toactivate,to activate or skip with,1,pour activer ou sauter avec,1
 ,focus.dialog.tab,Tab,1,Onglet,1
 ,focus.dialog.main,We'll keep focus locked on the viewer - exit with,1,Nous allons garder le focus verrouillé sur le visualiseur - sortir à l'aide de,1
 ,focus.dialog.escape,Escape,1,Échapper,1
+,focus.dialog.confirm,Ok,1,Oui,1
 ,toc.menu.symbology,Show legend,1,Afficher la légende,1
 ,sidenav.menu.plugin,Plugins,1,Modules,1
 Table of Content expand legend group,toc.label.group.expand,Expand Group,1,Ouvrir les groupes,1
