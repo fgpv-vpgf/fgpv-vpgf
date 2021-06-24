@@ -1,0 +1,23 @@
+<div class="rv-keyboard-controls-button">
+    <md-button
+        ng-click="self.open()"
+        class="rv-close md-icon-button primary rv-button-40"
+        aria-label="{{ 'focus.dialog.keyboardInstructions' | translate }}"
+        ng-if="self.type === 'ACTIVE'"
+    >
+        <md-tooltip>{{ 'focus.dialog.keyboardInstructions' | translate }}</md-tooltip>
+        <md-icon class="rv-lt-lg" md-svg-src="navigation:keyboard"></md-icon>
+        <md-icon class="rv-lg" md-svg-src="navigation:keyboard"></md-icon
+    ></md-button>
+
+    <md-button
+        ng-click="self.open()"
+        class="rv-close md-icon-button primary rv-button-40"
+        aria-label="{{ 'focus.dialog.activateKeyboardControls' | translate }}"
+        ng-if="self.type !== 'ACTIVE'"
+    >
+        <md-tooltip>{{ 'focus.dialog.activateKeyboardControls' | translate }}</md-tooltip>
+        <md-icon class="rv-lt-lg" md-svg-src="navigation:keyboard"></md-icon>
+        <md-icon class="rv-lg" md-svg-src="navigation:keyboard"></md-icon
+    ></md-button>
+</div>
