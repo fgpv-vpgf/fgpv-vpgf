@@ -2,6 +2,7 @@
 'use strict';
 const svgjs = require('svg.js');
 const shared = require('./shared.js')();
+const rcolour = require('rcolor');
 
 // Functions for turning ESRI Renderers into images
 // Specifically, converting ESRI "Simple" symbols into images,
@@ -247,6 +248,20 @@ function searchRenderer(attributes, renderer) {
             break;
 
         case UNIQUE_VALUE:
+            // detect layer with arcade symbology (no field values)
+            const containsField = renderer.field1 || renderer.field2 || renderer.field3;
+            if (renderer.valueExpression && !containsField) {
+                // convert to simple renderer with generated placeholder symbology using '?'
+                renderer.type = SIMPLE;
+                const color = rcolour({ saturation: 0.4, value: 0.8 });
+                const placeholder = generatePlaceholderSymbology('?', color);
+
+                renderer.svgcode = placeholder.svgcode;
+                svgcode = placeholder.svgcode;
+                renderer.symbol = symbol;
+                break;
+            }
+
             // make a key value for the graphic in question, using comma-space delimiter if multiple fields
             // put an empty string when key value is null
             let graphicKey = attributes[renderer.field1] === null ? '' : attributes[renderer.field1];
