@@ -84,7 +84,7 @@ For more info on individual packages builds/documentation read the READMEs in th
 
 ## Documentation
 
-The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, WCAG 2.0 AA compliant common viewer platform for the Government of Canada.
+The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.0 AA compliant common viewer platform for the Government of Canada.
 
 For more information on this project, please see one of the sections below:
 
