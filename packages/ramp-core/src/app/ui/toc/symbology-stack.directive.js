@@ -55,7 +55,7 @@ class ToggleSymbol {
  */
 angular.module('app.ui').directive('rvSymbologyStack', rvSymbologyStack).factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, $timeout) {
+function rvSymbologyStack($rootScope, $rootElement, $q, Geo, animationService, layerRegistry, $timeout) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -85,6 +85,8 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
 
         self.expandSymbology = expandSymbology;
         self.fanOutSymbology = fanOutSymbology;
+
+        self.showSymbologyBorder = showSymbologyBorder;
 
         self.symbologyWidth = 32;
 
@@ -395,6 +397,31 @@ function rvSymbologyStack($rootScope, $q, Geo, animationService, layerRegistry, 
         }
 
         return true;
+
+        /**
+         * Draws a black box around the symbology stack for accessibility purposes.
+         *
+         * @function showSymbologyBorder
+         * @private
+         * @param {Boolean} toggle true will draw an outline around the stack; false will remove the border
+         */
+        function showSymbologyBorder(toggle) {
+            // If the viewer isn't in keyboard mode don't bother drawing these outlines.
+            if (!$rootElement.hasClass('rv-keyboard')) {
+                return;
+            }
+
+            // If a value is provided (aka the symbology was focused or blurred), then apply the outline as necessary.
+            if (toggle !== undefined) {
+                toggle && !self.isExpanded
+                    ? element.addClass('rv-symbol-outline')
+                    : element.removeClass('rv-symbol-outline');
+            } else {
+                // If no value is provided (aka the symbology was clicked), then ensure that the border is removed if the
+                // symbology is expanded (to prevent a double border around the symbology and the close button).
+                self.isExpanded ? element.addClass('rv-symbol-outline') : element.removeClass('rv-symbol-outline');
+            }
+        }
 
         /**
          * Expands the symbology stack to show all its individual elements.

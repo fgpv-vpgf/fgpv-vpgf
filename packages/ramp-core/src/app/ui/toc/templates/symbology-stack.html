@@ -59,9 +59,9 @@
         ng-style="{'z-index': 100 + self.symbology.stack.length + 2 }"
         class="rv-symbol-trigger rv-button-32 rv-icon-24 md-icon-button"
         ng-if="self.symbology.isInteractive"
-        ng-click="self.expandSymbology()"
-        ng-focus="self.fanOutSymbology(true)"
-        ng-blur="self.fanOutSymbology(false)"
+        ng-click="self.expandSymbology(); self.showSymbologyBorder()"
+        ng-focus="self.fanOutSymbology(true); self.showSymbologyBorder(true)"
+        ng-blur="self.fanOutSymbology(false); self.showSymbologyBorder(false)"
         ng-mouseover="self.fanOutSymbology(true)"
         ng-mouseout="self.fanOutSymbology(false)"
     >
