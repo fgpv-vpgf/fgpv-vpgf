@@ -89,6 +89,19 @@
             padding: 5px 0px;
         }
 
+        // sr-only accessible hiding element (only accessible to screen reader users)
+        .rv-alert-message {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
         .rv-north-arrow {
             position: absolute;
             transform-origin: top center;

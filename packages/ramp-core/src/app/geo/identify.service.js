@@ -181,6 +181,8 @@ function identifyService($q, configService, gapiService, referenceService, state
         // show details panel only when there is data and the identifyMode is set to `Details`
         if (mApi.layers.identifyMode.includes(IdentifyMode.Details)) {
             stateManager.toggleDisplayPanel('mainDetails', details, requester, 0);
+            // alert SR user on details panel opening
+            mapInstance.updateAlert('details.alert.open');
         }
 
         if (mApi.layers.identifyMode.includes(IdentifyMode.Highlight)) {
