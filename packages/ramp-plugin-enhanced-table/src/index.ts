@@ -429,6 +429,7 @@ TableBuilder.prototype.translations = {
             placeholder: 'Search table',
         },
         table: {
+            alert: 'Data table loaded',
             filter: {
                 clear: 'Clear filters',
                 apply: 'Apply filters to map',
@@ -475,6 +476,7 @@ TableBuilder.prototype.translations = {
             placeholder: 'Texte à rechercher',
         },
         table: {
+            alert: 'Tableau de données chargées',
             filter: {
                 clear: 'Effacer les filtres',
                 apply: 'Appliquer des filtres à la carte', // TODO: Add official French translation

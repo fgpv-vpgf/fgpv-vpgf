@@ -182,6 +182,8 @@ Table of Content Layer options label,toc.layer.tooltip.options,More options,1,Pl
 Table of Content show symbology label,toc.layer.label.symbology,Legend,1,Légende,1
 Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,1,Développer la légende,1
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,1,Masquer la légende,1
+Table of Content expand symbology alert label,toc.layer.label.symbologyExpand,Expanded,1,Élargi,1
+Table of Content collapse symbology alert label,toc.layer.label.symbologyCollapse,Collapsed,1,Effondrée,1
 Table of Content main title,toc.title,Layer Selector,1,Sélecteur de couche,1
 Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,1,Masquer le groupe de visibilité,1
 Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Toggle group visibility,1,Masquer le groupe de visibilité,1

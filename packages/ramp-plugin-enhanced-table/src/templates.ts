@@ -150,8 +150,8 @@ export const MOBILE_MENU_TEMPLATE = `
 
 export const RECORD_COUNT_TEMPLATE = `
 <p class="rv-record-count" title="{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}" >
-    <span class="filterRecords" role="status" ng-if="filtered == false">{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}</span>
-    <span class="filterRecords" role="status" ng-if="filtered == true">{{ 'filter.default.label.filtered' | translate:{range: scrollRecords, total: shownRecords, max: totalRecords} }}</span>
+    <span class="filterRecords" ng-if="filtered == false">{{ 'filter.default.label.info' | translate:{range: scrollRecords, total: totalRecords, max: totalRecords} }}</span>
+    <span class="filterRecords" ng-if="filtered == true">{{ 'filter.default.label.filtered' | translate:{range: scrollRecords, total: shownRecords, max: totalRecords} }}</span>
 </p>`;
 
 export const DETAILS_TEMPLATE = (oid) =>

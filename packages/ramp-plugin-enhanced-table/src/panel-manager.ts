@@ -320,6 +320,16 @@ export class PanelManager {
                 this.panel.open();
                 this.autoSizeToMaxWidth();
                 this.sizeColumnsToFitIfNeeded();
+
+                // alert user that data table has been opened
+                const alertEl = $(`<span>{{ 'plugins.enhancedTable.table.alert' | translate }}</span>`);
+                this.mapApi.$compile(alertEl);
+                setTimeout(() => {
+                    const alert = $('#' + this.mapApi.id).find('.rv-alert-message');
+                    alert.empty().append(alertEl[0]);
+                    // add role=status to filter records after alert has been announced
+                    this.panel.element.find('.filterRecords').attr('role', 'status');
+                }, 0);
             };
         }
     }
