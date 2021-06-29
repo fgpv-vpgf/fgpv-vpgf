@@ -76,6 +76,11 @@ Datatable settings name column label,filter.settings.label.name,Name,1,Nom,1
 Datatable settings filter column label,filter.settings.label.filter,Filter,1,Filtre,1
 Datatable settings sort column label,filter.settings.label.sort,Sort,1,Trier,1
 Datatable settings display column label,filter.settings.label.show,Show,1,Montrer,1
+Details pane open alert,details.alert.open,Details panel opened,1,Détails panneau ouvert,0
+Details pane expand alert,details.alert.expand,Expanding details panel,1,Élargir les détails panneau,0
+Details pane close alert,details.alert.close,Details panel closed,1,Panneau détails fermé,0
+Details pane entry expanded alert,details.alert.expanded,Details entry expanded,1,Détails entrée élargi,0
+Details pane entry collapsed alert,details.alert.collapsed,Details entry collapsed,1,Détails de fondre d’entréey,1
 Details pane title,details.title,Feature Information,1,Information sur l'élément,1
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
 Details pane aria label for dialog modal,details.aria.dialog,Details Summary,1,Détails Résumé,0
@@ -142,10 +147,12 @@ Map Navigation history tooltip,nav.tooltip.history,History,1,Historique,1
 Map Navigation basemap tooltip,nav.tooltip.basemap,Basemap,1,Carte de base,1
 Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
 Metadata pane expand,metadata.expand.tooltip,Expand metadata,1,Agrandir les métadonnées,1
+Metadata pane toggled alert, metadata.alert.toggled,Metadata panel toggled,1,Métadonnées panneau activer,1
 Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
 ,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at:,1,Changement <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> à:,0
 Settings main title,settings.title,Settings,1,Paramètres,1
 Settings visibility header label,settings.label.display,Display,1,Affichage,1
+Settings toggled alert,settings.alert.toggled,Settings panel toggled,1,Paramètres panneau activer,1
 Settings bounding box visibility label,settings.label.boundingBox,Bounding box,1,Zone de délimitation,1
 Settings bounding box visibility aria label,settings.aria.boundingBox,Bounding box,1,Zone de délimitation,1
 Settings opacity slider label,settings.label.opacity,Opacity,1,Opacité,1
@@ -179,9 +186,13 @@ Side Navigation language,sidenav.label.language,Language,1,Langue,1
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed service #{{count}},1,Service sans nom #{{count}},1
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,1,Menu du panneau des données ouvertes,1
 Table of Content Layer options label,toc.layer.tooltip.options,More options,1,Plus d'options,1
+Table of Content Layer added alert,toc.layer.alert.added,{{name}} layer added to legend,1,{{name}} couche ajoutée à la légende,1
+Table of Content Layer removed alert,toc.layer.alert.removed,{{name}} layer removed from legend,1,Couche {{name}} retiré de la légende,1
 Table of Content show symbology label,toc.layer.label.symbology,Legend,1,Légende,1
 Table of Content show symbology label,toc.layer.label.symbologyShow,Expand legend,1,Développer la légende,1
 Table of Content hide symbology label,toc.layer.label.symbologyHide,Hide legend,1,Masquer la légende,1
+Table of Content expand symbology alert label,toc.layer.label.symbologyExpand,Expanded,1,Élargi,1
+Table of Content collapse symbology alert label,toc.layer.label.symbologyCollapse,Collapsed,1,Effondrée,1
 Table of Content main title,toc.title,Layer Selector,1,Sélecteur de couche,1
 Table of Content toggle group visibility label,toc.label.toggleGroupViz,Toggle group visibility,1,Masquer le groupe de visibilité,1
 Table of Content toggle group visibility tootlip,toc.tooltip.toggleGroupViz,Toggle group visibility,1,Masquer le groupe de visibilité,1

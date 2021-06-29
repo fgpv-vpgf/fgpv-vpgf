@@ -9,7 +9,7 @@ angular.module('app.core').factory('shellService', shellService);
  * @param {object} errorService error notification service
  * @returns {object} shell service signature
  */
-function shellService(common, errorService) {
+function shellService($translate, common, configService, errorService, events) {
     const service = {
         // returns `true` if at least one of the loading processes is active
         get isLoading() {
@@ -18,8 +18,16 @@ function shellService(common, errorService) {
 
         setLoadingFlag,
         clearLoadingFlag,
+        updateAlert,
         loadingProcesses: {},
     };
+
+    events.$on(events.rvMapLoaded, () => {
+        // wire in a hook to any map for updating user alert message
+        configService.getSync.map.instance.updateAlert = (alertMsg, params = null) => {
+            service.updateAlert(alertMsg, params);
+        };
+    });
 
     return service;
 
@@ -157,5 +165,20 @@ function shellService(common, errorService) {
         delete service.loadingProcesses[id];
 
         // console.log('[]- clear complete', id, Object.values(service.loadingProcesses).map(p => ({ id: p.id, state: p._state })), service.isLoading);
+    }
+
+    /**
+     * Changes invisible alert message on map changes to be announced to screen readers.
+     *
+     * @param {String} alertMsg is the alert message that should be announced to screen readers
+     * @param  {Object} params [optional] specifies any variables that should be interpolated in translations
+     */
+    function updateAlert(alertMsg, params) {
+        console.log("alert message: ", alertMsg, params);
+        // translate the message and create new element to inject into rv-alert-message
+        alertMsg = params === null ? $translate.instant(alertMsg) : $translate.instant(alertMsg, params);
+        const alert = $('.rv-inner-shell').find('.rv-alert-message');
+        const alertEl = $(`<span>${alertMsg}</span>`);
+        alert.empty().append(alertEl);
     }
 }
