@@ -320,6 +320,10 @@ export class PanelManager {
                 this.panel.open();
                 this.autoSizeToMaxWidth();
                 this.sizeColumnsToFitIfNeeded();
+
+                // alert SR user on data table loaded
+                const map = this.mapApi.mapI;
+                map.updateAlert('plugins.enhancedTable.table.alert');
             };
         }
     }

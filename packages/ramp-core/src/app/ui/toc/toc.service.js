@@ -12,6 +12,7 @@ angular.module('app.ui').factory('tocService', tocService);
 function tocService(
     $q,
     $rootScope,
+    $rootElement,
     $mdToast,
     $translate,
     referenceService,
@@ -100,22 +101,22 @@ function tocService(
             }
         };
 
-        //wire in a hook to any map for removing a layer using the given LegendBlock
+        // wire in a hook to any map for removing a layer using the given LegendBlock
         configService.getSync.map.instance.removeAPILegendBlock = (legendBlock) => {
             service.removeLayer(legendBlock, false);
         };
 
-        //wire in a hook to any map for reloading a layer using the given LegendBlock
+        // wire in a hook to any map for reloading a layer using the given LegendBlock
         configService.getSync.map.instance.reloadAPILegendBlock = (legendBlock) => {
             service.reloadLayer(legendBlock);
         };
 
-        //wire in a hook to any map for toggling Metadata for any given legendBlock
+        // wire in a hook to any map for toggling Metadata for any given legendBlock
         configService.getSync.map.instance.toggleMetadata = (legendBlock) => {
             service.toggleMetadata(legendBlock);
         };
 
-        //wire in a hook to any map for toggling settings for any given legendBlock
+        // wire in a hook to any map for toggling settings for any given legendBlock
         configService.getSync.map.instance.toggleSettings = (legendBlock) => {
             service.toggleSettings(legendBlock);
         };
@@ -399,6 +400,10 @@ function tocService(
 
         // send to display manager method
         stateManager.toggleDisplayPanel('sideSettings', legendBlock, requester);
+
+        // alert SR user on toggling setting panel
+        const map = configService.getSync.map.instance;
+        map.updateAlert('settings.alert.toggled');
     }
 
     function toggleLayerTablePanel(legendBlock) {
@@ -457,6 +462,10 @@ function tocService(
 
         // send to display manager method
         stateManager.toggleDisplayPanel('sideMetadata', dataPromise, requester);
+
+        // alert SR user on toggling metadata panel
+        const map = configService.getSync.map.instance;
+        map.updateAlert('metadata.alert.toggled');
     }
 
     /**
