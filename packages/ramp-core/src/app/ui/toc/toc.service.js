@@ -12,6 +12,7 @@ angular.module('app.ui').factory('tocService', tocService);
 function tocService(
     $q,
     $rootScope,
+    $rootElement,
     $mdToast,
     $translate,
     referenceService,
