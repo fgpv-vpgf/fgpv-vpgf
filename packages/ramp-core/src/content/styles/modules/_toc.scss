@@ -216,6 +216,12 @@ $layer-item-height-touch: rem(7.2);
             &.rv-selected:before {
                 background-color: $accent-color;
             }
+
+            .rv-symbol-outline {
+                border: 1px solid;
+                padding: 7px;
+                margin: 0px -8px;
+            }
         }
 
         &.rv-legend-bad-projection {
