@@ -266,6 +266,11 @@ function legendServiceFactory(
         // add the new block config to the legend config (always to the root group), so it will be preserved when map is rebuilt
         configService.getSync.map.legend.addChild(importedBlockConfig, position);
 
+        // alert SR user on adding layer to legend (user-added)
+        if (layerBlueprint.config.state.userAdded) {
+            configService.getSync.map.instance.updateAlert('toc.layer.alert.added', { name: layerBlueprint.config.name });
+        }
+
         return importedLegendBlock;
     }
 
@@ -436,6 +441,10 @@ function legendServiceFactory(
 
             // remove any bounding box layers associated with this legend block
             _boundingBoxRemoval(legendBlock);
+
+            // alert SR user on removing layer from legend
+            const map = configService.getSync.map.instance;
+            map.updateAlert('toc.layer.alert.removed', { name: legendBlock.name });
 
             // TODO: modify the legend accordingly to update our api legend object as well, currently it never changes
         }

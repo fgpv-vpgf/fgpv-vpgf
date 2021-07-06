@@ -13,7 +13,7 @@ angular.module('app.ui').factory('detailService', detailService);
 const parserFunctions = [];
 const templates = [];
 
-function detailService($mdDialog, stateManager, mapService, referenceService, events) {
+function detailService($mdDialog, stateManager, configService, mapService, referenceService, events) {
     const service = {
         expandPanel,
         closeDetails,
@@ -82,6 +82,10 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
             bindToController: true,
             hasBackdrop,
         });
+
+        // alert SR user on expanding details content
+        const map = configService.getSync.map.instance;
+        map.updateAlert('details.alert.expand');
     }
 
     /**
@@ -90,6 +94,10 @@ function detailService($mdDialog, stateManager, mapService, referenceService, ev
      */
     function closeDetails() {
         stateManager.clearDisplayPanel('mainDetails');
+
+        // alert SR user on closing details content
+        const map = configService.getSync.map.instance;
+        map.updateAlert('details.alert.close');
 
         // remove highlighted features and the haze when the details panel is closed
         mapService.clearHighlight(false);

@@ -127,7 +127,7 @@ function rvDetailsRecordEsrifeatureItem(
     }
 }
 
-function Controller() {
+function Controller(configService) {
     'ngInject';
     const self = this;
 
@@ -140,6 +140,11 @@ function Controller() {
     function toggleDetails() {
         self.isRendered = true;
         self.isExpanded = !self.isExpanded;
+
+        // alert SR user on expanding/collapsing individual identify record
+        const map = configService.getSync.map.instance;
+        const alertMsg = self.isExpanded ? 'details.alert.expanded' : 'details.alert.collapsed';
+        map.updateAlert(alertMsg);
 
         self.toggleHighlight(self.item.oid, self.isExpanded);
     }

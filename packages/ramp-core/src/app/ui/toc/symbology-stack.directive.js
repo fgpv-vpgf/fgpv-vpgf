@@ -55,7 +55,7 @@ class ToggleSymbol {
  */
 angular.module('app.ui').directive('rvSymbologyStack', rvSymbologyStack).factory('SymbologyStack', symbologyStack);
 
-function rvSymbologyStack($rootScope, $rootElement, $q, Geo, animationService, layerRegistry, $timeout) {
+function rvSymbologyStack($rootScope, $rootElement, $q, Geo, configService, animationService, layerRegistry, $timeout) {
     const directive = {
         require: '^?rvTocEntry', // need access to layerItem to get its element reference
         restrict: 'E',
@@ -453,7 +453,17 @@ function rvSymbologyStack($rootScope, $rootElement, $q, Geo, animationService, l
                     self.showSymbologyToggle = false;
                     ref.fanOutTimeline.play();
                 }
+                const expandedChanged = self.symbology.expanded !== value;
                 self.symbology.expanded = value;
+
+                // alert user that symbology has been expanded/collapsed
+                if (expandedChanged) {
+                    const map = configService.getSync.map.instance;
+                    const alertMsg = self.symbology.expanded
+                        ? 'toc.layer.label.symbologyExpand'
+                        : 'toc.layer.label.symbologyCollapse';
+                    map.updateAlert(alertMsg);
+                }
             }
         }
 
