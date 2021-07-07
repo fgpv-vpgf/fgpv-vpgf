@@ -102,26 +102,32 @@ function esriMap(esriBundle, geoApi) {
                 this.scalebar.show();
             }
 
-            if (opts.overviewMap && opts.overviewMap.enabled) {
-                overviewExpand = opts.overviewMap.expandFactor;
+            // once the map has loaded, begin creation of the overview map and display it
+            this._map.on('load', () => {
+                if (opts.overviewMap && opts.overviewMap.enabled) {
+                    overviewExpand = opts.overviewMap.expandFactor;
 
-                if (opts.tileSchema.overviewUrl) {
-                    // initial implementation.  we only are supporting tile layers.
-                    // if we want to enhance to have other layer types, will need to determine
-                    // how to go about it. we could just use raw objects in a switch statement here,
-                    // or attempt to wire in the layer records.
-                    this.checkCorsException(opts.tileSchema.overviewUrl.url);
-                    this.defaultOverview = false;
-                    const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(opts.tileSchema.overviewUrl.url);
-                    customOverview.on('load', () => {
-                        this.initOverviewMap(overviewExpand, customOverview);
-                    });
-                } else {
-                    // we use the active basemap, and reset the overview whenever it changes
-                    this.defaultOverview = true;
-                    this.initOverviewMap(overviewExpand);
+                    if (opts.tileSchema.overviewUrl) {
+                        // initial implementation.  we only are supporting tile layers.
+                        // if we want to enhance to have other layer types, will need to determine
+                        // how to go about it. we could just use raw objects in a switch statement here,
+                        // or attempt to wire in the layer records.
+                        this.checkCorsException(opts.tileSchema.overviewUrl.url);
+                        this.defaultOverview = false;
+                        const customOverview = new esriBundle.ArcGISTiledMapServiceLayer(
+                            opts.tileSchema.overviewUrl.url
+                        );
+
+                        customOverview.on('load', () => {
+                            this.initOverviewMap(overviewExpand, customOverview);
+                        });
+                    } else {
+                        // we use the active basemap, and reset the overview whenever it changes
+                        this.defaultOverview = true;
+                        this.initOverviewMap(overviewExpand);
+                    }
                 }
-            }
+            });
 
             this.zoomPromise = Promise.resolve();
             this.zoomCounter = 0;

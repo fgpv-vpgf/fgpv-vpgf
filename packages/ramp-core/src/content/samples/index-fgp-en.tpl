@@ -454,7 +454,7 @@
                         <input type="text" id="bookmarkDisplay" style="width:100%;" onClick="this.select();" />
                         <button style="display:flex;" onclick="testBackToCart()">Back To Cart</button>
                     </div>
-                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="config.rcs.[lang].json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" data-rv-keys='' data-rv-wait="true" rv-plugins="backToCart">
+                    <div id="fgpmap" is="rv-map" class="myMap" data-rv-config="https://cors-anywhere.herokuapp.com/https://osdp-psdo.canada.ca/assets/osdp/config-OSDP-AirQuality-en.json" data-rv-langs='["en-CA", "fr-CA"]' data-rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" data-rv-keys='' data-rv-wait="true" rv-plugins="backToCart">
                         <noscript>
                             <p>This interactive map requires JavaScript. To view this content please enable JavaScript in your browser or download a browser that supports it.<p>
 
