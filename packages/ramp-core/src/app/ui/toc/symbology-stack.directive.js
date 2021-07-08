@@ -305,7 +305,13 @@ function rvSymbologyStack($rootScope, $rootElement, $q, Geo, configService, anim
         scope.$watch('self.showSymbologyToggle', (value) => {
             if (value) {
                 element.find('.md-icon-button').addClass('show');
-                $.link(element.find('.md-icon-button'));
+
+                // If the symbology contains more than one icon, link the symbology stack to the first
+                // checkbox so it can be focused on.
+                if (self.symbology.stack.length > 1) {
+                    $.link(element.find('.md-icon-button'));
+                }
+
                 element.find('button').not('.rv-symbol-trigger').removeAttr('nofocus').addClass('focusOnce');
             } else {
                 element.find('.md-icon-button').removeClass('show');
