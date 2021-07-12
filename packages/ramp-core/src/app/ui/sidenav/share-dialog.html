@@ -17,7 +17,15 @@
         </md-switch>
 
         <md-input-container class="md-block" flex-gt-xs>
-            <input class="rv-shareLink" type="text" ng-model="self.url" readonly md-select-on-focus rv-focus />
+            <input
+                class="rv-shareLink"
+                type="text"
+                ng-model="self.url"
+                aria-label="{{'sidenav.label.sharelink' | translate}}"
+                readonly
+                md-select-on-focus
+                rv-focus
+            />
             <span>{{'sidenav.label.copy' | translate}}</span>
         </md-input-container>
     </rv-content-pane>

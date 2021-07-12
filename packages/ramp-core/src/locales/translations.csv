@@ -382,6 +382,7 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,helpui.nothingfound,Nothing is found. Please try a different search.,1,Rien n’est trouvé. Veuillez essayer une recherche différente.,1
 ,helpui.search,Search Help,1,Aide à la recherche,1
 ,helpui.clearsearch,Clear,1,Effacer,1
+,helpui.expand,Expand,1,Agrandir,1
 Error message when resource fails to load,toc.error.resource.loadfailed,There was an error retrieving this resource - try again later,1,Une erreur s'est produite lors du chargement de cette ressource - réessayez plus tard,1
 Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,1,Impossible d'obtenir le nombre de,1
 ,metadata.xslt.Abstract,Abstract,1,Résumé,1
