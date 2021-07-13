@@ -4,6 +4,9 @@
     ng-disabled="self.uiControl.isDisabled"
     ng-click="self.uiControl.action(); self.notifyApiClick(self.block)"
 >
+    <md-tooltip md-direction="top"
+        >{{ !!self.uiControl.tooltip ? self.uiControl.tooltip : self.uiControl.label | translate }}</md-tooltip
+    >
     <md-tooltip md-delay="self.node.getTooltipDelay()" md-direction="{{ self.node.getTooltipDirection() }}"
         >{{ self.block.name }}</md-tooltip
     >
