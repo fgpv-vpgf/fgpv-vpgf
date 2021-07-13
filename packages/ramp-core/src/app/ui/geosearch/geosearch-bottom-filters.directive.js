@@ -36,9 +36,9 @@ function Controller(geosearchFiltersService, debounceService) {
     'ngInject';
     const self = this;
 
-    self.visibleOnly = false;
-
     self.service = geosearchFiltersService;
+
+    self.visibleOnly = self.service.lastVisible;
 
     self.onUpdateDebounce = onUpdateDebounceBuilder();
 
