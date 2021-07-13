@@ -48,7 +48,7 @@
         ng-if="self.config.ui.appBar.basemap"
         aria-label="{{ 'nav.tooltip.basemap' | translate }}"
         class="md-icon-button primary"
-        ng-click="self.openBasemapSelector()"
+        ng-click="self.openBasemapSelector(false)"
         ng-show="self.panelRegistry.legend.isOpen"
     >
         <md-tooltip>{{ 'nav.tooltip.basemap' | translate }}</md-tooltip>

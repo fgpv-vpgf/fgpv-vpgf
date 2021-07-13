@@ -169,6 +169,7 @@
                 "name": "WMS Layer with a really long name",
                 "layerType": "ogcWms",
                 "disabledControls": ["styles"],
+                "suppressGetCapabilities": true,
                 "layerEntries": [
                     {
                         "id": "GDPS.ETA_UU",
@@ -176,7 +177,7 @@
                         "currentStyle": "WINDARROWKMH"
                     }
                 ],
-                "url": "http://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities"
+                "url": "https://geo.weather.gc.ca/geomet/?lang=E&service=WMS&request=GetCapabilities"
             }
         ],
         "extentSets": [
