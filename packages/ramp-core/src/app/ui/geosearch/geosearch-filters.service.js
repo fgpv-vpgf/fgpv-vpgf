@@ -17,6 +17,10 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         provinceIndexes: [],
         typeIndexes: [],
 
+        lastProvince: '', // last province filter saved
+        lastType: '', // last type filter saved
+        lastVisible: false, // last value of visible only
+
         setProvince,
         setType,
         setVisible,
@@ -46,20 +50,24 @@ function geosearchFiltersService($translate, events, configService, geoService, 
      * Sets the filter promise for the query.
      *
      * @function setProvince
-     * @param {String} provinceCode code of the province to be set
+     * @param {String} selectedProvince province filter to be set
      */
-    function setProvince(provinceCode) {
-        geosearchService.setProvince(provinceCode);
+    function setProvince(selectedProvince) {
+        const provinceFilter = selectedProvince && selectedProvince.name ? selectedProvince.name : undefined;
+        geosearchService.setProvince(provinceFilter);
+        service.lastProvince = selectedProvince;
     }
 
     /**
      * Sets the type promise for the query.
      *
      * @function setType
-     * @param {String} typeCode code of the results type to be set
+     * @param {String} selectedType type filter to be set
      */
-    function setType(typeCode) {
-        geosearchService.setType(typeCode);
+    function setType(selectedType) {
+        const typeFilter = selectedType && selectedType.name ? selectedType.name : undefined;
+        geosearchService.setType(typeFilter);
+        service.lastType = selectedType;
     }
 
     /**
@@ -75,6 +83,7 @@ function geosearchFiltersService($translate, events, configService, geoService, 
         } else {
             ref.extentChangeListener(); // unsubscribe from event
         }
+        service.lastVisible = visibleOnly;
 
         setExtentParameter();
 

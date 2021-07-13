@@ -36,14 +36,15 @@ function Controller(geosearchFiltersService) {
     'ngInject';
     const self = this;
 
-    self.selectedProvince = null;
-    self.selectedType = null;
-
     self.service = geosearchFiltersService;
 
     self.clear = clear;
     self.setType = setType;
     self.setProvince = setProvince;
+
+    // keep existing filter values if necessary
+    self.selectedProvince = self.service.lastProvince ? self.service.lastProvince : null;
+    self.selectedType = self.service.lastType ? self.service.lastType : null;
 
     return;
 
@@ -54,7 +55,7 @@ function Controller(geosearchFiltersService) {
      * @private
      */
     function setProvince() {
-        self.service.setProvince(self.selectedProvince.name);
+        self.service.setProvince(self.selectedProvince);
         self.onUpdate();
 
         // reset the selection like clear to unselect the option if -1
@@ -71,7 +72,7 @@ function Controller(geosearchFiltersService) {
      * @private
      */
     function setType() {
-        self.service.setType(self.selectedType.name);
+        self.service.setType(self.selectedType);
         self.onUpdate();
 
         // reset the selection like clear to unselect the option if -1
