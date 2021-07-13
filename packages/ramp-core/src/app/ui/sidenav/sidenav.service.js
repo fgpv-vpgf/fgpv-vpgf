@@ -66,7 +66,7 @@ function sideNavigationService(
             label: 'nav.label.basemap',
             icon: 'maps:map',
             action: () => {
-                basemapService.open();
+                basemapService.open(true);
             },
         },
         geoSearch: {

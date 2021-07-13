@@ -11,6 +11,7 @@ angular.module('app.ui').factory('basemapService', basemapService);
 
 function basemapService($rootElement, $mdSidenav, $q) {
     let closePromise;
+    let isSideMenuOpen;
 
     const service = {
         open,
@@ -27,13 +28,16 @@ function basemapService($rootElement, $mdSidenav, $q) {
      * @function open
      * @return  {Promise}   resolves to undefined when panel animation is complete
      */
-    function open() {
+    function open(sideMenuOpen = false) {
         closePromise = $q($mdSidenav('right').onClose).then(() => setOtherChromeOpacity(1));
+        isSideMenuOpen = sideMenuOpen;
 
         setOtherChromeOpacity(0.2);
 
-        // close the side menu
-        $mdSidenav('left').close();
+        // if opened using the side menu, close it while this panel is open.
+        if (isSideMenuOpen) {
+            $mdSidenav('left').close();
+        }
 
         return (
             $mdSidenav('right')
@@ -59,7 +63,10 @@ function basemapService($rootElement, $mdSidenav, $q) {
      * @return  {Promise}   resolves to undefined when panel animation is complete
      */
     function close() {
-        $mdSidenav('left').open();
+        if (isSideMenuOpen) {
+            $mdSidenav('left').open();
+        }
+
         return $mdSidenav('right').close();
     }
 
