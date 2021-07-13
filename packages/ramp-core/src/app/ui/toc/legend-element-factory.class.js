@@ -421,6 +421,10 @@ function LegendElementFactory(
             return 'toc.label.dataTable';
         }
 
+        get tooltip() {
+            return 'toc.tooltip.openDataTable';
+        }
+
         action() {
             this._debouncedAction();
         }
