@@ -24,8 +24,9 @@
                     <md-button
                         class="rv-group-body-button rv-button-square"
                         ng-click="section.isExpanded = !section.isExpanded"
-                        aria-label="{{ 'helpui.expand' | translate }}"
-                    ></md-button>
+                        aria-label="{{ section.isExpanded ? 'helpui.collapse' : 'helpui.expand' | translate }}"
+                        ><md-tooltip md-direction="top">{{ 'helpui.expand' | translate }}</md-tooltip></md-button
+                    >
 
                     <h4
                         class="rv-group-name"

@@ -86,6 +86,7 @@ Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,
 Details pane aria label for dialog modal,details.aria.dialog,Details Summary,1,Détails Résumé,0
 Details pane aria label for toggle button,details.aria.toggle,Toggle Details,1,Détails à bascule,0
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
+,details.tooltip.collapse,Collapse,1,Réduire,1
 Details pane label for no result,details.label.noresult,Nothing found,1,Aucun résultat,1
 Details pane label for searching,details.label.searching,Searching ...,1,Rechercher ...,1
 Content pane aria label for close button,contentPane.aria.close,Close,1,Fermer,1
@@ -264,6 +265,7 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 Table of Content open datatable label,toc.label.dataTable,Datatable,1,Tableau de données,1
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
+,toc.tooltip.openDataTable,Open Datatable,1,Ouvrir le tableau de données,0
 ,toc.layer.longload.message,{{name}} is taking longer than expected,1,{{name}} prend plus longtemps que prévu,1
 ,toc.layer.longload.hide,Dismiss,1,Rejeter,0
 ,toc.layer.longload.failed,{{name}} failed to load,1,Échec du chargement de {{name}},1
@@ -383,6 +385,7 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,helpui.search,Search Help,1,Aide à la recherche,1
 ,helpui.clearsearch,Clear,1,Effacer,1
 ,helpui.expand,Expand,1,Agrandir,1
+,helpui.collapse,Collapse,1,Réduire,1
 Error message when resource fails to load,toc.error.resource.loadfailed,There was an error retrieving this resource - try again later,1,Une erreur s'est produite lors du chargement de cette ressource - réessayez plus tard,1
 Error message when feature count cannot be retrieved,toc.error.resource.countfailed,Could not get number of,1,Impossible d'obtenir le nombre de,1
 ,metadata.xslt.Abstract,Abstract,1,Résumé,1

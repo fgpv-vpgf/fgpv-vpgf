@@ -7,6 +7,9 @@
         ng-click="self.toggleDetails()"
         aria-label="{{ 'details.aria.toggle' | translate }}"
     >
+        <md-tooltip md-direction="top"
+            >{{ self.isExpanded ? 'details.tooltip.collapse' : 'details.tooltip.expand' | translate }}</md-tooltip
+        >
     </md-button>
 
     <rv-symbology-stack symbology="self.item.symbologyStack"></rv-symbology-stack>
