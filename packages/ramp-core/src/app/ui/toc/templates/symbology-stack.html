@@ -2,6 +2,23 @@
     class="rv-symbology-container rv-render-{{ self.symbology.renderStyle }} rv-compound"
     ng-class='[{ "rv-expanded" : self.isExpanded }, { "rv-one" : self.symbology.stack.length === 1 }]'
 >
+    <md-button
+        ng-style="{'z-index': 100 + self.symbology.stack.length + 2 }"
+        class="rv-symbol-trigger rv-button-32 rv-icon-24 md-icon-button"
+        ng-if="self.symbology.isInteractive"
+        ng-click="self.expandSymbology(); self.showSymbologyBorder()"
+        ng-focus="self.fanOutSymbology(true); self.showSymbologyBorder(true)"
+        ng-blur="self.fanOutSymbology(false); self.showSymbologyBorder(false)"
+        ng-mouseover="self.fanOutSymbology(true)"
+        ng-mouseout="self.fanOutSymbology(false)"
+    >
+        <md-tooltip md-direction="top">
+            {{ self.symbology.expanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate
+            }}
+        </md-tooltip>
+        <md-icon md-svg-src="navigation:close"></md-icon>
+    </md-button>
+
     <div class="rv-description-container">
         <span class="rv-description">{{ ::self.description }}</span>
     </div>
@@ -54,21 +71,4 @@
             >
         </md-button>
     </div>
-
-    <md-button
-        ng-style="{'z-index': 100 + self.symbology.stack.length + 2 }"
-        class="rv-symbol-trigger rv-button-32 rv-icon-24 md-icon-button"
-        ng-if="self.symbology.isInteractive"
-        ng-click="self.expandSymbology(); self.showSymbologyBorder()"
-        ng-focus="self.fanOutSymbology(true); self.showSymbologyBorder(true)"
-        ng-blur="self.fanOutSymbology(false); self.showSymbologyBorder(false)"
-        ng-mouseover="self.fanOutSymbology(true)"
-        ng-mouseout="self.fanOutSymbology(false)"
-    >
-        <md-tooltip md-direction="top">
-            {{ self.symbology.expanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate
-            }}
-        </md-tooltip>
-        <md-icon md-svg-src="navigation:close"></md-icon>
-    </md-button>
 </div>
