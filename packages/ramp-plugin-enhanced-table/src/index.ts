@@ -434,8 +434,8 @@ TableBuilder.prototype.translations = {
                 clear: 'Clear filters',
                 apply: 'Apply filters to map',
             },
-            hideColumns: 'Hide columns',
-            hideAllColumns: 'All',
+            toggleColumns: 'Toggle columns',
+            toggleAllColumns: 'All',
             complexValue: 'Complex Value',
         },
         menu: {
@@ -481,8 +481,8 @@ TableBuilder.prototype.translations = {
                 clear: 'Effacer les filtres',
                 apply: 'Appliquer des filtres à la carte', // TODO: Add official French translation
             },
-            hideColumns: 'Masquer les colonnes', // TODO: Add Official French translation
-            hideAllColumns: 'Tous les',
+            toggleColumns: 'Toggle les colonnes', // TODO: Add Official French translation
+            toggleAllColumns: 'Tous les',
             complexValue: 'Valeur Complexes',
         },
         menu: {

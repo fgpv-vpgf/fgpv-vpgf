@@ -47,19 +47,19 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
 <md-menu-bar class="table-control" ng-controller="ColumnVisibilityMenuCtrl as ctrl">
     <md-menu md-position-mode="target-right target">
         <md-button
-            aria-label="{{ 'plugins.enhancedTable.table.hideColumns' | translate }}"
+            aria-label="{{ 'plugins.enhancedTable.table.toggleColumns' | translate }}"
             class="md-icon-button black"
             ng-click="$mdOpenMenu($event)">
-            <md-tooltip>{{ 'plugins.enhancedTable.table.hideColumns' | translate }}</md-tooltip>
+            <md-tooltip>{{ 'plugins.enhancedTable.table.toggleColumns' | translate }}</md-tooltip>
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
         </md-button>
         <md-menu-content class="rv-menu rv-dense">
             <md-menu-item>
                 <md-button
                     ng-click="ctrl.toggleAllColumns()"
-                    aria-label="{{ 'plugins.enhancedTable.table.hideAllColumns' | translate }}"
+                    aria-label="{{ 'plugins.enhancedTable.table.toggleAllColumns' | translate }}"
                     md-prevent-menu-close="md-prevent-menu-close">
-                    <span style='flex-basis: auto; overflow-wrap:normal;'>{{ 'plugins.enhancedTable.table.hideAllColumns' | translate }}</span>
+                    <span style='flex-basis: auto; overflow-wrap:normal;'>{{ 'plugins.enhancedTable.table.toggleAllColumns' | translate }}</span>
                     <md-icon md-svg-icon="action:done" ng-if="!ctrl.allColumnsVisible()"></md-icon>
                 </md-button>
             </md-menu-item>
