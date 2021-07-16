@@ -140,7 +140,7 @@ Now that you have the required files on your page we should add the map element.
 
 A map should now load on your page. Theres much more you can do with RAMP, a good place to start (I'm mentioning it again!) is the [map author guide](#map-author-guide)
 
-#### [Some samples](http://ramp4-app.azureedge.net/?prefix=legacy/branches/master/dist/samples/)
+#### [Some samples](http://ramp4-app.azureedge.net/?prefix=legacy/branches/master/samples/)
 
 ### Support
 
