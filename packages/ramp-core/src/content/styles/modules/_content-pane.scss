@@ -18,7 +18,7 @@
             height: auto; // 1px needed for a border
             min-height: $toolbar-height + 1px;
             align-items: center;
-            padding: 0 0 0 rem(1.6);
+            padding: 0 1 0 rem(1.6);
 
             .rv-header-content {
                 overflow: hidden;
