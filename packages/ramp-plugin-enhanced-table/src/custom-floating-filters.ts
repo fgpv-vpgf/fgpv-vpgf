@@ -58,17 +58,36 @@ export function setUpDateFilter(
     defaultValue = minAndMaxFilters !== undefined ? minAndMaxFilters : defaultValue;
 
     colDef.minWidth = 423;
+
     // Column should render and filter date properly
     colDef.filter = 'agDateColumnFilter';
+    colDef.filterParams.inRangeInclusive = true;
     colDef.filterParams.comparator = function (filterDate, entryDate) {
         let entry = new Date(entryDate);
-        if (entry > filterDate) {
+
+        // We need to specifically compare the UTC year, month, and date because
+        // directly comparing the dates returns the wrong value due to timezone differences
+        // Thus both dates need to be converted to UTC before comparing
+
+        // Check year
+        if (entry.getFullYear() > filterDate.getFullYear()) {
             return 1;
-        } else if (entry < filterDate) {
+        } else if (entry.getFullYear() < filterDate.getFullYear()) {
             return -1;
-        } else {
-            return 0;
         }
+
+        // At this point year is the same
+        // Check month
+        if (entry.getMonth() > filterDate.getMonth()) {
+            return 1;
+        } else if (entry.getMonth() < filterDate.getMonth()) {
+            return -1;
+        }
+
+        // At this point month is the same
+        // Now return the sign based on the date difference
+        // Note here we use getDate() and not getUTCDate() to avoid shifting the date
+        return entry.getDate() - filterDate.getDate();
     };
 
     $.extend(colDef.floatingFilterComponentParams, {
