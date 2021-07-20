@@ -30,9 +30,12 @@ export class PanelStatusManager {
             const focusedCell = that.tableOptions.api.getFocusedCell();
 
             if (focusedCell !== null) {
+                const mapName = that.panelManager.mapApi.identifier;
+
                 const topRow = parseInt(scrollRange.split(' - ')[0]) - 1;
                 const bottomRow = parseInt(scrollRange.split(' - ')[1]) - 1;
-                const tableRight = $('#enhancedTable').position().left + $('#enhancedTable').width();
+                const tableRight =
+                    $(`#enhancedTable-${mapName}`).position().left + $(`#enhancedTable-${mapName}`).width();
                 const focusedCellRight = $('.ag-cell-focus').offset().left + $('.ag-cell-focus').width();
                 const focusedRow = focusedCell.rowIndex;
 

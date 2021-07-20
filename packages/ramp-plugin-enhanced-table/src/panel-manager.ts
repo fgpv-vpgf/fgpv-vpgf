@@ -278,7 +278,9 @@ export class PanelManager {
                     .find(`[legend-block-id="${this.legendBlock.id}"] button`)
                     .filter(':visible')
                     .first();
-                (<EnhancedJQuery>(<unknown>$(sourceEl))).link($(document).find(`#enhancedTable`));
+                (<EnhancedJQuery>(<unknown>$(sourceEl))).link(
+                    $(document).find(`#enhancedTable-${this.mapApi.identifier}`)
+                );
 
                 // Set up grid <-> filter accessibility
                 this.gridBody = this.panel.element[0].getElementsByClassName('ag-body')[0];
