@@ -268,7 +268,9 @@ function legendServiceFactory(
 
         // alert SR user on adding layer to legend (user-added)
         if (layerBlueprint.config.state.userAdded) {
-            configService.getSync.map.instance.updateAlert('toc.layer.alert.added', { name: layerBlueprint.config.name });
+            configService.getSync.map.instance.updateAlert('toc.layer.alert.added', {
+                name: layerBlueprint.config.name,
+            });
         }
 
         return importedLegendBlock;
@@ -586,19 +588,32 @@ function legendServiceFactory(
                     _updateApiReloadedBlock(legendBlockGroup); //update Dynamic Group in the Legend API
                 }
 
-                // Hide each entry from the legend if has `stateOnly` set.
-                legendBlockGroup.entries.forEach(entry => {
-                    const config = entry.proxyWrapper.layerConfig;
-                    entry.hidden = config.stateOnly ? config.stateOnly : false;
-                });
-
-                const isStateOnly = (entry) => {
-                    return entry.proxyWrapper.layerConfig.stateOnly;
+                // Check the layer entry to see if stateOnly is set to true. If so, hide it from the legend.
+                // If the layer entry is a group node, perform this action recursively to hit each leaf node.
+                const setEntriesVisible = (entry) => {
+                    if (entry.entries) {
+                        entry.entries.map((e) => setEntriesVisible(e));
+                    } else {
+                        const config = entry.proxyWrapper.layerConfig;
+                        entry.hidden = config.stateOnly ? config.stateOnly : false;
+                    }
                 };
 
-                // If all entries have `stateOnly` set, then hide the entire group
-                // from the legend.
-                if (legendBlockGroup.entries.every(isStateOnly)) {
+                // Hide each entry from the legend if has `stateOnly` set.
+                setEntriesVisible(legendBlockGroup);
+
+                // Check whether this legend block should be hidden from the legend. Recursively checks if all
+                // leaf nodes are hidden and if so, hides this parent block as well.
+                const isStateOnly = (entry) => {
+                    // If this entry is another group node, check the children recursively.
+                    if (entry.entries) {
+                        return entry.entries.every((e) => isStateOnly(e));
+                    } else {
+                        return entry.proxyWrapper.layerConfig.stateOnly;
+                    }
+                };
+
+                if (isStateOnly(legendBlockGroup)) {
                     legendBlockGroup.hidden = true;
                 }
 
@@ -811,7 +826,7 @@ function legendServiceFactory(
                     const defaultLayerEntryConfig = {
                         source: {
                             index: treeChild.entryIndex,
-                            stateOnly: true,
+                            stateOnly: false,
                         },
                     };
 
