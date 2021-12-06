@@ -1,8 +1,5 @@
 angular.module('app.ui').run(metadataBlock);
 
-const EXPAND_BTN_TEMPLATE = `<md-tooltip>{{ 'metadata.expand.tooltip' | translate }}</md-tooltip>
-                            <md-icon md-svg-src="action:open_in_new"></md-icon>`;
-
 function metadataBlock(events) {
     let mApi = null;
     const METADATA_BODY = `<rv-metadata-content max-text-length="250"></rv-metadata-content>`;
@@ -36,7 +33,7 @@ function metadataBlock(events) {
                 expandPanel();
             });
 
-            expandBtn.elem.addClass('md-icon-button rv-button-24 rv-gt-sm black');
+            expandBtn.elem.addClass('md-icon-button rv-gt-sm black');
             expandBtn.elem.removeClass('md-raised');
 
             metadataPanel.header.append(expandBtn);
