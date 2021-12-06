@@ -317,6 +317,7 @@ function rvSymbologyStack($rootScope, $rootElement, $q, Geo, configService, anim
         scope.$watchCollection('self.symbology.stack', (newStack, oldStack) => {
             if (newStack) {
                 ref.isReady = false;
+                ref.toggleLoaded = false;
 
                 // collapse the stack when underlying collection of the symbology changes as the expanded ui stack might initialy had a different number of items
                 if (self.isExpanded) {
@@ -362,36 +363,43 @@ function rvSymbologyStack($rootScope, $rootElement, $q, Geo, configService, anim
                                 });
                             }
                         });
+
+                        self.toggleLoaded = true;
                     });
                 }
             }
+
+            // if there exists a legend group, watch for when the group gets expanded
+            if (groupExists) {
+                // for obtaining the link to the parent group block
+                let parent = '.parent'.repeat(numParents);
+                scope.$watch('self.block' + parent + '.expanded', (newValue, oldValue) => {
+                    // when parent group is expanded, expand symbology stack if needed
+                    if (newValue !== oldValue && newValue) {
+                        // calling expandSymbology twice fixes some corner cases
+                        $timeout(() => self.expandSymbology(self.symbology.expanded), 0);
+                    }
+                });
+            }
+
+            scope.$watch('self.symbology.expanded', (newValue, oldValue) =>
+                newValue !== oldValue ? self.expandSymbology(newValue) : angular.noop
+            );
+
+            scope.$watch('self.symbology.fannedOut', (newValue, oldValue) =>
+                newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop
+            );
+
+            // Wait here and then expand the symbology stack if needed. Waits
+            // to ensure that the checkboxes are fully loaded (or not required) before opening the symbology.
+            if (!groupExists || cur.expanded) {
+                $timeout(() => {
+                    if (self.toggleList.length == 0 || (self.toggleList.length > 0 && self.toggleLoaded)) {
+                        self.expandSymbology(self.symbology.expanded);
+                    }
+                }, 1000);
+            }
         });
-
-        // if there exists a legend group, watch for when the group gets expanded
-        if (groupExists) {
-            // for obtaining the link to the parent group block
-            let parent = '.parent'.repeat(numParents);
-            scope.$watch('self.block' + parent + '.expanded', (newValue, oldValue) => {
-                // when parent group is expanded, expand symbology stack if needed
-                if (newValue !== oldValue && newValue) {
-                    // calling expandSymbology twice fixes some corner cases
-                    $timeout(() => self.expandSymbology(self.symbology.expanded), 0);
-                }
-            });
-        }
-
-        scope.$watch('self.symbology.expanded', (newValue, oldValue) =>
-            newValue !== oldValue ? self.expandSymbology(newValue) : angular.noop
-        );
-
-        scope.$watch('self.symbology.fannedOut', (newValue, oldValue) =>
-            newValue !== oldValue ? self.fanOutSymbology(newValue) : angular.noop
-        );
-
-        // expand the symbology stack if needed
-        if (!groupExists || cur.expanded) {
-            $timeout(() => expandSymbology(self.symbology.expanded), 0);
-        }
 
         return true;
 
