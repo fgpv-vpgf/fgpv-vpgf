@@ -46,7 +46,13 @@ function dateTimeZone() {
 }
 
 function autolink() {
-    const defaultOptions = { className: 'rv-linkified', ignoreTags: ['script'] };
+    const defaultOptions = {
+        className: 'rv-linkified',
+        ignoreTags: ['script'],
+        validate: {
+            url: (value) => /^https?:\/\//.test(value), // before converting to a link, ensure that the domain name begins with http:// or https://.
+        },
+    };
 
     return autolink;
 
