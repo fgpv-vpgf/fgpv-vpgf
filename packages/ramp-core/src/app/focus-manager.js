@@ -56,8 +56,6 @@ let ignoreFocusLoss = false;
 
 const jQwindow = $(window);
 
-let keyCode;
-
 /**
  * Represents one viewer on a page, with multiple viewers being possible. Tracks viewer state,
  * determines if elements belong to it, and stores limited angular services passed in.
@@ -129,7 +127,7 @@ class Viewer {
         // When the viewer status changes, update the label for the keyboard control button.
         // If the viewer is not active, the button should say "activate keyboard controls".
         const instructionsButton = this.rootElement.find('.rv-keyboard-controls-button');
-        var scope = angular.element(instructionsButton).scope();
+        const scope = angular.element(instructionsButton).scope();
 
         scope.self.type = status;
 
@@ -167,14 +165,25 @@ class Viewer {
      * during a waiting state, the next focusable element outside the viewer is focused. This also
      * solves an issue where focus cannot be manually set to the browsers url bar, which in turn causes
      * focus to be trapped inside the document body.
+     * @param {Boolean} forward the direction of focus movement
      */
-    clearTabindex() {
-        this.rootElement
-            .find(focusSelector + ', [tabindex=0]')
-            .not('.rv-esri-map')
-            .not('[tabindex=-2]')
-            .not('[tabindex=-3]')
-            .attr('tabindex', '-1');
+    clearTabindex(forward = true) {
+        if (forward) {
+            this.rootElement
+                .find(focusSelector + ', [tabindex=0]')
+                .not('.rv-esri-map')
+                .not('.rv-keyboard-controls-button')
+                .not('[tabindex=-2]')
+                .not('[tabindex=-3]')
+                .attr('tabindex', '-1');
+        } else {
+            this.rootElement
+                .find(focusSelector + ', [tabindex=0]')
+                .not('.rv-keyboard-controls-button')
+                .not('[tabindex=-2]')
+                .not('[tabindex=-3]')
+                .attr('tabindex', '-1');
+        }
     }
 }
 
@@ -433,7 +442,6 @@ function shiftFocus(forward = true, onlyUseHistory = false) {
         } else {
             $('.highlighted').find('.move-right')[0].origfocus();
         }
-        e.keyCode = keyCode;
         ifm.list.trigger(e);
         return true;
     } else if ($('.ag-cell-focus')[0] !== undefined) {
@@ -648,8 +656,6 @@ function onFocusin(event) {
  */
 // eslint-disable-next-line complexity
 function onKeydown(event) {
-    keyCode = event.keyCode;
-
     /*jshint maxcomplexity:12 */
     const viewerActive = viewerGroup.status(statuses.ACTIVE);
     const viewerWaiting = viewerGroup.status(statuses.WAITING);
@@ -698,6 +704,11 @@ function onKeydown(event) {
         if (event.which === 13 || event.which === 32) {
             // enter or spacebar
             viewerWaiting.setStatus(statuses.ACTIVE);
+        } else if (event.shiftKey && event.which === 9) {
+            // shift + tab key
+            // clear all tab indexes except for keyboard instructions button
+            viewerWaiting.clearTabindex(false);
+            // backtab to the previous non-viewer element (#hideshow)?
         } else if (event.which === 9) {
             // tab key
             viewerWaiting.clearTabindex();
@@ -884,7 +895,7 @@ HTMLElement.prototype.focus = $.fn.focus = function () {
     } else if (viewerGroup.trapped(el)) {
         console.warn(
             'focusManager',
-            `*rvFocus* must be used to set focus ` + `on elements that are a part of the viewer`
+            `*rvFocus* must be used to set focus on elements that are a part of the viewer`
         );
         return;
     } else {
