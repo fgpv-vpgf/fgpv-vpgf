@@ -27,6 +27,7 @@ function exportGenerators(
     $filter,
     $translate,
     $mdToast,
+    $rootElement,
     configService,
     graphicsService,
     exportSizesService,
@@ -245,7 +246,8 @@ function exportGenerators(
                 const mainCanvas = graphicsService.createCanvas(exportSize.width, exportSize.height, backgroundColour);
                 const ctx = mainCanvas.getContext('2d');
 
-                const esriRoot = document.querySelector('.rv-esri-map').firstElementChild;
+                const esriRoot = $rootElement.find('.rv-esri-map')[0].firstElementChild;
+
                 const imagePromises = angular
                     .element(esriRoot)
                     .find('img:visible')
@@ -267,6 +269,7 @@ function exportGenerators(
                     );
 
                 // need to wait for all images to load, so they can be added to the canvas in the correct order
+
                 Promise.all(imagePromises).then((data) => {
                     // eslint-disable-next-line complexity
                     data.forEach(({ imgSource, imgItem, error }) => {
