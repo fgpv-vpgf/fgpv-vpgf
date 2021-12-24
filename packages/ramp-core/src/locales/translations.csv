@@ -37,7 +37,7 @@ DataTable text for Processing,filter.default.label.processing,Processing...,1,Tr
 Datatable contents out of date,filter.default.label.outOfDate,Table may be out of date with layer,1,Le tableau peut être périmé avec la couche,1
 Datatable contents reload,filter.default.action.outOfDate,Reload table,1,Recharger le tableau,1
 Datatable close toast,filter.default.action.close,Close,1,Fermer,1
-Datatable dismiss toast,filter.default.action.hide,Dismiss,1,Rejeter,0
+Datatable dismiss toast,filter.default.action.hide,Dismiss,1,Rejeter,1
 DataTable text for Search,filter.default.label.search,Search: ,1,Rechercher : ,1
 DataTable text for Length Menu,filter.default.label.length.menu,Show _MENU_ entries,1,Afficher _MENU_ éléments,1
 DataTable text for Info,filter.default.label.info,{{range}} of {{total}} entries shown,1,Affichage de l'élément {{range}} sur {{total}} éléments,1
@@ -76,15 +76,15 @@ Datatable settings name column label,filter.settings.label.name,Name,1,Nom,1
 Datatable settings filter column label,filter.settings.label.filter,Filter,1,Filtre,1
 Datatable settings sort column label,filter.settings.label.sort,Sort,1,Trier,1
 Datatable settings display column label,filter.settings.label.show,Show,1,Montrer,1
-Details pane open alert,details.alert.open,Details panel opened,1,Détails panneau ouvert,0
-Details pane expand alert,details.alert.expand,Expanding details panel,1,Élargir les détails panneau,0
-Details pane close alert,details.alert.close,Details panel closed,1,Panneau détails fermé,0
-Details pane entry expanded alert,details.alert.expanded,Details entry expanded,1,Détails entrée élargi,0
+Details pane open alert,details.alert.open,Details panel opened,1,Volet des détails ouvert,1
+Details pane expand alert,details.alert.expand,Expanding details panel,1,Déploiement du volet des détails,1
+Details pane close alert,details.alert.close,Details panel closed,1,Volet des détails fermé,1
+Details pane entry expanded alert,details.alert.expanded,Details entry expanded,1,Déploiement de la saisie des détails,1
 Details pane entry collapsed alert,details.alert.collapsed,Details entry collapsed,1,Détails de fondre d’entréey,1
 Details pane title,details.title,Feature Information,1,Information sur l'élément,1
 Details pane aria label for expand button,details.aria.expand,Expand,1,Agrandir,1
-Details pane aria label for dialog modal,details.aria.dialog,Details Summary,1,Détails Résumé,0
-Details pane aria label for toggle button,details.aria.toggle,Toggle Details,1,Détails à bascule,0
+Details pane aria label for dialog modal,details.aria.dialog,Details Summary,1,Sommaire des détails,1
+Details pane aria label for toggle button,details.aria.toggle,Toggle Details,1,Afficher les détails,1
 Details pane tooltip for expand button,details.tooltip.expand,Expand,1,Agrandir,1
 ,details.tooltip.collapse,Collapse,1,Réduire,1
 Details pane label for no result,details.label.noresult,Nothing found,1,Aucun résultat,1
@@ -114,7 +114,7 @@ Geosearch lat/long type,geosearch.type.latlong,Latitude/Longitude,1,Latitude/Lon
 Geosearch FSA type,geosearch.type.fsa,Postal code,1,Code postal,1
 Geosearch National Topographic System type,geosearch.type.nts,NTS,1,SNRC,1
 ,geosearch.nomatches.label,No matches found for ""{{ noResultsSearchValue }}"",1,Aucun résultat correspondant à ""{{ noResultsSearchValue }}"".,1
-Geosearch FSA type,geosearch.serviceerror.label,"Service error, results cannot be shown at this time.",1,"Erreur de service, les résultats ne peuvent pas être affichés pour le moment.",0
+Geosearch FSA type,geosearch.serviceerror.label,"Service error, results cannot be shown at this time.",1,"Erreur de service, impossible d’afficher les résultats pour le moment",1
 ,geosearch.loadingfilters.label,Loading filters,1,Chargement des filtres,1
 Basemap refresh required,basemap.refresh.req,Map refresh required,1,Actualiser la carte,1
 Basemap blank title,basemap.blank.title,Blank map,1,Carte vide,1
@@ -150,7 +150,7 @@ Metadata pane title,metadata.title,Metadata,1,Métadonnées,1
 Metadata pane expand,metadata.expand.tooltip,Expand metadata,1,Agrandir les métadonnées,1
 Metadata pane toggled alert, metadata.alert.toggled,Metadata panel toggled,1,Métadonnées panneau activer,1
 Hovertip loading text,maptip.hover.label.loading,Loading...,1,Chargement en cours...,1
-,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at:,1,Changement <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> à:,0
+,settings.change.at,Change <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> at:,1,Changement <span class="rv-control-name" translate="settings.label.{{controlName}}"></span> à:,1
 Settings main title,settings.title,Settings,1,Paramètres,1
 Settings visibility header label,settings.label.display,Display,1,Affichage,1
 Settings toggled alert,settings.alert.toggled,Settings panel toggled,1,Paramètres panneau activer,1
@@ -265,9 +265,9 @@ Table of Content templates placeholder loading error label,toc.tmp.label.error.l
 Table of Content zoom to boundary label,toc.label.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
 Table of Content open datatable label,toc.label.dataTable,Datatable,1,Tableau de données,1
 Table of Content zoom to boundary tooltip,toc.tooltip.boundaryZoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
-,toc.tooltip.openDataTable,Open Datatable,1,Ouvrir le tableau de données,0
+,toc.tooltip.openDataTable,Open Datatable,1,Tableau de données ouvert,1
 ,toc.layer.longload.message,{{name}} is taking longer than expected,1,{{name}} prend plus longtemps que prévu,1
-,toc.layer.longload.hide,Dismiss,1,Rejeter,0
+,toc.layer.longload.hide,Dismiss,1,Rejeter,1
 ,toc.layer.longload.failed,{{name}} failed to load,1,Échec du chargement de {{name}},1
 ,toc.boundaryZoom.badzoom,Have we zoomed too far?,1,Le zoom est-il allé trop loin?,1
 ,toc.boundaryZoom.undo,fix,1,régler,1
@@ -285,7 +285,7 @@ ToC slider mixed values,toc.slider.mixed,Mixed values,1,Valeurs mixtes,1
 While counting geometry,geometry.counting, ...counting,1, ...compte,1
 Geometry types,geometry.type.generic,feature|features,1,élément|éléments,1
 Geometry types,geometry.type.esriGeometryPoint,point|points,1,point|points,1
-Geometry types,geometry.type.esriGeometryMultipoint,multipoint|multipoints,1,multipoint|multipoints,0
+Geometry types,geometry.type.esriGeometryMultipoint,multipoint|multipoints,1,multipoint|multipoints,1
 Geometry types,geometry.type.esriGeometryPolygon,polygon|polygons,1,polygone|polygones,1
 Geometry types,geometry.type.esriGeometryPolyline,line|lines,1,ligne|lignes,1
 Geometry types,geometry.type.imagery,imagery,1,imagerie,1
@@ -294,12 +294,12 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,export.download,Download,1,Télécharger,1
 ,export.undo,Undo,1,Annuler,1
 ,export.title,Enter Title,1,Titre,1
-,export.error.image.tainted,Some layer images can't be exported (same-origin policy exception).,1,Certaines images de calques seront omises (exception de stratégie de même origine).,0
-,export.error.legend.tainted,Some legend images can't be exported (same-origin policy exception).,1,Certaines images de calques seront omises (exception de stratégie de même origine).,0
+,export.error.image.tainted,Some layer images can't be exported (same-origin policy exception).,1,Certaines images de couche ne peuvent pas être exportées (exception à la politique d’origine identique).,1
+,export.error.legend.tainted,Some legend images can't be exported (same-origin policy exception).,1,Certaines images de légende ne peuvent pas être exportées (exception à la politique d’origine identique).,1
 ,export.error.tainted,We can't save the export image directly (same-origin policy exception). You can right click the image and select "Save As..." if supported by your browser.,1,Nous ne pouvons enregistrer l’image directement (exception liée à la politique de même origine). Vous pouvez cliquer sur le bouton droit de la souris lorsque le curseur est sur l’image et sélectionner « Enregistrer sous... » si votre navigateur le permet.,1
-,export.error.cantgenerate,Export image cannot be generated right now,1,L'image d'exportation ne peut pas être générée maintenant,0
+,export.error.cantgenerate,Export image cannot be generated right now,1,L’image d’exportation ne peut pas être générée pour le moment,1
 ,export.error.timeout,Connection timed out. Stopping export task.,1,Connexion expirée. Processus d’exportation arrêté.,1
-,export.error.service.timeout,The print service does not respond.,1,Le service d'impression ne répond pas.,0
+,export.error.service.timeout,The print service does not respond.,1,Le service d’impression ne répond pas.,1
 ,export.error.somethingelseiswrong,Ouch. Something went wrong. We cannot save the export image.,1,Aïe. Une erreur s'est produite. Nous ne pouvons enregistrer l’image créée par l'outil d'exportation.,1
 ,export.error.minwidth, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1
 ,export.error.minheight, Too small. {{min}} px minimum.,1, Trop petit. {{min}} px minimum.,1
@@ -328,14 +328,14 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.title,Add Layer,1,Ajouter une couche,1
 ,import.file.title,Import Layer,1,Importer un fichier,1
 ,import.file.upload.title,Upload data,1,Charger des données,1
-,import.file.upload.summary,"Upload a file or enter a URL",1,"Télécharger un fichier ou entrez une adresse URL",0
+,import.file.upload.summary,"Upload a file or enter a URL",1,"Télécharger un fichier ou saisir une URL",1
 ,import.file.upload.choose,choose a file,1,Choisir un fichier,1
 ,import.file.upload.drop,Drop the file to upload,1,Déposer le fichier à téléverser,1
 ,import.file.upload.or,or,1,ou,1
-,import.file.upload.fileurl,URL to File or Service,1,URL de déposer ou service,0
+,import.file.upload.fileurl,URL to File or Service,1,URL vers fichier ou service,1
 ,import.file.upload.invalid,This is not a valid URL,1,Cette adresse URL n'est pas valide,1
 ,import.file.upload.noaccess,Can't access file,1,Impossible d'accéder au fichier,1
-,import.file.select.title,Select format,1,Sélectionnez le format,0
+,import.file.select.title,Select format,1,Choisir un format,1
 ,import.file.select.fileformat,File Format,1,Format du fichier,1
 ,import.file.select.wrong,Incorrect file format,1,Format de fichier incorrecte,1
 ,import.file.configure.title,Configure layer,1,Configurer la couche,1
@@ -353,7 +353,7 @@ Geometry types,geometry.type.imagery,imagery,1,imagerie,1
 ,import.upload.type.wfs,OGC Web Feature Service 3,1,Service d'entités Web OGC 3,1
 ,import.upload.type.rasterlayer,Raster Layer,1,Couche Raster,1
 ,import.upload.type.geojson,GeoJSON,1,GeoJSON,0
-,import.service.connect.httpshint,Requests will be made using HTTPS,1,Les demandes seront faites en utilisant HTTPS,0
+,import.service.connect.httpshint,Requests will be made using HTTPS,1,Les requêtes seront exécutées au moyen de HTTPS,1
 ,import.service.title,Import Service,1,Importer un service,1
 ,import.service.connect.title,Connect service,1,Connecter au service,1
 ,import.service.connect.serviceurl,Service layer URL,1,Adresse URL du service,1
@@ -412,14 +412,14 @@ Error message when feature count cannot be retrieved,toc.error.resource.countfai
 ,metadata.xslt.cataloguePage,Data Catalogue Page,1,Page des données du catalogue,1
 ,metadata.xslt.metadataPage,Raw Metadata,1,Métadonnées brutes,1
 ,metadata.xslt.metadata,Metadata,1,Métadonnées,1
-,focus.dialog.activateKeyboardControls,Activate Keyboard Controls,1,Activer les contrôles du clavier,0
-,focus.dialog.keyboardInstructions,View Keyboard Instructions,1,Voir les instructions du clavier,0
-,focus.dialog.movement,You can navigate around the map by using the arrow keys.,1,Vous pouvez naviguer autour de la carte en utilisant les touches fléchées.,0
-,focus.dialog.speedup,You can speed up navigation using ,1,Vous pouvez accélérer le moyen de navigation ,0
-,focus.dialog.slowdown,or slow down navigation using ,1,ou ralentir la navigation en utilisant,0
-,focus.dialog.features, to select a data point on the map.,1,pour sélectionner un point de données sur la carte,0
-,focus.dialog.control,Ctrl,1,Contrôle,0
-,focus.dialog.shift,Shift,1,Shift,0
+,focus.dialog.activateKeyboardControls,Activate Keyboard Controls,1,Activer les commandes du clavier,1
+,focus.dialog.keyboardInstructions,View Keyboard Instructions,1,Voir les instructions du clavier,1
+,focus.dialog.movement,You can navigate around the map by using the arrow keys.,1,Vous pouvez vous déplacer sur la carte à l’aide du pavé curseur.,1
+,focus.dialog.speedup,You can speed up navigation using ,1,Vous pouvez accélérer la navigation en utilisant,1
+,focus.dialog.slowdown,or slow down navigation using ,1,ou ralentir la navigation en utilisant,1
+,focus.dialog.features, to select a data point on the map.,1,pour sélectionner un point de données sur la carte.,1
+,focus.dialog.control,Ctrl,1,Ctrl,1
+,focus.dialog.shift,Shift,1,Shift,1
 ,focus.dialog.press,Press,1,Appuyer,1
 ,focus.dialog.enter,Enter,1,Entrer,1
 ,focus.dialog.tab,Tab,1,Onglet,1
@@ -433,5 +433,5 @@ Table of Content collapse legend group,toc.label.group.collapse,Collapse Group,1
 Export size selector,export.size.selector,Size Selector,1,Sélecteur de taille,1
 ,lightbox.tooltip.next,Next,1,Prochain,1
 ,lightbox.tooltip.previous,Previous,1,Précédent,1
-,api.panel.toggle,Toggle Panel,1,Basculer le panneau,0
-,api.panel.close,Close Panel,1,Fermer le panneau,0
+,api.panel.toggle,Toggle Panel,1,Faire basculer le volet,1
+,api.panel.close,Close Panel,1,Fermer le volet,1
