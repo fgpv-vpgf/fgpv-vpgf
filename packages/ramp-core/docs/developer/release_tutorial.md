@@ -92,7 +92,7 @@ Note: with the monorepo, this section is no longer relevant.
         git checkout [-b] develop
     ```
 
-3. Change the version tag and geoApi tag in `package.json` and `package-lock.json` to the appropriate versions. Note geoapi and plugins versions are no longer relevant.
+3. Change the version tag in `package.json` to the appropriate versions. Note geoapi and plugins versions are no longer relevant. Note `package-lock.json` no longer exists.
 
     ```json
         "version": [version],
