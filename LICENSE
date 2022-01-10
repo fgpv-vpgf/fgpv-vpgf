@@ -1,14 +1,16 @@
-Federal Geospatial Platform Visualiser (FGPV) - Terms and Conditions of Use
+Reusable Accessible Mapping Platform (RAMP) - Terms and Conditions of Use
 
-Unless otherwise noted, computer program source code of the Federal Geospatial Platform Visualiser (FGPV) is covered under Crown Copyright, Government of Canada, and is distributed under the MIT License.
+This is an unsupported product. If you require a supported version please contact applicationsdecartographieweb-webmappingapplications@ec.gc.ca for a cost estimate. The software and code samples available on this website are provided "as is" without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time. 
+
+Unless otherwise noted, computer program source code of the Reusable Accessible Mapping Platform (RAMP) is covered under Crown Copyright, Government of Canada, and is distributed under the MIT License.
 
 The Canada wordmark and related graphics associated with this distribution are protected under trademark law and copyright law. No permission is granted to use them outside the parameters of the Government of Canada's corporate identity program. For more information, see http://www.tbs-sct.gc.ca/fip-pcim/index-eng.asp
 
-Copyright title to all 3rd party software distributed with the Federal Geospatial Platform Visualiser (FGPV) is held by the respective copyright holders as noted in those files. Users are asked to read the 3rd Party Licenses referenced with those assets.
+Copyright title to all 3rd party software distributed with the Reusable Accessible Mapping Platform (RAMP) is held by the respective copyright holders as noted in those files. Users are asked to read the 3rd Party Licenses referenced with those assets.
 
 MIT License
 
-Copyright (c) 2015 Government of Canada
+Copyright (c) 2021 Government of Canada
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -18,19 +20,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 -------------------------------------------------------------------
 
-Visualisateur pour la Plateforme géospatiale fédérale (VPGF) - Conditions régissant l'utilisation
+Ce produit n'est pas pris en charge. Si vous avez besoin d'une version prise en charge, veuillez envoyer un courriel à l'adresse applicationsdecartographieweb-webmappingapplications@ec.gc.ca pour obtenir une estimation des coûts. Le logiciel et les échantillons de code disponibles sur ce site Web sont fournis « en l'état », sans garantie d'aucune sorte, expresse ou implicite. Utilisez à vos propres risques!  Il peut être impossible d'accéder à ce dépôt GitHub, à tout moment.
 
-Sauf indication contraire, le code source du Visualisateur pour la Plateforme géospatiale fédérale (VPGF) est protégé par le droit d'auteur de la Couronne du gouvernement du Canada et distribué sous la licence MIT.
+Plateforme de cartographie accessible et réutilisable (PCAR) - Conditions régissant l'utilisation
+
+Sauf indication contraire, le code source du Plateforme de cartographie accessible et réutilisable (PCAR) est protégé par le droit d'auteur de la Couronne du gouvernement du Canada et distribué sous la licence MIT.
 
 Le mot-symbole « Canada » et les éléments graphiques connexes liés à cette distribution sont protégés en vertu des lois portant sur les marques de commerce et le droit d'auteur.
 
 Aucune autorisation n'est accordée pour leur utilisation à l'extérieur des paramètres du programme de coordination de l'image de marque du gouvernement du Canada. Pour obtenir davantage de renseignements à ce sujet, veuillez consulter http://www.tbs-sct.gc.ca/fip-pcim/index-fra.asp
 
-La propriété du droit d'auteur de tout logiciel tiers distribué avec le Visualisateur pour la Plateforme géospatiale fédérale (VPGF) est conservée par les détenteurs du droit d'auteur mentionnés dans ces fichiers. Nous demandons aux utilisateurs de lire les licences des tiers indiqués à titre de référence dans ces logiciels.
+La propriété du droit d'auteur de tout logiciel tiers distribué avec le Plateforme de cartographie accessible et réutilisable (PCAR) est conservée par les détenteurs du droit d'auteur mentionnés dans ces fichiers. Nous demandons aux utilisateurs de lire les licences des tiers indiqués à titre de référence dans ces logiciels.
 
 Licence MIT
 
-(c) Droit d'auteur – Gouvernement du Canada, 2015
+(c) Droit d'auteur – Gouvernement du Canada, 2021
 
 La présente autorise toute personne d'obtenir gratuitement une copie du présent logiciel et des documents connexes (le « logiciel »), de traiter le logiciel sans restriction, y compris, mais sans s'y limiter, les droits d'utiliser, de copier, de modifier, de fusionner, de publier, de distribuer, d'accorder une sous licence et de vendre des copies dudit logiciel, et de permettre aux personnes auxquelles le logiciel est fourni de le faire, selon les conditions suivantes :
 
