@@ -1201,6 +1201,11 @@
                     "type": "string",
                     "description": "The longitude field of the layer (only for CSVs)."
                 },
+                "rawFile": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Optional GeoJSON file tacked onto the config. Url will be ignored. Can be JSON object or stringified object. Only for GeoJSON."
+                },
                 "tolerance": {
                     "type": "number",
                     "default": 5,

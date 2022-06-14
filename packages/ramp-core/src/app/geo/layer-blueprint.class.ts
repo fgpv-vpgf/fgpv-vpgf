@@ -210,16 +210,44 @@ function LayerBlueprint(
                 return Promise.resolve(this._layer);
             }
 
+            // check if geojson config has a raw file tacked on
+            const bRawGeoJson = this.type === 'geojson' && this.config.rawFile;
+            if (bRawGeoJson) {
+                this.setRawData(this.config.rawFile);
+            }
+
             // reset valid data flag and the raw data when force-reloading
             // during the validation step, raw data will be re-downloaded
             if (force && !this._isDataPreloaded) {
                 [this._isDataValid, this._rawData] = [false, null];
             }
 
-            await this.validate();
+            // raw content on the config will not be encoded. Other sources will be in ArrayBuffer
+            await this.validate(this.type, !bRawGeoJson);
 
-            // TODO: targetSR property should be added to the WFS layer config node
-            this.config.targetSR = configService.getSync.map.instance.spatialReference;
+            // with GeoJSON files loading from the config, we can
+            // encounter a situation where this runs before the
+            // map instance has a spatial reference. Slight delay
+            // until it appears.
+            const mapInstance = configService.getSync.map.instance;
+            const busyPromise = new Promise<void>((resolve, reject) => {
+                let iamerror = 1;
+                const stopit = setInterval(() => {
+                    if (mapInstance.spatialReference) {
+                        clearInterval(stopit);
+                        this.config.targetSR = mapInstance.spatialReference;
+                        resolve();
+                    }
+                    iamerror += 1;
+                    if (iamerror > 50) {
+                        // couldn't find a spatial reference in 15 seconds. something's up
+                        clearInterval(stopit);
+                        reject();
+                    }
+                }, 300);
+            });
+
+            await busyPromise;
 
             // clone data because the makeSomethingLayer functions mangle the config data
             const clonedFormattedData = angular.copy(this._formattedData);
@@ -752,8 +780,8 @@ function LayerBlueprint(
          * @returns {Promise<any>}
          * @memberof GeoJSONSource
          */
-        async validate(): Promise<any> {
-            const validationResult = await super.validate();
+        async validate(type: string = this.type, isEncoded: boolean = true): Promise<any> {
+            const validationResult = await super.validate(type, isEncoded);
             this.setFieldsOptions(validationResult);
 
             return Promise.resolve(true);
