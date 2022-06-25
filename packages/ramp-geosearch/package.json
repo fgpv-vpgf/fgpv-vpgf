@@ -19,7 +19,7 @@
         "jasmine": "3.1.0",
         "jasmine-ts": "0.2.1",
         "jest": "23.2.0",
-        "node-fetch": "2.1.2",
+        "node-fetch": "2.6.7",
         "nodemon": "1.17.5",
         "ts-jest": "22.4.6",
         "ts-loader": "4.4.1",
