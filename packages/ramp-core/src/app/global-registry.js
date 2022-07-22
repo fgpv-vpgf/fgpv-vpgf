@@ -5,7 +5,7 @@
  */
 const rvDefaults = {
     // NOTE is appears this URL def is no longer being used. The `dojoUrl` var in config.service.js is what gets loaded
-    dojoURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.35/init.js',
+    dojoURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//js.arcgis.com/3.41/init.js',
 };
 
 /**
