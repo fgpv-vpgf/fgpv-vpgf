@@ -1139,6 +1139,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._colour = source.colour || RColor({ saturation: 0.4, value: 0.8 });
             this._state.snapshot = true;
             this._fieldMetadata = source.fieldMetadata;
+            this._rawFile = source.rawFile;
         }
 
         get fileType() {
@@ -1152,10 +1153,15 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._colour = value;
         }
 
+        get rawFile() {
+            return this._rawFile;
+        }
+
         get JSON() {
             return angular.merge(super.JSON, {
                 fileType: this.fileType,
                 colour: this.colour,
+                rawFile: this.rawFile,
             });
         }
     }
