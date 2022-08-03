@@ -87,25 +87,31 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
             }
 
             const previouslySelected = findPreviouslySelected(newValue);
-            if (previouslySelected) {
-                // pick selected item user previously selected one,
-                selectItem(previouslySelected);
-            } else if (newValue.length === 1) {
-                // or if there is a single item, pick that
+            if (newValue.length === 1) {
+                // if there is a single item, pick that
                 selectItem(newValue[0]);
             } else {
                 // otherwise, wait for the first item to get results and select that
                 deregisterFirstResultWatch = $scope.$watch(_waitForFirstResult, (result) => {
                     // check if the result returned is an object and a successfully detected first data point
                     if (typeof result === 'object' && result) {
-                        // if the user already selected an item, do not override the selection
-                        if (!self.selectedItem) {
+                        // If no layer was previously selected in the details panel, take the first point that was returned.
+                        if (!previouslySelected) {
                             selectItem(result);
+                        } else {
+                            // If there does happen to be a previous selection and that selection has a point in this result,
+                            // select that one. If it does not have a point in this result, then select the new result.
+                            if (previouslySelected.data.length > 0) {
+                                selectItem(previouslySelected);
+                            } else {
+                                selectItem(result);
+                            }
                         }
                         deregisterFirstResultWatch();
                         // otherwise the return result represents the loading status and if loading is done and all searches found nothing, no valid data point was clicked
                     } else if (typeof result === 'boolean' && !result) {
                         detailService.mApi.panels.details.header.title = 'details.label.noresult';
+                        selectItem(null);
                         deregisterFirstResultWatch();
                     }
                 });
