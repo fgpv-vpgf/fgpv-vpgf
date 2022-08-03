@@ -87,28 +87,40 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
             }
 
             const previouslySelected = findPreviouslySelected(newValue);
-            if (previouslySelected) {
-                // pick selected item user previously selected one,
-                selectItem(previouslySelected);
-            } else if (newValue.length === 1) {
-                // or if there is a single item, pick that
+            if (newValue.length === 1) {
+                // if there is a single item, pick that
                 selectItem(newValue[0]);
             } else {
-                // otherwise, wait for the first item to get results and select that
-                deregisterFirstResultWatch = $scope.$watch(_waitForFirstResult, (result) => {
-                    // check if the result returned is an object and a successfully detected first data point
-                    if (typeof result === 'object' && result) {
-                        // if the user already selected an item, do not override the selection
-                        if (!self.selectedItem) {
+                // If a layer was previously selected, wait to see if a result comes back from that layer. If no layer
+                // was selected previously, wait for the first result to come back.
+                deregisterFirstResultWatch = $scope.$watch(
+                    () => {
+                        return previouslySelected
+                            ? _waitForFirstResult(previouslySelected.layerId)
+                            : _waitForFirstResult();
+                    },
+                    (result) => {
+                        // check if the result returned is an object and a successfully detected first data point
+                        if (typeof result === 'object' && result) {
                             selectItem(result);
+                            deregisterFirstResultWatch();
+                            // otherwise the return result represents the loading status and if loading is done and all searches found nothing, no valid data point was clicked
+                        } else if (typeof result === 'boolean' && !result) {
+                            // If a previous layer was selected and no results came back, see if any results
+                            // came back at all. If so, select that layer instead.
+                            if (previouslySelected) {
+                                result = _waitForFirstResult();
+                                if (typeof result === 'object' && result) {
+                                    selectItem(result);
+                                }
+                            } else {
+                                detailService.mApi.panels.details.header.title = 'details.label.noresult';
+                                selectItem(null);
+                                deregisterFirstResultWatch();
+                            }
                         }
-                        deregisterFirstResultWatch();
-                        // otherwise the return result represents the loading status and if loading is done and all searches found nothing, no valid data point was clicked
-                    } else if (typeof result === 'boolean' && !result) {
-                        detailService.mApi.panels.details.header.title = 'details.label.noresult';
-                        deregisterFirstResultWatch();
                     }
-                });
+                );
             }
 
             detailService.mApi.panels.details.open();
@@ -125,14 +137,23 @@ function Controller($scope, $element, events, stateManager, mapService, detailSe
         }
 
         /**
-         * Checks if at least one fo the item received results, or if no results at all.
+         * Checks if at least one of the item received results, or if no results at all.
          *
          * @function _waitForFirstResult
          * @private
+         * @param  {Object} layer a specific layer to wait for data from
          * @return {Object | Boolean} data for a first item that has completed loading, OR the loading status of the entire query
          */
-        function _waitForFirstResult() {
-            const searchFirstResult = self.display.data.find((item) => item.data.length > 0);
+        function _waitForFirstResult(layer) {
+            let searchFirstResult;
+
+            // If a layer is provided as a parameter, look for a result from that specific layer.
+            if (layer) {
+                searchFirstResult = self.display.data.find((item) => item.layerId === layer && item.data.length > 0);
+            } else {
+                searchFirstResult = self.display.data.find((item) => item.data.length > 0);
+            }
+
             const isLoading = self.display.isLoading;
             // return an object representing the first data point clicked if found, otherwise return a boolean representing if loading is done
             // reason for this is that angular executes this function being watched until it returns the same result twice, compared using ===
