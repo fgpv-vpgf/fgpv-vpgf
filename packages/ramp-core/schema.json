@@ -1872,6 +1872,11 @@
                     "default": true,
                     "description": "Specifies if the user-added layers are allowed."
                 },
+                "sublayerRemovable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies if ESRI dynamic sublayers can be removed separately."
+                },
                 "isOpen": {
                     "type": "object",
                     "description": "Specifies whether the legend is opened by default on initial loading of the map for small, medium, and large viewports",
@@ -2004,7 +2009,6 @@
             "required": ["data"]
         }
     },
-
     "properties": {
         "version": {
             "type": "string",
@@ -2016,7 +2020,6 @@
             "enum": ["en", "fr", "es"],
             "description": "ISO 639-1 code indicating the language of strings in the schema file"
         },
-
         "ui": {
             "description": "A set of service endpoints used by the viewer",
             "type": "object",
@@ -2112,12 +2115,10 @@
                 }
             }
         },
-
         "plugins": {
             "description": "A set of config snippets correponding to the plugins loaded onto the viewer",
             "type": "object"
         },
-
         "services": {
             "description": "A set of service endpoints used by the viewer",
             "type": "object",
@@ -2208,7 +2209,6 @@
             },
             "additionalProperties": false
         },
-
         "map": {
             "type": "object",
             "description": "Core map properties (extent sets, levels of detail)",
@@ -2263,6 +2263,5 @@
             "required": ["tileSchemas", "baseMaps"]
         }
     },
-
     "required": ["version"]
 }

@@ -3168,6 +3168,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         constructor(uiLegendSource = {}) {
             this._reorderable = uiLegendSource.reorderable !== false;
             this._allowImport = uiLegendSource.allowImport !== false;
+            this._sublayerRemovable = uiLegendSource.sublayerRemovable !== false;
             this._isOpen = new LegendIsOpen(uiLegendSource.isOpen);
         }
 
@@ -3177,6 +3178,9 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
         get allowImport() {
             return this._allowImport;
         }
+        get sublayerRemovable() {
+            return this._sublayerRemovable;
+        }
         get isOpen() {
             return this._isOpen;
         }
@@ -3185,6 +3189,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             return {
                 reorderable: this.reorderable,
                 allowImport: this.allowImport,
+                sublayerRemovable: this.sublayerRemovable,
                 isOpen: this.isOpen.JSON,
             };
         }

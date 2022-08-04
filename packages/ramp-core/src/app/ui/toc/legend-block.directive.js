@@ -33,6 +33,7 @@ function rvLegendBlock($compile, $templateCache, layoutService, appInfo, common,
         scope: {
             block: '=',
             isReorder: '=', // this is a flag indicating if Toc is in reorder mode; consider creating a `mode` variable in the TocService if a third mode is created (`select` for example)
+            slRemovable: '='
         },
         link: link,
         controller: () => {},
