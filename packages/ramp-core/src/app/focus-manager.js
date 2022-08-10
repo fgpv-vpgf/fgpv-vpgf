@@ -668,8 +668,10 @@ function onKeydown(event) {
         // set viewer inactive but allow tab action to be handled by the browser
         if (event.which === 9 && keys[27]) {
             // escape + tab keydown
-            viewerActive.setStatus(statuses.INACTIVE);
-            viewerActive.clearTabindex();
+
+            // force focus on the `open keyboard controls` button and set viewer status to inactive.
+            const keyControlsElem = viewerActive.rootElement.find('.rv-keyboard-controls-button > button')[0];
+            keyControlsElem.rvFocus({}, statuses.INACTIVE);
 
             // Fixes an issue where keyup is not called in some cases causing focus manager to have an incorrect pressed key state
             delete keys[27];
@@ -711,7 +713,6 @@ function onKeydown(event) {
             // backtab to the previous non-viewer element (#hideshow)?
         } else if (event.which === 9) {
             // tab key
-            viewerWaiting.clearTabindex();
             viewerWaiting.setStatus(statuses.INACTIVE);
         }
     }
@@ -825,9 +826,10 @@ HTMLElement.prototype.origfocus = HTMLElement.prototype.focus;
  * You may not use this method if the element is not part of a viewer.
  *
  * @function rvFocus
- * @param   {Object}    opts    configuration object for setting focus, currently only supports on property (delay) which is the amount of time to delay a focus movement.
+ * @param   {Object}    opts       configuration object for setting focus, currently only supports on property (delay) which is the amount of time to delay a focus movement.
+ * @param   {String}    setStatus  after focusing, sets the viewer status to what is provided
  */
-HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
+HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}, setStatus = undefined) {
     const jqueryElem = $(this);
     const elem = jqueryElem[0];
 
@@ -866,6 +868,9 @@ HTMLElement.prototype.rvFocus = $.fn.rvFocus = function (opts = {}) {
             // applying focus didn't work, try going back to a history element
             shiftFocus(false, true);
         }
+
+        // If provided, set the viewer status to the provided status.
+        if (setStatus) viewerGroup.contains(jqueryElem).setStatus(setStatus);
     }, focusDelay);
 };
 
@@ -893,10 +898,7 @@ HTMLElement.prototype.focus = $.fn.focus = function () {
             exempt: true,
         }); // more performant to use el[0] instead of el, since jQuery focus is implemented on HTMLElement.prototype.focus
     } else if (viewerGroup.trapped(el)) {
-        console.warn(
-            'focusManager',
-            `*rvFocus* must be used to set focus on elements that are a part of the viewer`
-        );
+        console.warn('focusManager', `*rvFocus* must be used to set focus on elements that are a part of the viewer`);
         return;
     } else {
         el[0].origfocus();
