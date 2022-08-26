@@ -510,9 +510,38 @@ function validateGeoJson(geoJson) {
         fields.push({ name: oid, type: 'esriFieldTypeString' });
     }
 
+    let geomType = geoJson.features[0].geometry.type;
+    // handle geometry collection type case
+    if (geomType === 'GeometryCollection') {
+        const geoms = geoJson.features[0].geometry.geometries;
+        if (geoms === undefined || geoms.length === 0) {
+            return Promise.reject(new Error('File is missing geometries for geometry collection'));
+        }
+
+        // scan geometries collection to ensure that type is homogenous, throw error if not
+        geomType = geoms[0].type;
+        geoms.forEach((geom) => {
+            if (geom.type !== geomType) {
+                return Promise.reject(new Error('File contains multiple geometry types in geometry collection'));
+            }
+        });
+
+        // scan rest of file to ensure geometry type is consistent
+        if (geoJson.features.length > 1) {
+            for (let i = 1; i <= geoJson.features.length; i++) {
+                if (geoJson.features[i].geometry.type !== geomType) {
+                    return Promise.reject(new Error('File contains multiple geometry types'));
+                }
+            }
+        }
+
+        // clean up geojson file by converting geometry collection
+        cleanUpGeomCollection(geoJson);
+    }
+
     const res = {
         fields: fields,
-        geometryType: geomMap[geoJson.features[0].geometry.type],
+        geometryType: geomMap[geomType],
         formattedData: geoJson,
         smartDefaults: {
             // TODO: try to find a name field if possible
@@ -907,6 +936,43 @@ function cleanUpFields(geoJson, layerDefinition) {
     });
 }
 
+/**
+ * Convert a geometry collection to a single supported geometry structure.
+ * ([Point] --> MultiPoint, [LineString] --> MultiLineString, [Polygon] --> MultiPolygon)
+ *
+ * @function cleanUpGeomCollection
+ * @param {Object} geoJson           layer data in geoJson format
+ */
+function cleanUpGeomCollection(geoJson) {
+    const geoms = geoJson.features[0].geometry.geometries;
+    // already validated type is consistent throughout non-empty collection
+    const geomType = geoms[0].type;
+    const mapping = {
+        Point: 'MultiPoint',
+        LineString: 'MultiLineString',
+        Polygon: 'MultiPolygon',
+    };
+
+    // if there is only one geometry in collection, map to single supported class
+    if (geoms.length === 1) {
+        geoJson.features[0].geometry = {
+            type: geomType,
+            coordinates: geoms[0].coordinates,
+        };
+    } else {
+        // merge coordinates to form a multi-geometry structure
+        let combined = [];
+        geoms.forEach((geom) => {
+            combined.push(geom.coordinates);
+        });
+
+        geoJson.features[0].geometry = {
+            type: mapping[geomType],
+            coordinates: combined,
+        };
+    }
+}
+
 function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
     /**
      * Converts a GeoJSON object into a FeatureLayer.  Expects GeoJSON to be formed as a FeatureCollection
@@ -1028,15 +1094,15 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         const buildLayer = () => {
             return new Promise((resolve) => {
                 // project data and convert to esri json format
-
                 const fancySR = new esriBundle.SpatialReference(targetSR);
 
+                layerId = opts.id !== undefined ? opts.id : layerId;
+                const geometryType = layerDefinition.drawingInfo.geometryType;
                 geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
 
                 // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
                 // use 8888 as placehold then adjust below
                 const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: 8888 });
-                const geometryType = layerDefinition.drawingInfo.geometryType;
 
                 // set proper SR on the geometeries
                 esriJson.forEach((gr) => {
@@ -1223,10 +1289,11 @@ function createGraphicsRecordBuilder(esriBundle, geoApi, classBundle) {
     /**
      * Creates a Graphics Layer Record class
      * @param {String} name           name and id of the layer to be constructed
-     * @returns {Object}              instantited GraphicsRecord class
+     * @param {Object} layer          an optional pre-constructed layer
+     * @returns {Object}              instantiated GraphicsRecord class
      */
-    return (name) => {
-        return new classBundle.GraphicsRecord(esriBundle, geoApi, name);
+    return (name, layer = undefined) => {
+        return new classBundle.GraphicsRecord(esriBundle, geoApi, name, layer);
     };
 }
 
