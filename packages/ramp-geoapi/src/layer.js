@@ -26,6 +26,7 @@ const featureTypeToRenderer = {
     MultiLineString: 'solidLine',
     Polygon: 'outlinedPoly',
     MultiPolygon: 'outlinedPoly',
+    GeometryCollection: 'geometryCollection',
 };
 
 /**
@@ -492,6 +493,7 @@ function validateGeoJson(geoJson) {
         MultiLineString: 'esriGeometryPolyline',
         Polygon: 'esriGeometryPolygon',
         MultiPolygon: 'esriGeometryPolygon',
+        GeometryCollection: 'geometryCollection',
     };
 
     if (!geoJson.features) {
@@ -1028,15 +1030,34 @@ function makeGeoJsonLayerBuilder(esriBundle, geoApi) {
         const buildLayer = () => {
             return new Promise((resolve) => {
                 // project data and convert to esri json format
-
                 const fancySR = new esriBundle.SpatialReference(targetSR);
+
+                layerId = opts.id !== undefined ? opts.id : layerId;
+                const geometryType =
+                    layerDefinition.drawingInfo !== undefined
+                        ? layerDefinition.drawingInfo.geometryType
+                        : geoJson.features[0].geometry.type;
+                
+                // handle geometry collection conversion case when making layer record
+                if (geometryType === 'GeometryCollection') {
+                    const geoms = geoJson.features[0].geometry.geometries;
+                    geoms.forEach((geom) => (geom.spatialReference = fancySR));
+
+                    const res = {
+                        name: layerId,
+                        geometryType: geometryType,
+                        geometries: geoms,
+                    };
+
+                    resolve(res);
+                    return;
+                }
 
                 geoApi.proj.projectGeojson(geoJson, destProj, srcProj);
 
                 // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
                 // use 8888 as placehold then adjust below
                 const esriJson = Terraformer.ArcGIS.convert(geoJson, { sr: 8888 });
-                const geometryType = layerDefinition.drawingInfo.geometryType;
 
                 // set proper SR on the geometeries
                 esriJson.forEach((gr) => {
@@ -1223,10 +1244,11 @@ function createGraphicsRecordBuilder(esriBundle, geoApi, classBundle) {
     /**
      * Creates a Graphics Layer Record class
      * @param {String} name           name and id of the layer to be constructed
-     * @returns {Object}              instantited GraphicsRecord class
+     * @param {Object} layer          an optional pre-constructed layer
+     * @returns {Object}              instantiated GraphicsRecord class
      */
-    return (name) => {
-        return new classBundle.GraphicsRecord(esriBundle, geoApi, name);
+    return (name, layer = undefined) => {
+        return new classBundle.GraphicsRecord(esriBundle, geoApi, name, layer);
     };
 }
 

@@ -1,5 +1,6 @@
 import to from 'await-to-js';
 import angular from 'angular';
+import { BaseGeometry, Point, MultiPolygon, Polygon } from 'api/geometry';
 
 // TODO: move mixin constructors into the util file
 // NOTE: do not user async/await with Angular $q promises - they don't work always correctly and debugging such errors is a huge pain
@@ -47,6 +48,12 @@ type WFSResponse = {
     data: { numberMatched: number; features: any[] };
 };
 type WFSData = { type: string; features: any[] };
+
+type GeoJSONResponse = {
+    name: string;
+    geometryType: string;
+    geometries: any[];
+};
 
 type ValidationResult = {
     fields: any[];
@@ -756,6 +763,8 @@ function LayerBlueprint(
     }
 
     class GeoJSONSource extends mixins(BlueprintBase, ClientSideData, FieldsOption) {
+        _geometryType: string;
+
         constructor(rawConfig: any) {
             super();
 
@@ -770,8 +779,13 @@ function LayerBlueprint(
          * @memberof GeoJSONSource
          */
         async makeLayerRecord(force: boolean = false): Promise<any> {
-            const layer = await super._makeLayer(force);
-            return super.makeLayerRecord(force, layer);
+            const res = await super._makeLayer(force);
+            // check for geometry collection -> create simple layer
+            if (this._geometryType === 'geometryCollection') {
+                this._addGeometryCollection(res);
+                return Promise.resolve();
+            }
+            return super.makeLayerRecord(force, res);
         }
 
         /**
@@ -782,6 +796,7 @@ function LayerBlueprint(
          */
         async validate(type: string = this.type, isEncoded: boolean = true): Promise<any> {
             const validationResult = await super.validate(type, isEncoded);
+            this._geometryType = validationResult.geometryType;
             this.setFieldsOptions(validationResult);
 
             return Promise.resolve(true);
@@ -797,6 +812,56 @@ function LayerBlueprint(
 
         get type() {
             return Geo.Service.Types.GeoJSON;
+        }
+
+        get geometryType() {
+            return this._geometryType;
+        }
+
+        /**
+         * Create a graphics layer record and simple layer to support geometryCollection type.
+         *
+         * @param {res} GeoJSONResponse GeoJSON layer information
+         * @returns {Promise<any>} a promise resolving with the initialized layer
+         * @memberof GeoJSONSource
+         */
+        async _addGeometryCollection(res: GeoJSONResponse): Promise<any> {
+            const map = configService.getSync.map;
+            map.instance.addSimpleLayer(res.name).then((layer: any) => {
+                const geomCollectionLayer = layer[0];
+
+                const geometryTypes = {
+                    POINT: 'Point',
+                    POLYGON: 'Polygon',
+                };
+                // store all polygons separately
+                let polygons = [] as Array<Polygon>;
+                let geoms = [] as Array<BaseGeometry>;
+                
+                // create geometry objects for geometry collection set
+                res.geometries.forEach((geom, idx) => {
+                    let newGeometry;
+                    // TODO: support multiple geometry types (e.g. lines)
+                    if (geom.type === geometryTypes.POLYGON) {
+                        newGeometry = new Polygon(`${geom.type}-${idx}`, geom.coordinates);
+                        polygons.push(newGeometry);
+                    } else if (geom.type === geometryTypes.POINT) {
+                        newGeometry = new Point(`${geom.type}-${idx}`, geom.coordinates);
+                        geoms.push(newGeometry);
+                    }
+                });
+
+                // merge polygons into a single multipolygon
+                const multipolygon = new MultiPolygon(1000, polygons);
+                geoms.push(multipolygon);
+                
+                // add all custom geometries to simple layer
+                geoms.forEach(geometry => {
+                    geomCollectionLayer.addGeometry(geometry);
+                });
+                
+                return Promise.resolve(geomCollectionLayer);
+            });
         }
     }
 

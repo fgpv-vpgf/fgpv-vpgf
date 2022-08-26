@@ -632,7 +632,9 @@ function Controller(
 
         layerRecordPromise
             .then(() => {
-                legendService.importLayerBlueprint(self.layerBlueprint);
+                if (!(self.layerBlueprint.geometryType === 'geometryCollection')) {
+                    legendService.importLayerBlueprint(self.layerBlueprint);
+                }
                 closeLoaderFile();
             })
             .catch((error) => {
