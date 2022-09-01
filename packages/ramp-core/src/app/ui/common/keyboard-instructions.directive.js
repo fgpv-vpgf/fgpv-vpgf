@@ -8,7 +8,6 @@ const dialogUrl = require('./keyboard-instructions-dialog.html');
  * @name rvKeyboardInstructions
  * @module app.ui
  * @requires dependencies
- * @description
  *
  */
 angular.module('app.ui').directive('rvKeyboardInstructions', rvKeyboardInstructions);

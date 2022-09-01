@@ -56,5 +56,8 @@ jobs:
               run: |
                   node common/scripts/install-run-rush.js install
                   node common/scripts/install-run-rush.js rebuild --verbose
+                  cd packages/ramp-core
+                  npm run docs
+                  cp -R docs build
               env:
                   NODE_OPTIONS: '--max-old-space-size=8192'
