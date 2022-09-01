@@ -1,0 +1,40 @@
+name: Publish to GitHub pages
+
+on:
+    workflow_call:
+        inputs:
+            cache_sha:
+                type: string
+                required: true
+
+jobs:
+    deploy-to-pages:
+        name: Deploy to GitHub pages
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Get build files
+              uses: actions/cache@v3
+              with:
+                  path: packages/ramp-core/build
+                  key: build-${{ inputs.cache_sha }}
+
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  branch: gh-pages
+                  folder: packages/ramp-core/build
+                  target-folder: ${{ github.head_ref || github.ref_name }}
+
+            - uses: actions/github-script@v6
+              name: Post link to demo for PR's
+              if: github.event_name == 'pull_request_target' && github.event.action == 'opened'
+              with:
+                  script: |
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        body: `Your demo site is ready! 🚀 Visit it here: https://${{github.repository_owner}}.github.io/fgpv-vpgf/${{github.head_ref}}/`
+                      })

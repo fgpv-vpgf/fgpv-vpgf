@@ -1,0 +1,25 @@
+on:
+    pull_request_target:
+        types: [opened, synchronize]
+
+    push:
+        branches:
+            - 'main'
+            - 'master'
+            - 'develop'
+        tags:
+            - v**
+
+jobs:
+    build:
+        name: Develop build for demo files
+        uses: ./.github/workflows/build.yml
+        with:
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    deploy-pages:
+        needs: [build]
+        name: Deploy the files
+        uses: ./.github/workflows/pages.yml
+        with:
+            cache_sha: ${{ github.event.pull_request.head.sha || github.sha }}
