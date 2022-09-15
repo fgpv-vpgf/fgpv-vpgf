@@ -55,8 +55,9 @@ class GraphicsRecord extends root.Root {
      * @param {Object} esriBundle       bundle of API classes
      * @param {Object} apiRef           object pointing to the geoApi. allows us to call other geoApi functions.
      * @param {String} name             name and id of the layer.
+     * @param {GraphicsLayer} layer     an optional pre-constructed graphics layer
      */
-    constructor(esriBundle, apiRef, name) {
+    constructor(esriBundle, apiRef, name, layer = undefined) {
         super();
 
         this._bundle = esriBundle;
@@ -64,7 +65,7 @@ class GraphicsRecord extends root.Root {
         this._layerClass = esriBundle.GraphicsLayer;
         this._name = name;
         this._id = name;
-        this._layer = this._layerClass({ id: this._name });
+        this._layer = layer !== undefined ? layer : this._layerClass({ id: this._name });
         this.bindEvents(this._layer);
         this._hoverEvent = new shared.FakeEvent();
     }
