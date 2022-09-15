@@ -30,6 +30,7 @@ class AttribFC extends basicFC.BasicFC {
             geoms: {},
         };
         this.filter = new filter.Filter(this);
+        console.log('AttributeFC', this, layerPackage);
     }
 
     get geomType() {
@@ -61,6 +62,14 @@ class AttribFC extends basicFC.BasicFC {
 
     get loadedFeatureCount() {
         return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0;
+    }
+
+    get defaultVisibility() {
+        return this._layerPackage
+            ? this._layerPackage.layerData.then((data) => {
+                  return data.defaultVisibility;
+              })
+            : true;
     }
 
     /**

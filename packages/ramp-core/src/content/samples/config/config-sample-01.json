@@ -114,7 +114,6 @@
                 "id": "powerplant100mw-electric",
                 "name": "Electric Transmission Line",
                 "layerType": "esriFeature",
-                "controls": ["remove"],
                 "state": {
                     "visibility": false,
                     "boundingBox": false
@@ -127,7 +126,7 @@
                 "layerType": "esriFeature",
                 "metadataUrl": "http://maps-cartes.ec.gc.ca/LWBSF-FIBLW/LWBSF_en.xml?_=1490727645184",
                 "state": {
-                    "visibility": false,
+                    "visibility": true,
                     "boundingBox": false
                 },
                 "table": {
@@ -155,7 +154,7 @@
                 "expectedResponseTime": 100,
                 "layerType": "esriFeature",
                 "state": {
-                    "visibility": true
+                    "visibility": false
                 },
                 "table": {
                     "search": { "enabled": false },

@@ -372,12 +372,24 @@ class DynamicRecord extends attribRecord.AttribRecord {
                 .getLayerData()
                 .then((ld) => {
                     dFC.layerType = serverLayerTypeToClientLayerType(ld.layerType);
-
+                    console.log('Got layer data', subC, this, ld, dFC);
                     // if we didn't have an extent defined on the config, use the layer extent
                     if (!dFC.extent) {
                         dFC.extent = ld.extent;
                     }
                     dFC.extent = shared.makeSafeExtent(dFC.extent);
+
+                    // If visibility isn't set in the config, and defaultVisibility is defined
+                    // from the service, then set the visibility to be equal to the value of defaultVisibility.
+                    const hasVisibleState =
+                        this.config.source.state && this.config.source.state.visibility !== undefined;
+
+                    dFC.defaultVisibility.then((data) => {
+                        if (!hasVisibleState && data !== undefined) {
+                            // This isn't working, probably not finished loading
+                            this._proxies[dFC.fcID.layerIdx].setVisibility(data);
+                        }
+                    });
 
                     dFC._scaleSet.minScale = ld.minScale;
                     dFC._scaleSet.maxScale = ld.maxScale;

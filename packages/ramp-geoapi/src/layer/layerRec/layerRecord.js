@@ -147,6 +147,7 @@ class LayerRecord extends root.Root {
     constructLayer() {
         this._layer = this.layerClass(this.config.url, this.makeLayerConfig());
         this.bindEvents(this._layer);
+
         return this._layer;
     }
 
@@ -284,7 +285,7 @@ class LayerRecord extends root.Root {
      */
     onLoad() {
         // only super-general stuff in here, that all layers should run.
-        console.info(`Layer loaded: ${this._layer.id}`);
+        console.info(`Layer loaded: ${this._layer.id}`, this._layer);
 
         if (!this.name) {
             // no name from config. attempt layer name
@@ -297,6 +298,14 @@ class LayerRecord extends root.Root {
         }
 
         this.extent = shared.makeSafeExtent(this.extent);
+
+        // If visibility isn't set in the config, and defaultVisibility is defined
+        // from the service, then set the visibility to be equal to the value of defaultVisibility.
+        const hasVisibleState = this.config.source.state && this.config.source.state.visibility !== undefined;
+
+        if (!hasVisibleState && this.defaultVisibility !== undefined) {
+            this.visibility = this.defaultVisibility;
+        }
 
         let lookupPromise = Promise.resolve();
         if (this._epsgLookup) {
@@ -696,6 +705,7 @@ class LayerRecord extends root.Root {
                 throw new Error('Cannot construct pre-made layers');
             };
             this._layer = esriLayer;
+
             this.bindEvents(this._layer);
             this._rootUrl = esriLayer.url || '';
 

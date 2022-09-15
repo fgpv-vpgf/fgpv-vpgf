@@ -81,10 +81,10 @@ function LegendBlockFactory(
             this._proxyPromise
                 .then((proxy) => {
                     this._proxy = proxy;
-
                     // This will apply initial state values from the layer config object to the layer proxy object.
                     // This is needed to apply state settings that are not set in geoApi (dynamic layers, for example, start up as fully invisible to prevent flicker on initial load).
                     this.opacity = this._layerConfig.state.opacity;
+
                     this.visibility = this._layerConfig.state.visibility;
                     this.query = this._layerConfig.state.query;
 

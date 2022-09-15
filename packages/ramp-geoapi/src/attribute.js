@@ -309,6 +309,7 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
             defService.then(
                 (serviceResult) => {
                     if (serviceResult && typeof serviceResult.error === 'undefined') {
+                        console.log('got attrib', serviceResult.defaultVisibility);
                         // properties for all endpoints
                         layerData.layerType = serviceResult.type;
                         layerData.geometryType = serviceResult.geometryType || 'none'; // TODO need to decide what propert default is. Raster Layer has null gt.
