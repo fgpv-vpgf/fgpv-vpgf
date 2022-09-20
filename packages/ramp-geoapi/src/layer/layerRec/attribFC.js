@@ -63,6 +63,14 @@ class AttribFC extends basicFC.BasicFC {
         return this._layerPackage ? this._layerPackage.loadedFeatureCount : 0;
     }
 
+    get defaultVisibility() {
+        return this._layerPackage
+            ? this._layerPackage.layerData.then((data) => {
+                  return data.defaultVisibility;
+              })
+            : Promise.resolve(true);
+    }
+
     /**
      * Returns attribute data for this FC.
      *

@@ -297,6 +297,25 @@ class LayerRecord extends root.Root {
         }
 
         this.extent = shared.makeSafeExtent(this.extent);
+        this.defaultVisibility = this._layer.defaultVisibility;
+
+        // If visibility isn't set in the config, and defaultVisibility is defined
+        // from the service, then set the visibility to be equal to the value of defaultVisibility.
+        const hasVisibleState = this.config.source.state && this.config.source.state.visibility !== undefined;
+
+        if (!hasVisibleState && this.defaultVisibility !== undefined) {
+            this.visibility = this.defaultVisibility;
+            this.config.state.visibility = this.defaultVisibility;
+
+            // Save the visibility value so it is kept if the layer is refreshed.
+            if (!this.config.source.state) {
+                this.config.source.state = {
+                    visibility: this.defaultVisibility,
+                };
+            } else {
+                this.config.source.state.visibility = this.defaultVisibility;
+            }
+        }
 
         let lookupPromise = Promise.resolve();
         if (this._epsgLookup) {
