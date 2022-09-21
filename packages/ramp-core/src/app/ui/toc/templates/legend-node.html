@@ -61,7 +61,13 @@
 
             <rv-legend-control block="self.block" template="menu" name="boundary"></rv-legend-control>
             <rv-legend-control block="self.block" template="menu" name="reload"></rv-legend-control>
-            <rv-legend-control block="self.block" template="menu" name="remove"></rv-legend-control>
+            <!-- Check if config sublayer removable flag is turned off for dynamic layers -->
+            <rv-legend-control
+                ng-if="self.slRemovable || self.block.parentLayerType !== 'esriDynamic'"
+                block="self.block"
+                template="menu"
+                name="remove"
+            ></rv-legend-control>
         </md-menu-content>
     </md-menu>
 
