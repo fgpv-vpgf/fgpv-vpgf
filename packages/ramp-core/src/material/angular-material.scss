@@ -2087,6 +2087,22 @@ button.md-button::-moz-focus-inner {
         border-radius: $button-icon-border-radius;
     }
 
+    &.md-info-button {
+        padding: 1px;
+        margin: 0px;
+        margin-right: 5px;
+        min-height: 6px;
+        min-width: 0px;
+        line-height: 6px;
+        border-radius: $button-icon-border-radius;
+        display: inline;
+    }
+
+    &.md-info-button:focus {
+        border: 1px solid black;
+        margin: -1px 4px -1px -1px;
+    }
+
     &.md-fab {
         // Include the top/left/bottom/right fab positions
         @include fab-all-positions();

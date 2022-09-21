@@ -165,6 +165,10 @@
     .rv-icon-14 {
         @include icon-size(rem(1.4));
     }
+
+    .rv-icon-12 {
+        @include icon-size(rem(1.2));
+    }
 }
 
 @mixin icon-size($size) {
