@@ -3,6 +3,10 @@
     ng-mouseover="self.block.symbologyStack.fannedOut = true"
     ng-mouseleave="self.block.symbologyStack.fannedOut = false"
 >
+    <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}"
+        >{{ self.block.name }}</md-tooltip
+    >
+
     <rv-legend-control block="self.block" template="body" node="self" name="data"></rv-legend-control>
 </div>
 
@@ -21,6 +25,18 @@
     ></div>
 
     <div class="rv-list-item-flags">
+        <!-- if layer name is truncated, displays full layer name -->
+        <md-button
+            ng-if="self.isNameTruncated"
+            class="md-info-button rv-icon-12 rv-layer-item-flag"
+            role="presentation"
+        >
+            <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}"
+                >{{ 'toc.layer.name' | translate }}: {{ self.block.name }}</md-tooltip
+            >
+            <md-icon md-svg-src="community:help"></md-icon>
+        </md-button>
+
         <rv-legend-flag block="self.block" name="type"></rv-legend-flag>
         <rv-legend-flag block="self.block" name="data"></rv-legend-flag>
         <rv-legend-flag block="self.block" name="user"></rv-legend-flag>
