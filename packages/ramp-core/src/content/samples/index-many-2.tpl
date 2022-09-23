@@ -8,7 +8,7 @@
 
     <style>
         body {
-            display: flex;
+
             flex-direction: column;
         }
 
@@ -32,7 +32,7 @@
 
         .row {
             height: 650px;
-            display: flex;
+
         }
     </style>
     <script src="./plugins/coordInfo/coordInfo.js"></script>
@@ -50,6 +50,7 @@
 <!-- rv-service-endpoint="http://section917.canadacentral.cloudapp.azure.com/" rv-keys='["Airports"]' -->
 
 <body>
+    <h1>Title 1</h1>
     <div class="myMap" id="sample-map" is="rv-map" ramp-gtm
         rv-config="config/config-many-1.json"
         rv-langs='["en-CA", "fr-CA"]'
@@ -62,7 +63,7 @@
             <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
         </noscript>
     </div>
-    <div class="row">
+        <h1>Title 2</h1>
         <div class="myMap flexMap" id="second-map" is="rv-map" ramp-gtm
             rv-config="config/config-many-2.json"
             rv-langs='["en-CA", "fr-CA"]'
@@ -75,6 +76,7 @@
                 <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
             </noscript>
         </div>
+        <h1>Title 3</h1>
         <div class="myMap flexMap" id="third-map" is="rv-map" ramp-gtm
             rv-config="config/config-many-3.json"
             rv-langs='["en-CA", "fr-CA"]'
@@ -87,7 +89,7 @@
                 <p>Cette carte interactive nécessite JavaScript. Pour voir ce contenu, s'il vous plaît, activer JavaScript dans votre navigateur ou télécharger un navigateur qui le prend en charge.</p>
             </noscript>
         </div>
-    </div>
+
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
 
