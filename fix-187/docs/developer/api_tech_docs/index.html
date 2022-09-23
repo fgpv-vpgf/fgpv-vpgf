@@ -1,0 +1,333 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ramp-core - v3.3.6</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">ramp-core - v3.3.6</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> ramp-core - v3.3.6</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#ramp2-fgp-visualiser--visualisateur-pour-la-pgf-pcar2" id="ramp2-fgp-visualiser--visualisateur-pour-la-pgf-pcar2" style="color: inherit; text-decoration: none;">
+					<h1>RAMP2 FGP Visualiser / Visualisateur pour la PGF PCAR2</h1>
+				</a>
+				<p>The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.0 &quot;AA&quot; compliant common viewer platform for the Government of Canada. </p>
+				<blockquote>
+					<p>This is an unsupported product. If you require a supported version please contact <a href="mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca">applicationsdecartographieweb-webmappingapplications@ec.gc.ca</a> for a cost estimate. The software and code samples available on this website are provided &quot;as is&quot; without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time. </p>
+				</blockquote>
+				<p>This project is now a monorepo and contains the following repos under the <code>packages</code> folder:</p>
+				<ul>
+					<li>ramp-core (previously this repo)</li>
+					<li>ramp-geoapi (previously <a href="https://github.com/fgpv-vpgf/geoApi">https://github.com/fgpv-vpgf/geoApi</a>)</li>
+					<li>ramp-geosearch (previously <a href="https://github.com/RAMP-PCAR/geosearch">https://github.com/RAMP-PCAR/geosearch</a>)</li>
+					<li>ramp-plugin-areas-of-interest (previously at <a href="https://github.com/fgpv-vpgf/plugins">https://github.com/fgpv-vpgf/plugins</a>)</li>
+					<li>ramp-plugin-back-to-cart (previously at <a href="https://github.com/fgpv-vpgf/plugins">https://github.com/fgpv-vpgf/plugins</a>)</li>
+					<li>ramp-plugin-custom-export (previously at <a href="https://github.com/fgpv-vpgf/plugins">https://github.com/fgpv-vpgf/plugins</a>)</li>
+					<li>ramp-plugin-coordinate-info (previously at <a href="https://github.com/fgpv-vpgf/plugins">https://github.com/fgpv-vpgf/plugins</a>)</li>
+					<li>ramp-plugin-enhanced-table (previously at <a href="https://github.com/fgpv-vpgf/plugins">https://github.com/fgpv-vpgf/plugins</a>)</li>
+				</ul>
+				<a href="#building-the-project" id="building-the-project" style="color: inherit; text-decoration: none;">
+					<h2>Building the project</h2>
+				</a>
+				<p>Install Python 2 if you don&#39;t already have it: <a href="https://www.python.org/downloads/release/python-2718/">Python 2.7.18 Download</a> (Python 3 is not supported)</p>
+				<p>Install the required C++ build tools (2 options)</p>
+				<ul>
+					<li><strong>OPTION 1 (recommended):</strong> Install Visual Studio and the required additional package<ul>
+							<li><a href="https://docs.microsoft.com/en-us/cpp/build/vscpp-step-0-installation?view=msvc-160">Walkthrough for complete Visual Studio installation and additional packages post-install</a></li>
+							<li><a href="https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019">Build Tools for Visual Studio 2019</a></li>
+						</ul>
+					</li>
+					<li><strong>OPTION 2:</strong> Directly add <a href="https://www.npmjs.com/package/windows-build-tools">windows-build-tools</a> package<pre><code>$ <span class="hljs-built_in">npm</span> install --<span class="hljs-built_in">global</span> windows-build-tools</code></pre><ul>
+							<li><strong>NOTE:</strong> This may stop giving feedback in the console mid-install and seem to hang. However, it appears the required packages are still installed</li>
+						</ul>
+					</li>
+				</ul>
+				<p>Install Rush if you don&#39;t already have it:</p>
+				<pre><code>$ <span class="hljs-built_in">npm</span> install -g @microsoft/rush</code></pre><p>Clone the repo and use Rush to install dependencies</p>
+				<pre><code><span class="hljs-variable">$ </span>rush update</code></pre><p>You might want to run <code>rush update -p --full</code> to cleanly re-install all the dependencies (<code>-p</code> will purge what is currently there)</p>
+				<p>Build the project:</p>
+				<pre><code><span class="hljs-variable">$ </span>rush build</code></pre><ul>
+					<li><strong>NOTE:</strong> <code>rush build</code> will need to be run before the <code>rush serve</code> statement below any time code is changed in <code>ramp-geoapi</code> to avoid an outdated build</li>
+				</ul>
+				<p>Serve the project:</p>
+				<pre><code>$ rush serve -p <span class="hljs-number">10</span> -v</code></pre><ul>
+					<li><code>-p 10</code> specifies the maximum number of concurrent processes to run (we need 8 right now to serve all the packages at the same time)</li>
+					<li><code>-v</code> provides verbose output for debugging</li>
+				</ul>
+				<p>If you want to work on only a subset of packages instead you have to run their builds/serves seperately:</p>
+				<pre><code><span class="hljs-comment">// terminal 0</span>
+$ <span class="hljs-keyword">cd</span> packages/ramp-core
+$ npm <span class="hljs-keyword">run</span> serve
+
+<span class="hljs-comment">// terminal 1</span>
+$ <span class="hljs-keyword">cd</span> packages/ramp-<span class="hljs-keyword">plugin</span>-enhanced-<span class="hljs-keyword">table</span>
+$ npm <span class="hljs-keyword">run</span> serve</code></pre><p>Lastly open the samples page:</p>
+				<pre><code>http:<span class="hljs-regexp">//</span>localhost:<span class="hljs-number">6001</span><span class="hljs-regexp">/samples/i</span>ndex-samples.html
+etc.</code></pre><p>For more rush commands or general reading: <a href="https://rushjs.io/pages/intro/welcome/">https://rushjs.io/pages/intro/welcome/</a></p>
+				<p>For more info on individual packages builds/documentation read the READMEs in the respective folder.</p>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h2>Documentation</h2>
+				</a>
+				<p>For more information on this project, please see one of the sections below:</p>
+				<ul>
+					<li><a href="#usage">Usage</a></li>
+					<li><a href="#support">Support</a></li>
+				</ul>
+				<p>Also, please visit the <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/home">Documentation Site</a> for additional content on:</p>
+				<ul>
+					<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/mapauthor/intro">Map Author Guide</a></li>
+					<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/contribute/getting_started">Contributing to the RAMP Project</a></li>
+					<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/developer/intro">Developer Guide</a></li>
+					<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/technical/architecture">Technical Documentation</a></li>
+				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h3>Usage</h3>
+				</a>
+				<a href="#quick-guide" id="quick-guide" style="color: inherit; text-decoration: none;">
+					<h4>Quick guide</h4>
+				</a>
+				<p>We&#39;ll go through the simplest way to use RAMP, for more information see the <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/mapauthor/intro">map author guide</a></p>
+				<p>First, grab the most recent release from the <a href="https://github.com/fgpv-vpgf/fgpv-vpgf/releases">github releases</a>
+				Place the files <code>rv-main.js</code> and <code>rv-styles.css</code> within your webpage&#39;s folder structure. We usually put our JavaScript files under a <code>js</code> folder and our stylesheets under a <code>css</code> folder.</p>
+				<p>Then you want to include those files on your page, along with jQuery and the needed polyfills:</p>
+				<ol>
+					<li>Within <code>head</code></li>
+				</ol>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"../../../rv-styles.css"</span> /&gt;</span></code></pre>
+				<ol start="2">
+					<li>Near the end of the <code>body</code></li>
+				</ol>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>
+  <span class="hljs-attr">src</span>=<span class="hljs-string">"https://code.jquery.com/jquery-2.2.4.min.js"</span>
+  <span class="hljs-attr">integrity</span>=<span class="hljs-string">"sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="</span>
+  <span class="hljs-attr">crossorigin</span>=<span class="hljs-string">"anonymous"</span>
+&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"/js/rv-main.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<p>Now that you have the required files on your page we should add the map element.</p>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>
+  <span class="hljs-attr">is</span>=<span class="hljs-string">"rv-map"</span>
+  <span class="hljs-attr">style</span>=<span class="hljs-string">"height: 100%; display:flex;"</span>
+  <span class="hljs-attr">rv-langs</span>=<span class="hljs-string">'["en-CA", "fr-CA"]'</span>
+&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+				<p>A map should now load on your page. Theres much more you can do with RAMP, a good place to start is the <a href="#map-author-guide">map author guide</a></p>
+				<a href="#samples" id="samples" style="color: inherit; text-decoration: none;">
+					<h3>Samples</h3>
+				</a>
+				<p>A collection of <a href="https://github.com/fgpv-vpgf/fgpv-vpgf/tree/master/packages/ramp-core/src/content/samples">sample source files</a> are in the repo.</p>
+				<p>A live site containing our development sample page is found <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/samples/index-samples.html">here</a>.</p>
+				<p>An example of a production site is the Government of Canada <a href="https://climate-viewer.canada.ca/climate-maps.html">Climate Data Viewer</a>.</p>
+				<a href="#support" id="support" style="color: inherit; text-decoration: none;">
+					<h2>Support</h2>
+				</a>
+				<a href="#bugs" id="bugs" style="color: inherit; text-decoration: none;">
+					<h3>Bugs</h3>
+				</a>
+				<p>If you have a bug to report you can open up an issue at <a href="https://github.com/fgpv-vpgf/fgpv-vpgf/issues">https://github.com/fgpv-vpgf/fgpv-vpgf/issues</a> by clicking the green button above the issue list</p>
+				<p>For more information on contributing read the <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/contribute/getting_started">Contributing Guide</a>. Note there may be some references to the pre-monorepo setup, pull requests are now only needed in one place (this repo).</p>
+				<a href="#contact" id="contact" style="color: inherit; text-decoration: none;">
+					<h3>Contact</h3>
+				</a>
+				<p>The team can be reached at <a href="mailto:applicationsdecartographieweb-webmappingapplications@ec.gc.ca">applicationsdecartographieweb-webmappingapplications@ec.gc.ca</a></p>
+				<a href="#future-versions" id="future-versions" style="color: inherit; text-decoration: none;">
+					<h2>Future Versions</h2>
+				</a>
+				<p><a href="https://github.com/ramp4-pcar4/ramp4-pcar4">RAMP 4</a> is still in development but is shaping up nicely. We hope to have an initial release soon™. Notable changes include:</p>
+				<ul>
+					<li>Updating the UI framework from Angular 1 to Vue 3</li>
+					<li>Updating the ESRI Mapping API from v3 to v4</li>
+					<li>An application architecture and API that is more open and adjustable</li>
+					<li>UI re-design with mobile use in mind</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_events_.html">&quot;api/src/events&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_layers_.html">&quot;api/src/layers&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_legend_.html">&quot;api/src/legend&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_map_.html">&quot;api/src/map&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_panel_registry_.html">&quot;api/src/panel-<wbr>registry&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_panel_button_.html">&quot;api/src/panel/button&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_panel_button_close_.html">&quot;api/src/panel/button.close&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_panel_button_toggle_.html">&quot;api/src/panel/button.toggle&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_panel_element_.html">&quot;api/src/panel/element&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_panel_header_.html">&quot;api/src/panel/header&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_panel_index_.html">&quot;api/src/panel/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_src_ui_.html">&quot;api/src/ui&quot;</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_src_app_app_seed_.html">&quot;src/app/app-<wbr>seed&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_src_app_startup_.html">&quot;src/app/startup&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
