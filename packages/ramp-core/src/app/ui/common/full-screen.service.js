@@ -90,6 +90,7 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         const shellNode = angular.element('rv-shell');
         body.attr('style', 'width: 100%; height: 100%');
         $rootElement.attr('style', `overflow: visible; z-index: ${FULL_SCREEN_Z_INDEX};`);
+        $rootElement.addClass('rv-full-screen-element');
         shellNode.attr('style', `position: fixed; margin: 0; z-index: ${FULL_SCREEN_Z_INDEX};`);
         angular.element('body').addClass('rv-full-screen');
 
@@ -117,6 +118,12 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         if (screenfull.isFullscreen) {
             screenfull.toggle(body[0]);
             onChange();
+        }
+
+        // Prevents the page from jumping back to the top when exiting full screen.
+        if ($rootElement.hasClass('rv-full-screen-element')) {
+            $('html,body').animate({ scrollTop: $($rootElement).offset().top }, 0);
+            $rootElement.removeClass('rv-full-screen-element');
         }
     }
 
