@@ -26,6 +26,14 @@
 </div>
 
 <div class="rv-list-item-controls">
+    <!-- if layer name is truncated, displays full layer name -->
+    <md-button ng-if="self.isNameTruncated" class="md-info-button rv-icon-14 rv-layer-item-flag" role="presentation">
+        <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}"
+            >{{ 'toc.layer.name' | translate }}: {{ self.block.name }}</md-tooltip
+        >
+        <md-icon md-svg-src="community:help"></md-icon>
+    </md-button>
+
     <rv-legend-control
         block="self.block"
         name="reload"

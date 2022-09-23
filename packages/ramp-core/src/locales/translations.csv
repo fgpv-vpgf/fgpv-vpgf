@@ -184,6 +184,7 @@ Bookmark link copy hint,sidenav.label.copy,Press Ctrl+C to copy,1,Appuyez sur «
 Side Navigation help,sidenav.label.help,Help,1,Aide,1
 Side Navigation touch mode,sidenav.label.touch,Touch mode,1,Mode Tactile,1
 Side Navigation language,sidenav.label.language,Language,1,Langue,1
+Table of Content name,toc.layer.name,Name,1,Nom,1
 Table of Content Unnamed service,toc.layer.unnamed,Unnamed service #{{count}},1,Service sans nom #{{count}},1
 Table of Content Layer open data panel aria label,toc.layer.aria.openData,Open data panel menu,1,Menu du panneau des données ouvertes,1
 Table of Content Layer options label,toc.layer.tooltip.options,More options,1,Plus d'options,1
