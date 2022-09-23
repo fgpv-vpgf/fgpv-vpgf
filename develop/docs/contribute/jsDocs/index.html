@@ -43,9 +43,11 @@
 
 
     <section>
-        <article><h1>RAMP2</h1>
+        <article><h1>RAMP2 FGP Visualiser / Visualisateur pour la PGF PCAR2</h1>
+<p>The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.0 &quot;AA&quot; compliant common viewer platform for the Government of Canada.</p>
+<blockquote>
 <p>This is an unsupported product. If you require a supported version please contact applicationsdecartographieweb-webmappingapplications@ec.gc.ca for a cost estimate. The software and code samples available on this website are provided &quot;as is&quot; without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time.</p>
-<p>Demo site: http://ramp4-app.azureedge.net/legacy</p>
+</blockquote>
 <p>This project is now a monorepo and contains the following repos under the <code>packages</code> folder:</p>
 <ul>
 <li>ramp-core (previously this repo)</li>
@@ -110,26 +112,24 @@ etc.
 <p>For more rush commands or general reading: https://rushjs.io/pages/intro/welcome/</p>
 <p>For more info on individual packages builds/documentation read the READMEs in the respective folder.</p>
 <h2>Documentation</h2>
-<p>The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.0 AA compliant common viewer platform for the Government of Canada.</p>
 <p>For more information on this project, please see one of the sections below:</p>
 <ul>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#support">Support</a></li>
 </ul>
-<p>Also, please visit the <a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/home">Documentation Site</a> for additional content on:</p>
+<p>Also, please visit the <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/home">Documentation Site</a> for additional content on:</p>
 <ul>
-<li><a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro">Map Author Guide</a></li>
-<li><a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/contribute/getting_started">Contributing to the RAMP Project</a></li>
-<li><a href="https://fgpv-vpgf.github.io/schema-to-docs/">Interactive Schema Documentation</a></li>
-<li><a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/developer/intro">Developer Guide</a></li>
-<li><a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/technical/architecture">Technical Documentation</a></li>
+<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/mapauthor/intro">Map Author Guide</a></li>
+<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/contribute/getting_started">Contributing to the RAMP Project</a></li>
+<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/developer/intro">Developer Guide</a></li>
+<li><a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/technical/architecture">Technical Documentation</a></li>
 </ul>
 <h3>Usage</h3>
 <h4>Quick guide</h4>
-<p>We'll go through the simplest way to use RAMP, for more information see the <a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro">map author guide</a></p>
+<p>We'll go through the simplest way to use RAMP, for more information see the <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/mapauthor/intro">map author guide</a></p>
 <p>First, grab the most recent release from the <a href="https://github.com/fgpv-vpgf/fgpv-vpgf/releases">github releases</a>
 Place the files <code>rv-main.js</code> and <code>rv-styles.css</code> within your webpage's folder structure. We usually put our JavaScript files under a <code>js</code> folder and our stylesheets under a <code>css</code> folder.</p>
-<p>Then you want to include those files on your page, along with jQuery and the needed polyfills (again, more info at the <a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/mapauthor/intro">map author guide</a>):</p>
+<p>Then you want to include those files on your page, along with jQuery and the needed polyfills:</p>
 <ol>
 <li>Within <code>head</code></li>
 </ol>
@@ -153,15 +153,25 @@ Place the files <code>rv-main.js</code> and <code>rv-styles.css</code> within yo
   rv-langs='[&quot;en-CA&quot;, &quot;fr-CA&quot;]'
 >&lt;/div>
 </code></pre>
-<p>A map should now load on your page. Theres much more you can do with RAMP, a good place to start (I'm mentioning it again!) is the <a href="#map-author-guide">map author guide</a></p>
-<h4><a href="http://ramp4-app.azureedge.net/?prefix=legacy/branches/master/samples/">Some samples</a></h4>
-<h3>Support</h3>
-<h4>How we provide support</h4>
+<p>A map should now load on your page. Theres much more you can do with RAMP, a good place to start is the <a href="#map-author-guide">map author guide</a></p>
+<h3>Samples</h3>
+<p>A collection of <a href="https://github.com/fgpv-vpgf/fgpv-vpgf/tree/master/packages/ramp-core/src/content/samples">sample source files</a> are in the repo.</p>
+<p>A live site containing our development sample page is found <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/samples/index-samples.html">here</a>.</p>
+<p>An example of a production site is the Government of Canada <a href="https://climate-viewer.canada.ca/climate-maps.html">Climate Data Viewer</a>.</p>
+<h2>Support</h2>
+<h3>Bugs</h3>
+<p>If you have a bug to report you can open up an issue at https://github.com/fgpv-vpgf/fgpv-vpgf/issues by clicking the green button above the issue list</p>
+<p>For more information on contributing read the <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/contribute/getting_started">Contributing Guide</a>. Note there may be some references to the pre-monorepo setup, pull requests are now only needed in one place (this repo).</p>
+<h3>Contact</h3>
+<p>The team can be reached at applicationsdecartographieweb-webmappingapplications@ec.gc.ca</p>
+<h2>Future Versions</h2>
+<p><a href="https://github.com/ramp4-pcar4/ramp4-pcar4">RAMP 4</a> is still in development but is shaping up nicely. We hope to have an initial release soon™. Notable changes include:</p>
 <ul>
-<li><strong>Bugs:</strong> If you have a bug to report you can open up an issue at https://github.com/fgpv-vpgf/fgpv-vpgf/issues by clicking the green button above the issue list</li>
-<li><strong>Questions:</strong> You can ask questions through github team discussions at https://github.com/orgs/fgpv-vpgf/teams</li>
-</ul>
-<p>For more information on contributing read the <a href="http://fgpv-vpgf.github.io/fgpv-vpgf/master/#/contribute/getting_started">Contributing Guide</a>. Note there may be some references to the pre-monorepo setup, pull requests are now only needed in one place (this repo).</p></article>
+<li>Updating the UI framework from Angular 1 to Vue 3</li>
+<li>Updating the ESRI Mapping API from v3 to v4</li>
+<li>An application architecture and API that is more open and adjustable</li>
+<li>UI re-design with mobile use in mind</li>
+</ul></article>
     </section>
 
 
@@ -178,7 +188,7 @@ Place the files <code>rv-main.js</code> and <code>rv-styles.css</code> within yo
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Sep 23 2022 13:29:02 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Sep 23 2022 13:39:54 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
