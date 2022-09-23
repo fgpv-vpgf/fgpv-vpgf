@@ -11,6 +11,7 @@
             "folderName": "default"
         },
         "legend": {
+            "sublayerRemovable": false,
             "isOpen": {
                 "large": true,
                 "medium": true,
