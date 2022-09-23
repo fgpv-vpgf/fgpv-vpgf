@@ -316,6 +316,7 @@ function loadServerAttribsBuilder(esriBundle, geoApi) {
                         layerData.maxScale = serviceResult.effectiveMaxScale || serviceResult.maxScale;
                         layerData.supportsFeatures = false; // saves us from having to keep comparing type to 'Feature Layer' on the client
                         layerData.extent = serviceResult.extent;
+                        layerData.defaultVisibility = serviceResult.defaultVisibility;
 
                         if (serviceResult.type === 'Feature Layer') {
                             layerData.supportsFeatures = true;

@@ -349,6 +349,9 @@ class DynamicRecord extends attribRecord.AttribRecord {
             }
         };
 
+        // Initialize visibility structure
+        this.leafVisibilityStruct = {};
+
         // process each leaf we walked to in the processLayerInfo loop above
         // idx is a string
         leafsToInit.forEach((idx) => {
@@ -378,6 +381,11 @@ class DynamicRecord extends attribRecord.AttribRecord {
                         dFC.extent = ld.extent;
                     }
                     dFC.extent = shared.makeSafeExtent(dFC.extent);
+
+                    // Record the defaultVisibility value for the leaf layer.
+                    dFC.defaultVisibility.then((data) => {
+                        this.leafVisibilityStruct[idx] = data;
+                    });
 
                     dFC._scaleSet.minScale = ld.minScale;
                     dFC._scaleSet.maxScale = ld.maxScale;
@@ -414,28 +422,43 @@ class DynamicRecord extends attribRecord.AttribRecord {
         });
 
         // TODO careful now, as the dynamicFC.DynamicFC constructor also appears to be setting visibility on the parent.
-        if (this._configIsComplete) {
-            // if we have a complete config, want to set layer visibility
-            // get an array of leaf ids that are visible.
-            // use _featClasses as it contains keys that exist on the server and are
-            // potentially visible in the client.
-            const initVis = Object.keys(this._featClasses)
+        const loadLayerPromise = Promise.all(loadPromises).then(() => {
+            this.config.source.layerEntries.forEach((le) => {
+                // If visibility is defined in the layer config, override the
+                // defaultVisibility value with the config value.
+                if (le.state && le.state.visibility !== undefined) {
+                    this.leafVisibilityStruct[le.index] = le.state.visibility;
+                } else {
+                    // If no state object is defined in the config, create the object and set visibility.
+                    // This is to save the value properly incase the layer is reloaded.
+                    if (!le.state) {
+                        le.state = {
+                            visibility: this.leafVisibilityStruct[le.index],
+                        };
+                    } else {
+                        // If state object is defined, but visibility is not, set visibility here.
+                        le.state.visibility = this.leafVisibilityStruct[le.index];
+                    }
+                }
+            });
+
+            // Check to see which layers are set to visible and set the visible layers.
+            const initVis = Object.keys(this.leafVisibilityStruct)
                 .filter((fcId) => {
-                    return fetchSubConfig(fcId).config.state.visibility;
+                    return this.leafVisibilityStruct[fcId];
                 })
                 .map((fcId) => {
                     return parseInt(fcId);
                 });
 
+            // If no sublayers are visible, set layer to invisible.
+            this.setVisibility(initVis.length > 0);
+
             if (initVis.length === 0) {
                 initVis.push(-1); // esri code for set all to invisible
             }
             this._layer.setVisibleLayers(initVis);
-        } else {
-            // default configuration for non-complete config.
-            this._layer.setVisibility(false);
-            this._layer.setVisibleLayers([-1]);
-        }
+        });
 
         // get mapName of the legend entry from the service to use as the name if not provided in config
         if (!this.name) {
@@ -450,7 +473,8 @@ class DynamicRecord extends attribRecord.AttribRecord {
             loadPromises.push(setTitle);
         }
 
-        Promise.all(loadPromises).then(() => {
+        Promise.all(loadPromises.concat(loadLayerPromise)).then(() => {
+            console.log('Loaded loaded');
             this._stateChange(shared.states.LOADED);
         });
     }
