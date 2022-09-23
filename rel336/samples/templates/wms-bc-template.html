@@ -1,0 +1,8 @@
+<ul id="bcDetails" class="rv-details-list rv-toggle-slide" ng-show="self.isExpanded" aria-hidden="false" style="height: auto !important; opacity: 1 !important; display: block !important">
+    <li rv-lightbox="" ng-switch="" on="row.type" class="ng-scope" ng-repeat="item in self.layer.items" style="display: flex; flex-wrap: wrap; justify-content: flex-end; padding: 5px">
+        <div class="rv-details-attrib-key ng-binding" style="margin-right: 0; padding-right: 10px; font-weight: bold; word-break: break-word;">{{ item.title }}</div>
+        <span flex="" class="flex"></span>
+        <div class="rv-details-attrib-value ng-binding ng-scope" ng-bind-html="::item.value | picture | autolink">{{ item.value }}</div>
+    </li>
+    <br>
+</ul>
