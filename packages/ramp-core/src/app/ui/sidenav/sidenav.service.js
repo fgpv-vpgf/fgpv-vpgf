@@ -322,7 +322,7 @@ function sideNavigationService(
     function open() {
         $mdSidenav('left')
             .open()
-            .then(() => $('md-sidenav[md-component-id="left"] button').first().rvFocus());
+            .then(() => $rootElement.find('md-sidenav[md-component-id="left"] button').first().rvFocus());
     }
 
     /**
