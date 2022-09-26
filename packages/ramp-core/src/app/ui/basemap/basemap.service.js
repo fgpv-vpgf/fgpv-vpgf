@@ -9,7 +9,7 @@
  */
 angular.module('app.ui').factory('basemapService', basemapService);
 
-function basemapService($rootElement, $mdSidenav, $q) {
+function basemapService($rootElement, $mdSidenav, appInfo, $q) {
     let closePromise;
     let isSideMenuOpen;
 
@@ -36,7 +36,7 @@ function basemapService($rootElement, $mdSidenav, $q) {
 
         // if opened using the side menu, close it while this panel is open.
         if (isSideMenuOpen) {
-            $mdSidenav('left').close();
+            $mdSidenav(`left-${appInfo.id}`).close();
         }
 
         return (
@@ -64,7 +64,7 @@ function basemapService($rootElement, $mdSidenav, $q) {
      */
     function close() {
         if (isSideMenuOpen) {
-            $mdSidenav('left').open();
+            $mdSidenav(`left-${appInfo.id}`).open();
         }
 
         return $mdSidenav('right').close();
