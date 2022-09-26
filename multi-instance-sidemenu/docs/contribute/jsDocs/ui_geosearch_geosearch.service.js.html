@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ui/geosearch/geosearch.service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ui/geosearch/geosearch.service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module geosearchService
+ * @memberof app.ui
+ * @description
+ *
+ * The `geosearchService` is responsible for opening and closing geosearch panel and for running queries.
+ *
+ */
+angular.module('app.ui').factory('geosearchService', geosearchService);
+
+function geosearchService(
+    $q,
+    $rootScope,
+    stateManager,
+    referenceService,
+    events,
+    debounceService,
+    mapService,
+    geoService,
+    gapiService,
+    configService,
+    appInfo
+) {
+    const queryParams = {}; // params to apply on filter
+    let GSservice; // geosearch service from the geosearch feature
+
+    events.$on(events.rvApiReady, () => {
+        // initialize geosearch feature
+        let language = configService.getSync.language === 'fr-CA' ? 'fr' : 'en';
+        let excludeTypes = configService.getSync.services.search.disabledSearches;
+        let settings = configService.getSync.services.search.settings;
+        GSservice = new appInfo.features.geoSearch.GeoSearchUI({
+            language,
+            excludeTypes,
+            settings,
+        });
+    });
+
+    const service = {
+        isLoading: false, // waiting for results
+        isResultsVisible: false, // showing results when we get some
+        externalApiError: false,
+        noResultsSearchValue: '', // the (previous) search term which returned no results
+        serviceError: false,
+
+        searchValue: '', // current search term
+        searchValuePerm: '', // searchValue is cleared on esc, keep a reference
+        lastSearchValue: '', // last search term saved
+        searchResults: [], // currect search results
+        savedResults: [], // search results for last search term
+
+        runQuery,
+
+        toggle: toggleBuilder(),
+        onClose,
+
+        setProvince,
+        setType,
+        setExtent,
+        getProvinces,
+        getTypes,
+
+        zoomTo,
+        zoomScale,
+        zoomSearchExtent,
+    };
+
+    const ref = {
+        mainPanel: referenceService.panels.shell.find('[rv-state=main]'),
+
+        runningRequestCount: 0, // used to track the latest query and discard results from previous ones if they resolve after an older query
+    };
+
+    events.$on(events.rvApiPreMapAdded, (_, api) => {
+        service.mApi = api;
+        api.panels.geoSearch.body = $('&lt;rv-geosearch>&lt;/rv-geosearch>');
+        api.panels.geoSearch.isCloseable = true;
+        api.panels.geoSearch.allowUnderlay = false;
+        api.panels.geoSearch.allowOffscreen = true;
+
+        // this is horrible, but `onCloseCallback` stateManager function doesn't work correctly
+        api.panels.geoSearch.closing.subscribe(() => {
+            // this will properly hide geosearch content
+            onClose();
+
+            // emit close to directive
+            $rootScope.$emit(events.rvGeosearchClose);
+        });
+    });
+
+    return service;
+
+    /**
+     * Builds a debounced toggle function to open and close geosearch content
+     *
+     * @function toggleBuilder
+     * @private
+     * @return {Function} a geosearch toggle function
+     */
+    function toggleBuilder() {
+        return debounceService.registerDebounce(() => {
+            service.mApi.panels.geoSearch.toggle();
+        });
+    }
+
+    /**
+     * Properly closes the geosearch content and restores previous panel if any. Do not clear the search term when closing
+     * so when user come back he doesn't lose is search. Especially useful for small screen.
+     *
+     * @function onClose
+     */
+    function onClose() {
+        // because search value is cleared on esc, reset it to make permanent when we close geosearch
+        service.searchValue = service.searchValuePerm;
+    }
+
+    /**
+     * Runs geosearch query and returns the results or suggestions.
+     *
+     * @function runQuery
+     * @return {Promise} promise resolving with results (when results are found - { results: [] }) or suggestions (when results are not found - { suggestions: [] }) or nothing (when search value is not specified - {});
+     */
+    function runQuery() {
+        const requestCount = ++ref.runningRequestCount;
+
+        // skip when the search value is not specified
+        if (!service.searchValue) {
+            service.searchResults = [];
+            service.isLoading = false;
+            service.isResultsVisible = false;
+            service.mApi.panels.geoSearch.element.css({
+                opacity: 0,
+                'pointer-events': 'none',
+                bottom: 0,
+            });
+
+            return $q.resolve();
+        }
+
+        // show loading indicator
+        service.isLoading = true;
+
+        // only run query if a different search term is entered
+        if (service.searchValue &amp;&amp; service.searchValue !== service.lastSearchValue) {
+            return GSservice.query(`${service.searchValue}*`).then(
+                (data) => {
+                    // store data for current search term
+                    service.lastSearchValue = service.searchValue;
+                    service.savedResults = data;
+
+                    // hide loading indicator
+                    service.isLoading = false;
+                    service.isResultsVisible = true;
+                    service.mApi.panels.geoSearch.element.css({
+                        opacity: 1,
+                        'pointer-events': '',
+                        bottom: '',
+                    });
+                    service.serviceError = false;
+
+                    // discard any old results
+                    if (requestCount === ref.runningRequestCount) {
+                        let filteredData = filter(data);
+                        service.searchResults = filteredData || [];
+
+                        service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
+                    }
+
+                    // return data for optional processing further down the promise chain
+                    return data;
+                },
+                (_) => {
+                    service.searchResults = [];
+                    service.isLoading = false;
+                    service.isResultsVisible = true;
+                    service.serviceError = true;
+                }
+            );
+            // otherwise the unfiltered data is already saved for the current search term
+        } else {
+            // hide loading indicator
+            service.isLoading = false;
+            service.isResultsVisible = true;
+            service.mApi.panels.geoSearch.element.css({
+                opacity: 1,
+                'pointer-events': '',
+                bottom: '',
+            });
+            service.serviceError = false;
+
+            // discard any old results
+            if (requestCount === ref.runningRequestCount) {
+                let filteredData = filter(service.savedResults);
+                service.searchResults = filteredData || [];
+                service.noResultsSearchValue = service.searchResults.length === 0 ? service.searchValue : '';
+            }
+
+            // return data for optional processing further down the promise chain
+            return Promise.resolve(service.savedResults);
+        }
+    }
+
+    /**
+     * @function zoomTo
+     * @param {Object} result a search result to zoom to
+     */
+    function zoomTo(result) {
+        if (typeof result.bbox !== 'undefined') {
+            zoomSearchExtent(result.bbox, result.position);
+        } else {
+            // zoom to a scale
+            // name contain the search value inside result panel
+            // in the case of a scale, it will be something like 1:100 000 (geo-search.service.js line 334)
+            zoomScale(result.name.split(':')[1]);
+        }
+    }
+
+    /**
+     * Helper function that filters based on query parameters.
+     *
+     * @function filter
+     * @param data {Array} An array of locations from the query
+     */
+    function filter(data) {
+        if (queryParams.extent) {
+            data = data.filter(
+                (r) =>
+                    !(
+                        r.bbox[0] > queryParams.extent[2] ||
+                        r.bbox[2] &lt; queryParams.extent[0] ||
+                        r.bbox[3] &lt; queryParams.extent[1] ||
+                        r.bbox[1] > queryParams.extent[3]
+                    )
+            );
+        }
+        if (queryParams.province &amp;&amp; queryParams.province !== '...') {
+            data = data.filter((r) => r.location.province &amp;&amp; r.location.province.name === queryParams.province);
+        }
+        if (queryParams.type &amp;&amp; queryParams.type !== '...') {
+            data = data.filter((r) => r.type.name === queryParams.type);
+        }
+        return data;
+    }
+
+    /**
+     * Helper function which sets query parameters, or deletes them entirely iff
+     * value is undefined
+     *
+     * @function setQueryParam
+     * @private
+     * @param   {String}    paramName   a valid geoName query parameter
+     * @param   {String}    value       the geoName query parameter value
+     */
+    function setQueryParam(paramName, value) {
+        queryParams[paramName] = value;
+
+        if (typeof queryParams[paramName] === 'undefined') {
+            delete queryParams[paramName];
+        }
+    }
+
+    /**
+     * Include results with the given type. Passing a value of undefined clears the type.
+     *
+     * @function setType
+     * @param   {String}    type   the type code all results must have
+     */
+    function setType(type) {
+        setQueryParam('type', type);
+    }
+
+    /**
+     * Include results in the given province. Passing a value of undefined clears the province.
+     *
+     * @function setProvince
+     * @param   {String}    province   the province code all results must be in
+     */
+    function setProvince(province) {
+        setQueryParam('province', province);
+    }
+
+    /**
+     * Include results in the given extent. Passing a value of undefined clears the province. Note that
+     * a string can also be passed with a value of 'visible' (converted to current extent) or 'canada' (converted to whole of Canada extent)
+     *
+     * @function setExtent
+     * @param   {Object}    extent   mapObject extent object, or string value of either 'visible' or 'canada'
+     */
+    function setExtent(extent) {
+        if (extent === 'visible') {
+            // get the viewers current extent
+            extent = geoService.currentExtent;
+        } else if (extent === 'canada') {
+            // get the full extent of Canada
+            extent = geoService.fullExtent;
+        }
+
+        if (typeof extent === 'object') {
+            // convert to lat/long geoName readable string
+            // use the extent to reproject because it use a densify object that keep
+            // proportion and in the end good values for min and max. If we use points
+            // the results are bad, especially in LCC
+            const projExtent = gapiService.gapi.proj.localProjectExtent(extent, {
+                wkid: 4326,
+            });
+
+            extent = [projExtent.x0, projExtent.y0, projExtent.x1, projExtent.y1].join(',');
+        }
+
+        extent = extent.split(',').map(parseFloat);
+        setQueryParam('extent', extent);
+    }
+
+    /**
+     * Fetches the list of all possible provinces in a geoName query.
+     *
+     * @function getProvinces
+     * @return   {Promise}    resolves to a list of all provinces in the form
+     *                          {
+     *                              code: numeric province code (i.e. ontario is 35)
+     *                              abbr: short hand notation (Ontario is ON)
+     *                              name: full province name
+     *                          }
+     */
+    function getProvinces() {
+        return new Promise(
+            (resolve) => {
+                if (geoService.isMapReady) {
+                    // isMapReady gets set to true only before the
+                    // rvApiReady event is broadcasted, so this is a valid way to check
+                    resolve(GSservice.fetchProvinces());
+                } else {
+                    events.$on(events.rvApiReady, () => {
+                        resolve(GSservice.fetchProvinces());
+                    });
+                }
+            },
+            () => {
+                service.externalApiError = true;
+            }
+        );
+    }
+
+    /**
+     * Fetches the list of all possible types in a geoName query.
+     *
+     * @function getTypes
+     * @return   {Promise}    resolves to a list of all types in the form
+     *                          {
+     *                              code: Short form code (i.e. TERR)
+     *                              name: Full type name (i.e. Territory)
+     *                          }
+     */
+    function getTypes() {
+        return new Promise(
+            (resolve) => {
+                if (geoService.isMapReady) {
+                    // isMapReady gets set to true only before the
+                    // rvApiReady event is broadcasted, so this is a valid way to check
+                    resolve(GSservice.fetchTypes());
+                } else {
+                    events.$on(events.rvApiReady, () => {
+                        resolve(GSservice.fetchTypes());
+                    });
+                }
+            },
+            () => {
+                service.externalApiError = true;
+            }
+        );
+    }
+
+    /**
+     * Zoom to scale
+     *
+     * @function zoomScale
+     * @private
+     * @param   {String}    scale   the scale to zoom to
+     */
+    function zoomScale(scale) {
+        // remove space if scale is like 1 000 000 then use map to zoom to scale
+        geoService.setScale(parseInt(scale.replace(/ /g, '')));
+    }
+
+    /**
+     * Zoom to the search extent bbox and show map pin at location
+     *
+     * @function zoomSearchExtent
+     * @param   {Array}    bbox     4 coordinates for the bbox in the form of [xmin, ymin, xmax, ymax]
+     * @param   {Array}    position       2 coordinates for the position in the form of [x, y]
+     */
+    function zoomSearchExtent(bbox, position) {
+        //const mapObject = geoService.mapObject;
+        const mapSR = geoService.currentExtent.spatialReference; //mapObject.spatialReference;
+        const gapi = gapiService.gapi;
+
+        // set extent from bbox
+        const latlongExtent = gapi.Map.Extent(...bbox, {
+            wkid: 4326,
+        });
+
+        // reproject extent
+        const projExtent = gapi.proj.localProjectExtent(latlongExtent, mapSR);
+
+        // set extent from reprojected values
+        const zoomExtent = gapi.Map.Extent(projExtent.x0, projExtent.y0, projExtent.x1, projExtent.y1, projExtent.sr);
+
+        // zoom to location (expand the bbox to include all the area)
+        geoService.setExtent(zoomExtent.expand(1.5)).then(() => {
+            // get reprojected point and create point
+            const geoPt = gapi.proj.localProjectPoint(4326, mapSR, [parseFloat(position[0]), parseFloat(position[1])]);
+            const projPt = gapi.proj.Point(geoPt[0], geoPt[1], mapSR);
+
+            // show pin on the map
+            mapService.addMarkerHighlight(projPt, false);
+        });
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="app.common.module_displayManager.html">displayManager</a></li><li><a href="app.common.module_stateManager.html">stateManager</a></li><li><a href="app.core.module_common.html">common</a></li><li><a href="app.core.module_ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_configService.html">configService</a></li><li><a href="app.geo.module_gapiService.html">gapiService</a></li><li><a href="app.geo.module_Geo.html">Geo</a></li><li><a href="app.geo.module_geoService.html">geoService</a></li><li><a href="app.geo.module_identifyService.html">identifyService</a></li><li><a href="app.geo.module_layerRegistry.html">layerRegistry</a></li><li><a href="app.geo.module_LegendBlock.html">LegendBlock</a></li><li><a href="app.geo.module_LegendElementFactory.html">LegendElementFactory</a></li><li><a href="app.geo.module_legendService.html">legendService</a></li><li><a href="app.geo.module_locateService.html">locateService</a></li><li><a href="app.geo.module_mapService.html">mapService</a></li><li><a href="app.geo.module_mapToolService.html">mapToolService</a></li><li><a href="app.geo.module_metadataService.html">metadataService</a></li><li><a href="app.geo.module_rvInitMap.html">rvInitMap</a></li><li><a href="app.geo.module_rvOverviewToggle.html">rvOverviewToggle</a></li><li><a href="app.layout.module_animationService.html">animationService</a></li><li><a href="app.layout.module_layoutService.html">layoutService</a></li><li><a href="app.layout.module_referenceService.html">referenceService</a></li><li><a href="app.layout.module_rvShell.html">rvShell</a></li><li><a href="app.module_core.html">core</a></li><li><a href="app.module_ui.html">ui</a></li><li><a href="app.ui.module_basemapService.html">basemapService</a></li><li><a href="app.ui.module_detailService.html">detailService</a></li><li><a href="app.ui.module_errorService.html">errorService</a></li><li><a href="app.ui.module_expandImageService.html">expandImageService</a></li><li><a href="app.ui.module_ExportComponent.html">ExportComponent</a></li><li><a href="app.ui.module_exportGenerators.html">exportGenerators</a></li><li><a href="app.ui.module_ExportSize.html">ExportSize</a></li><li><a href="app.ui.module_exportSizesService.html">exportSizesService</a></li><li><a href="app.ui.module_fullScreenService.html">fullScreenService</a></li><li><a href="app.ui.module_geosearchFiltersService.html">geosearchFiltersService</a></li><li><a href="app.ui.module_geosearchService.html">geosearchService</a></li><li><a href="app.ui.module_helpService.html">helpService</a></li><li><a href="app.ui.module_highlightFilter.html">highlightFilter</a></li><li><a href="app.ui.module_layerSource.html">layerSource</a></li><li><a href="app.ui.module_mapNavigationService.html">mapNavigationService</a></li><li><a href="app.ui.module_rvAppbar.html">rvAppbar</a></li><li><a href="app.ui.module_rvBasemap.html">rvBasemap</a></li><li><a href="app.ui.module_rvBasemapItem.html">rvBasemapItem</a></li><li><a href="app.ui.module_rvContentPane.html">rvContentPane</a></li><li><a href="app.ui.module_rvDetails.html">rvDetails</a></li><li><a href="app.ui.module_rvDetailsContent.html">rvDetailsContent</a></li><li><a href="app.ui.module_rvDetailsHeader.html">rvDetailsHeader</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeature.html">rvDetailsRecordEsrifeature</a></li><li><a href="app.ui.module_rvDetailsRecordEsrifeatureItem.html">rvDetailsRecordEsrifeatureItem</a></li><li><a href="app.ui.module_rvDetailsRecordHtml.html">rvDetailsRecordHtml</a></li><li><a href="app.ui.module_rvDetailsRecordText.html">rvDetailsRecordText</a></li><li><a href="app.ui.module_rvDetectScrollbar.html">rvDetectScrollbar</a></li><li><a href="app.ui.module_rvDragula.html">rvDragula</a></li><li><a href="app.ui.module_rvExportCustomSize.html">rvExportCustomSize</a></li><li><a href="app.ui.module_rvGeosearch.html">rvGeosearch</a></li><li><a href="app.ui.module_rvGeosearchBar.html">rvGeosearchBar</a></li><li><a href="app.ui.module_rvGeosearchBottomFilters.html">rvGeosearchBottomFilters</a></li><li><a href="app.ui.module_rvGeosearchTopFilters.html">rvGeosearchTopFilters</a></li><li><a href="app.ui.module_rvHelpOverlay.html">rvHelpOverlay</a></li><li><a href="app.ui.module_rvHelpSearch.html">rvHelpSearch</a></li><li><a href="app.ui.module_rvLayerListSlider.html">rvLayerListSlider</a></li><li><a href="app.ui.module_rvLegendBlock.html">rvLegendBlock</a></li><li><a href="app.ui.module_rvLoaderFile.html">rvLoaderFile</a></li><li><a href="app.ui.module_rvLoaderMenu.html">rvLoaderMenu</a></li><li><a href="app.ui.module_rvMapnav.html">rvMapnav</a></li><li><a href="app.ui.module_rvMapnavButton.html">rvMapnavButton</a></li><li><a href="app.ui.module_rvMenuLink.html">rvMenuLink</a></li><li><a href="app.ui.module_rvMetadataContent.html">rvMetadataContent</a></li><li><a href="app.ui.module_rvMetadataPanel.html">rvMetadataPanel</a></li><li><a href="app.ui.module_rvMorph.html">rvMorph</a></li><li><a href="app.ui.module_rvPlugSlide.html">rvPlugSlide</a></li><li><a href="app.ui.module_rvReverse.html">rvReverse</a></li><li><a href="app.ui.module_rvSettings.html">rvSettings</a></li><li><a href="app.ui.module_rvSettingsContent.html">rvSettingsContent</a></li><li><a href="app.ui.module_rvSidenav.html">rvSidenav</a></li><li><a href="app.ui.module_rvStepperItem.html">rvStepperItem</a></li><li><a href="app.ui.module_rvSymbologyStack.html">rvSymbologyStack</a></li><li><a href="app.ui.module_rvTableDefault.html">rvTableDefault</a></li><li><a href="app.ui.module_rvTableDefaultMenu.html">rvTableDefaultMenu</a></li><li><a href="app.ui.module_rvTablePanel.html">rvTablePanel</a></li><li><a href="app.ui.module_rvToc.html">rvToc</a></li><li><a href="app.ui.module_rvTocEntryControl.html">rvTocEntryControl</a></li><li><a href="app.ui.module_rvTocExpandMenu.html">rvTocExpandMenu</a></li><li><a href="app.ui.module_rvTocVisibilityMenu.html">rvTocVisibilityMenu</a></li><li><a href="app.ui.module_rvToggleSlide.html">rvToggleSlide</a></li><li><a href="app.ui.module_rvTooltip.html">rvTooltip</a></li><li><a href="app.ui.module_rvTruncate.html">rvTruncate</a></li><li><a href="app.ui.module_sideNavigationService.html">sideNavigationService</a></li><li><a href="app.ui.module_StepperFactory.html">StepperFactory</a></li><li><a href="app.ui.module_SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tableService.html">tableService</a></li><li><a href="app.ui.module_tocService.html">tocService</a></li><li><a href="app.ui.module_tooltipService.html">tooltipService</a></li><li><a href="material.components.button.module_MdButtonDirectiveDecorator.html">MdButtonDirectiveDecorator</a></li><li><a href="material.components.dialog.module_$mdDialog.html">$mdDialog</a></li><li><a href="material.components.icon.module_mdIconDirectiveDecorator.html">mdIconDirectiveDecorator</a></li><li><a href="material.components.menu.module_mdMenuDirective.html">mdMenuDirective</a></li><li><a href="material.components.menu.module_mdSelectDirective.html">mdSelectDirective</a></li><li><a href="material.components.menuBar.module_mdMenuItemDirectiveDecorator.html">mdMenuItemDirectiveDecorator</a></li><li><a href="material.components.select.module_mdSelectMenuDirective.html">mdSelectMenuDirective</a></li><li><a href="material.components.tooltip.module_mdTooltipDirective.html">mdTooltipDirective</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="app.core.html">core</a></li><li><a href="app.geo.html">geo</a></li><li><a href="app.layout.html">layout</a></li><li><a href="app.ui.html">ui</a></li></ul><h3>Classes</h3><ul><li><a href="app.core.module_ConfigObject-About.html">About</a></li><li><a href="app.core.module_ConfigObject-Basemap.html">Basemap</a></li><li><a href="app.core.module_ConfigObject-ConfigObject.html">ConfigObject</a></li><li><a href="app.core.module_ConfigObject-Entry.html">Entry</a></li><li><a href="app.core.module_ConfigObject-ExportComponent.html">ExportComponent</a></li><li><a href="app.core.module_ConfigObject-ExportService.html">ExportService</a></li><li><a href="app.core.module_ConfigObject-ExtentSet.html">ExtentSet</a></li><li><a href="app.core.module_ConfigObject-Help.html">Help</a></li><li><a href="app.core.module_ConfigObject-InfoSection.html">InfoSection</a></li><li><a href="app.core.module_ConfigObject-InitialLayerSettings.html">InitialLayerSettings</a></li><li><a href="app.core.module_ConfigObject-LayerNode.html">LayerNode</a></li><li><a href="app.core.module_ConfigObject-Legend.html">Legend</a></li><li><a href="app.core.module_ConfigObject-LegendExportComponent.html">LegendExportComponent</a></li><li><a href="app.core.module_ConfigObject-LegendIsOpen.html">LegendIsOpen</a></li><li><a href="app.core.module_ConfigObject-LodSet.html">LodSet</a></li><li><a href="app.core.module_ConfigObject-Map.html">Map</a></li><li><a href="app.core.module_ConfigObject-NavBar.html">NavBar</a></li><li><a href="app.core.module_ConfigObject-Services.html">Services</a></li><li><a href="app.core.module_ConfigObject-SideMenu.html">SideMenu</a></li><li><a href="app.core.module_ConfigObject-StartPoint.html">StartPoint</a></li><li><a href="app.core.module_ConfigObject-TableIsOpen.html">TableIsOpen</a></li><li><a href="app.core.module_ConfigObject-TileSchema.html">TileSchema</a></li><li><a href="app.core.module_ConfigObject-UI.html">UI</a></li><li><a href="app.core.module_ConfigObject-UILegend.html">UILegend</a></li><li><a href="app.core.module_ConfigObject-VisibilitySet.html">VisibilitySet</a></li><li><a href="app.core.module_configService-Config.html">Config</a></li><li><a href="app.geo.module_LegendBlock-LegendGroup.html">LegendGroup</a></li><li><a href="app.geo.module_LegendBlock-ProxyWrapper.html">ProxyWrapper</a></li><li><a href="app.geo.module_LegendElementFactory-SymbologyControl.html">SymbologyControl</a></li><li><a href="app.ui.module_StepperFactory-Stepper.html">Stepper</a></li><li><a href="app.ui.module_SymbologyStack-SymbologyStack.html">SymbologyStack</a></li><li><a href="app.ui.module_tooltipService-ContainInside.html">ContainInside</a></li><li><a href="app.ui.module_tooltipService-FollowMap.html">FollowMap</a></li><li><a href="app.ui.module_tooltipService-FollowMouse.html">FollowMouse</a></li><li><a href="app.ui.module_tooltipService-Tooltip.html">Tooltip</a></li><li><a href="app.ui.module_tooltipService-TooltipStrategy.html">TooltipStrategy</a></li><li><a href="ConfigObject.UI.html">UI</a></li><li><a href="ExportSize.html">ExportSize</a></li><li><a href="ToggleSymbol.html">ToggleSymbol</a></li><li><a href="Viewer.html">Viewer</a></li><li><a href="ViewerGroup.html">ViewerGroup</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$on">$on</a></li><li><a href="global.html#_cfg">_cfg</a></li><li><a href="global.html#addViewer">addViewer</a></li><li><a href="global.html#applyDefault">applyDefault</a></li><li><a href="global.html#autolink">autolink</a></li><li><a href="global.html#centerAndZoom">centerAndZoom</a></li><li><a href="global.html#changeIconFocus">changeIconFocus</a></li><li><a href="global.html#configureParser">configureParser</a></li><li><a href="global.html#createCanvas">createCanvas</a></li><li><a href="global.html#createSvg">createSvg</a></li><li><a href="global.html#dateTimeZone">dateTimeZone</a></li><li><a href="global.html#disableCommonPrototypes">disableCommonPrototypes</a></li><li><a href="global.html#elemIsFocusable">elemIsFocusable</a></li><li><a href="global.html#focus">focus</a></li><li><a href="global.html#focusableSearch">focusableSearch</a></li><li><a href="global.html#getBookmark">getBookmark</a></li><li><a href="global.html#getConfig">getConfig</a></li><li><a href="global.html#getCurrentLang">getCurrentLang</a></li><li><a href="global.html#getTextWidth">getTextWidth</a></li><li><a href="global.html#hasLink">hasLink</a></li><li><a href="global.html#imageLoader">imageLoader</a></li><li><a href="global.html#initialBookmark">initialBookmark</a></li><li><a href="global.html#isTainted">isTainted</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#lastVisibleHistoryElement">lastVisibleHistoryElement</a></li><li><a href="global.html#link">link</a></li><li><a href="global.html#mergeCanvases">mergeCanvases</a></li><li><a href="global.html#noSourceLink">noSourceLink</a></li><li><a href="global.html#onFocusin">onFocusin</a></li><li><a href="global.html#onFocusout">onFocusout</a></li><li><a href="global.html#onKeydown">onKeydown</a></li><li><a href="global.html#onKeyup">onKeyup</a></li><li><a href="global.html#onMouseDown">onMouseDown</a></li><li><a href="global.html#picture">picture</a></li><li><a href="global.html#preLoadApiBlock">preLoadApiBlock</a></li><li><a href="global.html#process">process</a></li><li><a href="global.html#projectGeometry">projectGeometry</a></li><li><a href="global.html#readyDelay">readyDelay</a></li><li><a href="global.html#resetIconFocus">resetIconFocus</a></li><li><a href="global.html#restoreSession">restoreSession</a></li><li><a href="global.html#RV">RV</a></li><li><a href="global.html#rvCrosshairs">rvCrosshairs</a></li><li><a href="global.html#rvDefaults">rvDefaults</a></li><li><a href="global.html#rvFailureImage">rvFailureImage</a></li><li><a href="global.html#rvFocus">rvFocus</a></li><li><a href="global.html#rvNorthArrow">rvNorthArrow</a></li><li><a href="global.html#rvState">rvState</a></li><li><a href="global.html#setExtent">setExtent</a></li><li><a href="global.html#setMapCursor">setMapCursor</a></li><li><a href="global.html#setSvgHref">setSvgHref</a></li><li><a href="global.html#shellService">shellService</a></li><li><a href="global.html#shiftFocus">shiftFocus</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#svgToCanvas">svgToCanvas</a></li><li><a href="global.html#uid">uid</a></li><li><a href="global.html#updateNorthArrow">updateNorthArrow</a></li><li><a href="global.html#useBookmark">useBookmark</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Sep 26 2022 19:03:02 GMT+0000 (Coordinated Universal Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
