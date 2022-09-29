@@ -87,7 +87,7 @@
                 "layerType": "esriDynamic",
                 "name": "Clean power generating stations by type in megawatts (MW)",
                 "id": "65d3db23-b83c-4f49-ab93-65c59ee0e6aa",
-                "url": "https://cors-anywhere.herokuapp.com/geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer",
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer",
                 "layerEntries": [
                     {
                         "index": 0
