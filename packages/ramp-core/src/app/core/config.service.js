@@ -134,15 +134,15 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @return {Promise}              resolves with config object (or undefined if not defined) when rcs lookup is complete
          */
         processRCS(bookmarkInfo) {
-            if (this._rcsKeys.length === 0) {
-                return this.config;
-            }
+            // if (this._rcsKeys.length === 0) {
+            //     return this.config;
+            // }
 
-            if (typeof this.rcsEndpoint === 'undefined') {
-                throw new Error(
-                    'RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property'
-                );
-            }
+            // if (typeof this.rcsEndpoint === 'undefined') {
+            //     throw new Error(
+            //         'RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property'
+            //     );
+            // }
 
             const endpoint = this.rcsEndpoint.endsWith('/') ? this.rcsEndpoint : this.rcsEndpoint + '/';
             const results = {};
@@ -155,7 +155,87 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 rcsLang = 'en';
             }
 
-            return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(
+            const dataStuff = [
+                {
+                    layers: [
+                        {
+                            isTimeAware: false,
+                            layerType: 'esriDynamic',
+                            service_url:
+                                'https://maps-cartes.services.geo.ca/server_serveur/rest/services/IAAC/assessment_inventory_en/MapServer',
+                            name: 'Impact Assessment Agency of Canada - Assessments Inventory',
+                            id: 'rcs.f4c51eaa-a6ca-48b9-a1fc-b0651da20509.en',
+                            url: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/IAAC/assessment_inventory_en/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 0,
+                                },
+                                {
+                                    index: 1,
+                                },
+                                {
+                                    index: 2,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    layers: [
+                        {
+                            isTimeAware: false,
+                            layerType: 'esriDynamic',
+                            service_url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer',
+                            name: 'Clean power generating stations by type in megawatts (MW)',
+                            id: 'rcs.65d3db23-b83c-4f49-ab93-65c59ee0e6aa.en',
+                            url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/Energy/CERP_EN/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 0,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    layers: [
+                        {
+                            isTimeAware: false,
+                            layerType: 'esriDynamic',
+                            service_url:
+                                'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/stations_en/MapServer',
+                            name: 'Monitoring Stations',
+                            id: 'rcs.d256b422-2834-40a2-9f0c-bd5fc32781b2.en',
+                            url: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/stations_en/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 0,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    layers: [
+                        {
+                            isTimeAware: false,
+                            layerType: 'esriDynamic',
+                            service_url:
+                                'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+                            name: 'Airborne Radioactivity',
+                            id: 'rcs.21b821cf-0f1c-40ee-8925-eab12d357668.en',
+                            url: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 0,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+
+            return Promise.resolve({ data: dataStuff }).then(
                 (resp) => {
                     const result = [];
 
