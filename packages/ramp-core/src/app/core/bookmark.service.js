@@ -552,7 +552,7 @@ function bookmarkService($q, configService, gapiService, bookmarkVersions, Geo, 
                         const childSettings = extractChildSettings(child);
 
                         snippet.layerEntries.push({
-                            stateOnly: true,
+                            stateOnly: false,
                             state: childSettings,
                             index: childSettings.index,
                         });
