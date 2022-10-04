@@ -11,6 +11,7 @@
         ng-blur="self.fanOutSymbology(false); self.showSymbologyBorder(false)"
         ng-mouseover="self.fanOutSymbology(true)"
         ng-mouseout="self.fanOutSymbology(false)"
+        type="button"
     >
         <md-tooltip md-direction="top">
             {{ self.symbology.expanded ? 'toc.layer.label.symbologyHide' : 'toc.layer.label.symbologyShow' | translate
@@ -63,6 +64,7 @@
             aria-pressed="{{symbol.toggle.isSelected }}"
             aria-label="{{ (symbol.toggle.isSelected && ('toc.aria.visibility.on' | translate)) ||
                 (!symbol.toggle.isSelected && ('toc.aria.visibility.off' | translate)) }}"
+            type="button"
         >
             <md-icon md-svg-src="{{symbol.toggle.icon}}"></md-icon>
             <md-tooltip md-direction="top"

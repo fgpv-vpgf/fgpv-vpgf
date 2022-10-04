@@ -34,6 +34,7 @@ const ROW_BUTTON_TEMPLATE = (row, disabled) =>
     `<md-button
         aria-label="{{ self.isFunction(self.label) ? self.label(self.enabled) : self.label | translate }}"
         class="md-icon-button rv-icon-16 rv-button-24"
+        type="button"
         ng-click="self.action(${row})"
         ng-disabled="${disabled}">
 
@@ -44,8 +45,8 @@ const ROW_BUTTON_TEMPLATE = (row, disabled) =>
 
 const TABLE_UPDATE_TEMPALATE = `<md-toast class="table-toast">
         <span class="md-toast-text flex">{{ 'filter.default.label.outOfDate' | translate }}</span>
-        <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
-        <md-button ng-click="closeToast()">{{ 'filter.default.action.close' | translate }}</md-button>
+        <md-button type="button" class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
+        <md-button type="button" ng-click="closeToast()">{{ 'filter.default.action.close' | translate }}</md-button>
     </md-toast>`;
 
 // max field length accepted

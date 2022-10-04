@@ -3,6 +3,7 @@
     class="md-icon-button rv-button-32"
     ng-class="{ selected: self.control.selected() }"
     ng-click="self.control.action($event)"
+    type="button"
 >
     <md-tooltip md-direction="left">{{ self.control.tooltip | translate }}</md-tooltip>
     <md-icon md-svg-src="{{ self.control.icon }}"></md-icon>

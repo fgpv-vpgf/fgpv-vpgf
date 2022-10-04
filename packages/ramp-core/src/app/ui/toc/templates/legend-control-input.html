@@ -28,6 +28,7 @@
             class="rv-close md-icon-button black rv-icon-20"
             ng-click="self.uiControl.clearAndReload"
             ng-disabled="(!self.uiControl.value || self.uiControl.isDynamicChild) && refreshForm.interval.$valid"
+            type="button"
         >
             <md-tooltip>{{ 'settings.label.refreshInterval.close' | translate }}</md-tooltip>
             <md-icon md-svg-src="navigation:close"></md-icon>

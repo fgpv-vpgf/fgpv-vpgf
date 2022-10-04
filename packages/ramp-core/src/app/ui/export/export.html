@@ -20,6 +20,7 @@
                                 ng-disabled="self.exportSizes.isCustomOptionUpdated() || (!exportForm.customSizeWidth.$viewValue && !exportForm.customSizeHeight.$viewValue && !self.exportSizes.customOption.height)"
                                 ng-click="self.exportSizes.resetTemporaryOption()"
                                 class="rv-button-square"
+                                type="button"
                             >
                                 {{ 'export.undo' | translate }}
                             </md-button>
@@ -29,6 +30,7 @@
                                 ng-disabled="!exportForm.$valid || self.isGenerating() || (self.exportSizes.tempOption.height === self.exportSizes.selectedOption.height && !self.exportSizes.customToggled)"
                                 ng-click="self.exportSizes.updateCustomOption(); self.updateComponents();"
                                 class="rv-button-square md-raised md-primary"
+                                type="button"
                             >
                                 {{ 'export.generate' | translate }}
                                 <!-- show a progress indicator on the generate button when picking a custom export size -->
@@ -131,13 +133,14 @@
                 ng-if="self.isSettingsEditable() && !self.isGenerateError"
                 ng-class="{ selected: self.isExportSettingsOpen }"
                 ng-click="self.isExportSettingsOpen = !self.isExportSettingsOpen"
+                type="button"
             >
                 <md-icon md-svg-src="action:settings"></md-icon>
             </md-button>
 
             <span flex></span>
 
-            <md-button class="rv-button-square" ng-click="self.close()" rv-close-button>
+            <md-button class="rv-button-square" ng-click="self.close()" type="button" rv-close-button>
                 {{ 'export.close' | translate }}
             </md-button>
 
@@ -149,6 +152,7 @@
                     class="rv-button-square md-raised md-primary"
                     ng-click="self.saveImage()"
                     ng-disabled="self.isDownloadBlocked()"
+                    type="button"
                 >
                     {{ 'export.download' | translate }}
                 </md-button>

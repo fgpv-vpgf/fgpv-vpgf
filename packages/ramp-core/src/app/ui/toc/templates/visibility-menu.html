@@ -6,6 +6,7 @@
         class="md-icon-button primary rv-icon-20"
         ng-click="$mdOpenMenu($event)"
         ng-disabled="self.disabled"
+        type="button"
     >
         <md-tooltip>{{ 'toc.menu.visibility.title' | translate }}</md-tooltip>
         <md-icon md-svg-src="action:visibility"></md-icon>
@@ -17,6 +18,7 @@
                 ng-click="self.showAllLegendEntries()"
                 ng-disabled="self.isAllLegendEntriesVisible()"
                 aria-label="{{ 'toc.menu.visibility.allon' | translate }}"
+                type="button"
             >
                 <md-icon md-svg-icon="action:visibility"></md-icon>
                 {{ 'toc.menu.visibility.allon' | translate }}
@@ -28,6 +30,7 @@
                 ng-click="self.hideAllLegendEntries()"
                 ng-disabled="self.isAllLegendEntriesHidden()"
                 aria-label="{{ 'toc.menu.visibility.alloff' | translate }}"
+                type="button"
             >
                 <md-icon md-svg-icon="action:visibility_off"></md-icon>
                 {{ 'toc.menu.visibility.alloff' | translate }}

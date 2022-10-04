@@ -12,6 +12,7 @@
                 ng-if="self.config.ui.legend.reorderable"
                 ng-class="{ selected: self.isReorder }"
                 ng-click="self.toggleReorderMode()"
+                type="button"
             >
                 <md-tooltip>{{ 'toc.menu.reorder.title' | translate }}</md-tooltip>
                 <md-icon md-svg-src="action:swap_vert"></md-icon>
@@ -26,6 +27,7 @@
                 class="rv-close md-icon-button black rv-icon-20"
                 ng-click="self.toggleReorderMode(false)"
                 ng-if="self.isReorder"
+                type="button"
             >
                 <md-tooltip>{{ 'toc.menu.reorder.close' | translate }}</md-tooltip>
                 <md-icon md-svg-src="navigation:close"></md-icon>

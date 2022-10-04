@@ -3,6 +3,7 @@
         ng-if="!self.isReorder"
         class="rv-body-button rv-button-square"
         ng-click="self.block.expanded = !self.block.expanded"
+        type="button"
         aria-label="{{ self.block.expanded ? 'toc.label.group.collapse' : 'toc.label.group.expand' | translate }}"
     >
         <md-tooltip md-direction="top"
@@ -49,6 +50,7 @@
             aria-label="{{ 'toc.entry.aria.openData' | translate }}"
             class="md-icon-button rv-button-40 rv-icon-20"
             ng-click="$mdOpenMenu($event)"
+            type="button"
         >
             <md-icon md-svg-src="navigation:more_horiz"></md-icon>
             <md-tooltip md-direction="top">{{ 'toc.layer.tooltip.options' | translate }}</md-tooltip>

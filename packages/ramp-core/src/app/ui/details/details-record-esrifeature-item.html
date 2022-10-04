@@ -6,6 +6,7 @@
         ng-mouseover="self.isRendered = true"
         ng-click="self.toggleDetails()"
         aria-label="{{ 'details.aria.toggle' | translate }}"
+        type="button"
     >
         <md-tooltip md-direction="top"
             >{{ self.isExpanded ? 'details.tooltip.collapse' : 'details.tooltip.expand' | translate }}</md-tooltip
@@ -27,6 +28,7 @@
             class="md-icon-button rv-icon-20"
             ng-click="self.findFeature(self.item.oid)"
             ng-disabled="!self.requester.proxy.visibility"
+            type="button"
         >
             <md-tooltip md-direction="top">{{ 'filter.tooltip.zoom' | translate }}</md-tooltip>
             <md-icon md-svg-src="action:zoom_in"></md-icon>

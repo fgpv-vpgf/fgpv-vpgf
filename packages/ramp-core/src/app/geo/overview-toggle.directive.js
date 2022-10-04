@@ -6,6 +6,7 @@ const TEMPLATE = `
         aria-label="{{ 'geo.aria.overviewtoggle' | translate }}"
         class="md-icon-button rv-button-24 rv-overview-toggle"
         tabindex="-2"
+        type="button"
         ng-click="self.toggleOverview()">
         <md-icon md-svg-src="community:apple-keyboard-control"></md-icon>
     </md-button>

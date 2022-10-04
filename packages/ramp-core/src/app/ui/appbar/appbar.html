@@ -10,6 +10,7 @@
         aria-label="{{ 'appbar.aria.menu' | translate }}"
         class="md-icon-button black"
         rv-help="sidenav-button"
+        type="button"
         ng-click="self.sideNavigationService.open()"
     >
         <md-tooltip>{{'appbar.tooltip.menu' | translate}}</md-tooltip>
@@ -27,6 +28,7 @@
         aria-label="{{ 'appbar.aria.geosearch' | translate }}"
         class="md-icon-button primary rv-app-geosearch"
         ng-click="self.toggleGeosearch()"
+        type="button"
         ng-if="self.config.map.components.geoSearch.enabled && !self.geosearchService.externalApiError && self.config.ui.appBar.geoSearch"
     >
         <md-tooltip>{{ 'appbar.tooltip.geosearch' | translate }}</md-tooltip>
@@ -48,6 +50,7 @@
         ng-if="self.config.ui.appBar.basemap"
         aria-label="{{ 'nav.tooltip.basemap' | translate }}"
         class="md-icon-button primary"
+        type="button"
         ng-click="self.openBasemapSelector(false)"
         ng-show="self.panelRegistry.legend.isOpen"
     >
@@ -61,6 +64,7 @@
         aria-label="{{ 'appbar.aria.pointInfo' | translate }}"
         class="md-icon-button primary"
         rv-help="details-button"
+        type="button"
         ng-class="{ selected: self.panelRegistry.details.isOpen }"
         ng-click="self.toggleDetails()"
         ng-show="self.stateManager.display.details.requestId"
@@ -74,6 +78,7 @@
         aria-label="{{ 'appbar.aria.layers' | translate }}"
         class="md-icon-button primary"
         rv-help="toc-button"
+        type="button"
         ng-class="{ selected: self.panelRegistry.legend.isOpen }"
         ng-click="self.toggleToc()"
     >
