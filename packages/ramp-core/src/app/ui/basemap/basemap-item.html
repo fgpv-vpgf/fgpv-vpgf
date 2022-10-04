@@ -35,6 +35,7 @@
     <md-button
         aria-label="{{ 'basemap.' + (self.isDescriptionVisible ? 'hide' : 'show') + 'description' | translate }}"
         class="md-icon-button rv-button-32 rv-icon-20"
+        type="button"
         ng-class="{ selected: self.isDescriptionVisible }"
         ng-click="self.toggleDescription()"
     >
@@ -54,5 +55,6 @@
     aria-describedby="{{ ::$root.uid($id) }}-basemap-desc"
     class="rv-body-button rv-button-square"
     ng-click="self.select()"
+    type="button"
 >
 </md-button>

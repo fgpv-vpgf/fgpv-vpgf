@@ -7,6 +7,7 @@
         class="rv-button-square"
         ng-click="self.uiControl.action()"
         ng-disabled="self.uiControl.isDisabled || self.uiControl.value"
+        type="button"
     >
         <md-tooltip ng-if="self.uiControl.tooltip" md-direction="top"
             >{{ self.uiControl.tooltip | translate }}</md-tooltip

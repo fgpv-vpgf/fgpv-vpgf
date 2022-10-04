@@ -20,6 +20,7 @@ export const CLEAR_FILTERS_TEMPLATE = `
         ng-controller="ClearFiltersCtrl as ctrl"
         aria-label="{{ 'plugins.enhancedTable.table.filter.clear' | translate }}"
         class="md-icon-button black"
+        type="button"
         rv-help="table-clear-button"
         ng-click="ctrl.clearFilters()"
         ng-disabled="ctrl.noActiveFilters()">
@@ -35,6 +36,7 @@ export const APPLY_TO_MAP_TEMPLATE = `
         ng-controller="ApplyToMapCtrl as ctrl"
         aria-label="{{ 'plugins.enhancedTable.table.filter.apply' | translate }}"
         class="md-icon-button black"
+        type="button"
         ng-click="ctrl.applyToMap()"
         ng-disabled="!ctrl.filtersChanged()">
         <md-tooltip>{{ 'plugins.enhancedTable.table.filter.apply' | translate }}</md-tooltip>
@@ -49,6 +51,7 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
         <md-button
             aria-label="{{ 'plugins.enhancedTable.table.toggleColumns' | translate }}"
             class="md-icon-button black"
+            type="button"
             ng-click="$mdOpenMenu($event)">
             <md-tooltip>{{ 'plugins.enhancedTable.table.toggleColumns' | translate }}</md-tooltip>
             <md-icon md-svg-src="community:format-list-checks"></md-icon>
@@ -58,13 +61,14 @@ export const COLUMN_VISIBILITY_MENU_TEMPLATE = `
                 <md-button
                     ng-click="ctrl.toggleAllColumns()"
                     aria-label="{{ 'plugins.enhancedTable.table.toggleAllColumns' | translate }}"
+                    type="button"
                     md-prevent-menu-close="md-prevent-menu-close">
                     <span style='flex-basis: auto; overflow-wrap:normal;'>{{ 'plugins.enhancedTable.table.toggleAllColumns' | translate }}</span>
                     <md-icon md-svg-icon="action:done" ng-if="!ctrl.allColumnsVisible()"></md-icon>
                 </md-button>
             </md-menu-item>
             <md-menu-item ng-repeat="col in ctrl.columnVisibilities">
-                <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }}" md-prevent-menu-close="md-prevent-menu-close">
+                <md-button ng-click="ctrl.toggleColumn(col)" aria-label="{{ col.title }}" type="button" md-prevent-menu-close="md-prevent-menu-close">
                     <span style='flex-basis: auto; overflow-wrap:normal;'>{{col.title}}</span>
                     <md-icon md-svg-icon="action:done" ng-if="col.visibility"></md-icon>
                 </md-button>
@@ -80,6 +84,7 @@ export const MENU_TEMPLATE = `
         <md-button
             aria-label="{{ 'plugins.enhancedTable.menu.options' | translate }}"
             class="md-icon-button black"
+            type="button"
             ng-click="$mdOpenMenu($event)">
             <md-icon md-svg-src="navigation:more_vert"></md-icon>
             <md-tooltip>{{ 'plugins.enhancedTable.menu.options' | translate }}</md-tooltip>
@@ -112,13 +117,13 @@ export const MENU_TEMPLATE = `
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
             <md-menu-item ng-if='ctrl.printEnabled' aria-label="{{ 'plugins.enhancedTable.menu.print' | translate }}">
-                <md-button ng-click="ctrl.print()">
+                <md-button ng-click="ctrl.print()" type="button">
                     <md-icon md-svg-icon="action:print"></md-icon>
                     {{ 'plugins.enhancedTable.menu.print' | translate }}
                 </md-button>
             </md-menu-item>
             <md-menu-item aria-label="{{ 'plugins.enhancedTable.menu.export' | translate }}">
-                <md-button ng-click="ctrl.export()">
+                <md-button ng-click="ctrl.export()" type="button">
                     <md-icon md-svg-icon="editor:insert_drive_file"></md-icon>
                     {{ 'plugins.enhancedTable.menu.export' | translate }}
                 </md-button>
@@ -132,6 +137,7 @@ export const MOBILE_MENU_BTN_TEMPLATE = `
     <md-button
         ng-controller="MobileMenuCtrl as ctrl"
         class="md-icon-button black"
+        type="button"
         ng-click="ctrl.toggleMenu()">
         <md-icon md-svg-src="navigation:more_vert"></md-icon>
     </md-button>
@@ -155,14 +161,14 @@ export const RECORD_COUNT_TEMPLATE = `
 </p>`;
 
 export const DETAILS_TEMPLATE = (oid) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-details' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.details' | translate }}">
+    `<button type="button" ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.openDetails(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-details' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.details' | translate }}">
         <md-icon md-svg-src="action:description" aria-hidden='false' class='ng-scope' role='img'>
             <md-tooltip  md-direction="top">{{ 'plugins.enhancedTable.detailsAndZoom.details' | translate }}</md-tooltip>
         </md-icon>
     </button>`;
 
 export const ZOOM_TEMPLATE = (oid) =>
-    `<button ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-zoom' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.zoom' | translate }}">
+    `<button type="button" ng-controller='DetailsAndZoomCtrl as ctrl' ng-click='ctrl.zoomToFeature(${oid})' md-ink-ripple class='md-icon-button rv-icon-16 md-button ng-scope enhanced-table-zoom' aria-label="{{ 'plugins.enhancedTable.detailsAndZoom.zoom' | translate }}">
         <md-icon md-svg-src="action:zoom_in" aria-hidden='false'>
             <md-tooltip  md-direction="top">{{ 'plugins.enhancedTable.detailsAndZoom.zoom' | translate }}</md-tooltip>
         </md-icon>
@@ -203,17 +209,17 @@ export const TEXT_FILTER_TEMPLATE = (value, isStatic) => {
 
 export const CUSTOM_HEADER_TEMPLATE = (displayName: string) => `
 <div class="column-header">
-    <md-button class="custom-header-label">
+    <md-button type="button" class="custom-header-label">
         <span ref="eText" role="columnheader">${displayName}</span>
     </md-button>
     <md-icon ng-if="sortAsc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_upward" aria-label="{{ 'plugins.enhancedTable.columnHeader.sortAsc' | translate }}"></md-icon>
     <md-icon ng-if="sortDesc" class="rv-sort-arrow" md-svg-icon="navigation:arrow_downward" aria-label="{{ 'plugins.enhancedTable.columnHeader.sortDsc' | translate }}"></md-icon>
     <div class="arrows"></div>
     <div class="reorder-icons">
-        <md-button class="reorder-button md-icon-button move-left" ng-disabled="min" aria-label="{{ 'plugins.enhancedTable.columnHeader.reorderLeft' | translate }}">
+        <md-button type="button" class="reorder-button md-icon-button move-left" ng-disabled="min" aria-label="{{ 'plugins.enhancedTable.columnHeader.reorderLeft' | translate }}">
             <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_left"></md-icon>
         </md-button>
-        <md-button class="reorder-button md-icon-button move-right" ng-disabled="max" aria-label="{{ 'plugins.enhancedTable.columnHeader.reorderRight' | translate }}">
+        <md-button type="button" class="reorder-button md-icon-button move-right" ng-disabled="max" aria-label="{{ 'plugins.enhancedTable.columnHeader.reorderRight' | translate }}">
             <md-icon ng-style="{ 'font-size': '16px', height: '16px' }" md-svg-icon="hardware:keyboard_arrow_right"></md-icon>
         </md-button>
     </div>
@@ -289,8 +295,8 @@ export const PRINT_TABLE = (title, cols, rws) => {
 
 export const TABLE_UPDATE_TEMPLATE = `<md-toast class="table-toast">
         <span class="md-toast-text flex">{{ 'filter.default.label.outOfDate' | translate }}</span>
-        <md-button class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
-        <md-button ng-click="closeToast()">{{ 'filter.default.action.hide' | translate }}</md-button>
+        <md-button type="button" class="md-highlight" ng-click="reloadTable()">{{ 'filter.default.action.outOfDate' | translate }}</md-button>
+        <md-button type="button" ng-click="closeToast()">{{ 'filter.default.action.hide' | translate }}</md-button>
     </md-toast>`;
 
 export const TABLE_LOADING_TEMPLATE = (legendEntry) =>

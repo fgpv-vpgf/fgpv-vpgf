@@ -12,6 +12,7 @@
         class="rv-clear-search md-icon-button black rv-button-24 rv-icon-16"
         ng-click="self.searchTerm = ''; self.onSearchTermChange('')"
         ng-if="self.searchTerm"
+        type="button"
     >
         <md-tooltip>{{ 'helpui.clearsearch' | translate }}</md-tooltip>
         <md-icon md-svg-src="navigation:close"></md-icon>
