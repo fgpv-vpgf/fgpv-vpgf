@@ -320,9 +320,9 @@ function sideNavigationService(
      * @function open
      */
     function open() {
-        $mdSidenav('left')
+        $mdSidenav(`left-${appInfo.id}`)
             .open()
-            .then(() => $('md-sidenav[md-component-id="left"] button').first().rvFocus());
+            .then(() => $rootElement.find(`md-sidenav[md-component-id="left-${appInfo.id}"] button`).first().rvFocus());
     }
 
     /**
@@ -330,7 +330,7 @@ function sideNavigationService(
      * @function close
      */
     function close() {
-        return $mdSidenav('left').close();
+        return $mdSidenav(`left-${appInfo.id}`).close();
     }
 
     /**

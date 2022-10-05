@@ -171,7 +171,7 @@ function apiBlock(
         setMapCursor,
         projectGeometry,
         toggleSideNav: (val) => {
-            $mdSidenav('left')[val]();
+            $mdSidenav(`left-${appInfo.id}`)[val]();
         },
         reInitialize: (bookmark) => reloadService.reloadConfig(bookmark),
         getConfig,

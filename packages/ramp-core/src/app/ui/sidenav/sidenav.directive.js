@@ -24,12 +24,14 @@ function rvSidenav() {
     return directive;
 }
 
-function Controller(sideNavigationService, version, configService) {
+function Controller(sideNavigationService, appInfo, version, configService) {
     'ngInject';
     const self = this;
 
     // expose sidemenu config to the template
     configService.onEveryConfigLoad((config) => (self.uiConfig = config.ui));
+
+    self.appID = appInfo.id;
 
     self.service = sideNavigationService;
 
