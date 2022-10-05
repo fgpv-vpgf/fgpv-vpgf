@@ -30,6 +30,7 @@
             ng-if="self.isNameTruncated"
             class="md-info-button rv-icon-12 rv-layer-item-flag"
             role="presentation"
+            type="button"
         >
             <md-tooltip md-delay="self.getTooltipDelay()" md-direction="{{ self.getTooltipDirection() }}"
                 >{{ 'toc.layer.name' | translate }}: {{ self.block.name }}</md-tooltip
@@ -62,6 +63,7 @@
             aria-label="{{ 'toc.entry.aria.openData' | translate }}"
             class="md-icon-button rv-button-40 rv-icon-20"
             ng-click="$mdOpenMenu($event)"
+            type="button"
         >
             <md-icon md-svg-src="navigation:more_horiz"></md-icon>
             <md-tooltip md-direction="top">{{ 'toc.layer.tooltip.options' | translate }}</md-tooltip>

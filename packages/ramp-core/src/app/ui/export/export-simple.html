@@ -43,7 +43,7 @@
 
             <span flex></span>
 
-            <md-button class="rv-button-square" ng-click="self.close()" rv-close-button>
+            <md-button class="rv-button-square" ng-click="self.close()" type="button" rv-close-button>
                 {{ 'export.close' | translate }}
             </md-button>
 
@@ -55,6 +55,7 @@
                     class="rv-button-square md-raised md-primary"
                     ng-click="self.saveImage()"
                     ng-disabled="self.isDownloadBlocked()"
+                    type="button"
                 >
                     {{ 'export.download' | translate }}
                 </md-button>

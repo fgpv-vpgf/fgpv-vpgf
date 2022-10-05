@@ -2,6 +2,7 @@
     ng-if="self.control.type === 'link'"
     ng-click="self.control.action(self.control, $event)"
     class="rv-button-square"
+    type="button"
     aria-label="{{ self.control.label | translate }}"
 >
     <div layout="row">
@@ -13,6 +14,7 @@
 <md-button
     ng-if="self.control.type === 'fullscreen'"
     class="rv-button-square"
+    type="button"
     aria-label="{{ self.control.label | translate }}"
     ngsf-toggle-fullscreen
 >

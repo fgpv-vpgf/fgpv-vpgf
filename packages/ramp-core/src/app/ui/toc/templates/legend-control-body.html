@@ -3,6 +3,7 @@
     class="rv-body-button rv-button-square"
     ng-disabled="self.uiControl.isDisabled"
     ng-click="self.uiControl.action(); self.notifyApiClick(self.block)"
+    type="button"
 >
     <md-tooltip md-direction="top"
         >{{ !!self.uiControl.tooltip ? self.uiControl.tooltip : self.uiControl.label | translate }}</md-tooltip
