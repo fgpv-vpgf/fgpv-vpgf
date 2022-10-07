@@ -113,6 +113,7 @@ function fullScreenService($rootElement, configService, $interval, events, $time
         body.attr('style', '');
         $rootElement.attr('style', '');
         shellNode.attr('style', '');
+        angular.element('body').removeClass('rv-full-screen');
 
         if (screenfull.isFullscreen) {
             screenfull.toggle(body[0]);
