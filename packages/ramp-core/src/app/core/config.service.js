@@ -1,5 +1,6 @@
 import schemaUpgrade from './schema-upgrade.service.js';
 import geoapi from 'ramp-geoapi';
+import { data } from 'jquery';
 /**
  * @module configService
  * @memberof app.core
@@ -137,7 +138,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             if (this._rcsKeys.length === 0) {
                 return this.config;
             }
-
+            /*
             if (typeof this.rcsEndpoint === 'undefined') {
                 throw new Error(
                     'RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property'
@@ -145,6 +146,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             }
 
             const endpoint = this.rcsEndpoint.endsWith('/') ? this.rcsEndpoint : this.rcsEndpoint + '/';
+            */
             const results = {};
             let rcsLang = this.language.split('-')[0];
 
@@ -155,7 +157,51 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 rcsLang = 'en';
             }
 
-            return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(
+            const dataStuff = [
+                {
+                    layers: [
+                        {
+                            isTimeAware: false,
+                            layerType: 'esriDynamic',
+                            service_url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer',
+                            name: 'Echo Geo',
+                            id: 'rcs.f4c51eaa-a6ca-48b9-a1fc-b0651da20509.en',
+                            url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 5,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    layers: [
+                        {
+                            isTimeAware: false,
+                            layerType: 'esriDynamic',
+                            service_url:
+                                'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/stations_en/MapServer',
+                            name: 'Monitoring Stations',
+                            id: 'rcs.d256b422-2834-40a2-9f0c-bd5fc32781b2.en',
+                            url: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/stations_en/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 0,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+
+            const fancyPromise = new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ data: dataStuff });
+                }, 500);
+            });
+
+            return fancyPromise.then(
                 (resp) => {
                     const result = [];
 
