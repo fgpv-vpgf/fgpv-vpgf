@@ -38,10 +38,10 @@ export class XY {
     /**
      * Returns the value of this XY in a different projection
      *
-     * @param targetProjection - Projection of the result. Accepts WKID or EPSG codes as integers, or WTK as string.
+     * @param targetProjection - Projection of the result. Accepts WKID or EPSG codes as integers, a WTK as string, or object structured like an ESRI spatial reference object.
      * @returns a point object
      */
-    projectToPoint(targetProjection: number | string) {
+    projectToPoint(targetProjection: number | string | object) {
         const proj = (<any>window).RAMP.GAPI.proj;
 
         let projPoint = proj.localProjectPoint(4326, targetProjection, [this.x, this.y]);

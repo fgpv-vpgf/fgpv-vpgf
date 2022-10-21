@@ -168,7 +168,15 @@ export class Map {
     }
 
     get center(): geo.XY {
-        return this.bounds.center;
+        //  wrong! .bounds is extent projected to latlong, so will be warped (unless map is in LL projection)
+        //  resulting in a distorted center point
+        //
+        //  return this.bounds.center;
+
+        const mapCenter = this.getExtent().getCenter(); // esri point object
+        const dummy = new geo.XY(1, 1); // nothingburger instance so we can use the projection method
+        const llPoint = dummy.projectFromPoint(mapCenter.spatialReference, mapCenter.x, mapCenter.y); // esri point object
+        return new geo.XY(llPoint.x, llPoint.y);
     }
 
     /** The main JQuery map element on the host page.  */
