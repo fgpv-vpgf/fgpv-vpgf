@@ -761,6 +761,7 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
             this._disabledControls = defaultedSource.disabledControls;
             this._userDisabledControls = defaultedSource.userDisabledControls;
 
+            this._initialFilteredQuery = defaultedSource.initialFilteredQuery;
             this._toggleSymbology = typeof source.toggleSymbology === 'boolean' ? source.toggleSymbology : true;
 
             this._details = source.details;

@@ -1153,6 +1153,11 @@
                         "$ref": "#/definitions/fieldMetadataEntry"
                     },
                     "description": "Specifies options for the fields of a layer."
+                },
+                "initialFilteredQuery": {
+                    "type": "string",
+                    "default": "",
+                    "description": "A where clause filter to be initially applied to the layer"
                 }
             },
             "required": ["id", "layerType", "url"],
