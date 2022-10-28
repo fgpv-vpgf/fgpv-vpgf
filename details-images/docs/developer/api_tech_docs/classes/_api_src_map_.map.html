@@ -1,0 +1,1320 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Map | ramp-core - v3.3.6</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">ramp-core - v3.3.6</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_api_src_map_.html">&quot;api/src/map&quot;</a>
+				</li>
+				<li>
+					<a href="_api_src_map_.map.html">Map</a>
+				</li>
+			</ul>
+			<h1>Class Map</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Provides controls for modifying the map, watching for changes, and to access map layers and UI properties.</p>
+					</div>
+					<dl class="tsd-comment-tags">
+						<dt>example</dt>
+						<dd>
+							<a href="#acting-on-a-double-click-event" id="acting-on-a-double-click-event" style="color: inherit; text-decoration: none;">
+								<h4>Acting on a double click event</h4>
+							</a>
+							<pre><code class="language-js">mapInstance.doubleClick.subscribe(<span class="hljs-function"><span class="hljs-params">mouseEvent</span> =&gt;</span> {
+ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Double click at pixel location (<span class="hljs-subst">${mouseEvent.pageX}</span>, <span class="hljs-subst">${mouseEvent.pageY}</span>)`</span>);
+});</code></pre>
+						</dd>
+					</dl>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Map</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_api_src_map_.map.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Events</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#boundschanged" class="tsd-kind-icon">bounds<wbr>Changed</a></li>
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#centerchanged" class="tsd-kind-icon">center<wbr>Changed</a></li>
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#click" class="tsd-kind-icon">click</a></li>
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#doubleclick" class="tsd-kind-icon">double<wbr>Click</a></li>
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#mousedown" class="tsd-kind-icon">mouse<wbr>Down</a></li>
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#mousemove" class="tsd-kind-icon">mouse<wbr>Move</a></li>
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#mouseup" class="tsd-kind-icon">mouse<wbr>Up</a></li>
+								<li class="tsd-kind-event tsd-parent-kind-class"><a href="_api_src_map_.map.html#zoomchanged" class="tsd-kind-icon">zoom<wbr>Changed</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#_compile" class="tsd-kind-icon">$compile</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#panel" class="tsd-kind-icon">Panel</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#boundschangedobj" class="tsd-kind-icon">bounds<wbr>Changed<wbr>Obj</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#boundsobj" class="tsd-kind-icon">bounds<wbr>Obj</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#extentchanged" class="tsd-kind-icon">extent<wbr>Changed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#fgpmapobj" class="tsd-kind-icon">fgp<wbr>Map<wbr>Obj</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#filterchanged" class="tsd-kind-icon">filter<wbr>Changed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#identifier" class="tsd-kind-icon">identifier</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#layersobj" class="tsd-kind-icon">layers<wbr>Obj</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#mapdiv" class="tsd-kind-icon">map<wbr>Div</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#panelregistryobj" class="tsd-kind-icon">panel<wbr>Registry<wbr>Obj</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#simplelayerobj" class="tsd-kind-icon">simple<wbr>Layer<wbr>Obj</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_src_map_.map.html#uiobj" class="tsd-kind-icon">ui<wbr>Obj</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#bounds" class="tsd-kind-icon">bounds</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#center" class="tsd-kind-icon">center</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#div" class="tsd-kind-icon">div</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#esrimap" class="tsd-kind-icon">esri<wbr>Map</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#exportgenerators" class="tsd-kind-icon">export<wbr>Generators</a></li>
+								<li class="tsd-kind-set-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#fgpmap" class="tsd-kind-icon">fgp<wbr>Map</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#innershell" class="tsd-kind-icon">inner<wbr>Shell</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#layers" class="tsd-kind-icon">layers</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#mapi" class="tsd-kind-icon">mapI</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#panels" class="tsd-kind-icon">panels</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#simplelayer" class="tsd-kind-icon">simple<wbr>Layer</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_api_src_map_.map.html#ui" class="tsd-kind-icon">ui</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="_api_src_map_.map.html#zoom" class="tsd-kind-icon">zoom</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#export" class="tsd-kind-icon">export</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#fullscreen" class="tsd-kind-icon">fullscreen</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#getextent" class="tsd-kind-icon">get<wbr>Extent</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#help" class="tsd-kind-icon">help</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#identify" class="tsd-kind-icon">identify</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#setbounds" class="tsd-kind-icon">set<wbr>Bounds</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#setcenter" class="tsd-kind-icon">set<wbr>Center</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_api_src_map_.map.html#setextent" class="tsd-kind-icon">set<wbr>Extent</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Map<span class="tsd-signature-symbol">(</span>mapDiv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ViewerConfigSchema</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_map_.map.html" class="tsd-signature-type">Map</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L25">api/src/map.ts:25</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates a new map inside of the given HTML container, which is typically a DIV element.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>mapDiv: <span class="tsd-signature-type">HTMLElement</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">ViewerConfigSchema</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_map_.map.html" class="tsd-signature-type">Map</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Events</h2>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="boundschanged" class="tsd-anchor"></a>
+					<h3>bounds<wbr>Changed</h3>
+					<ul class="tsd-signatures tsd-kind-event tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> boundsChanged<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> boundsChanged<span class="tsd-signature-symbol">(</span>observable<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L246">api/src/map.ts:246</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Emits whenever the viewable map boundaries change, usually caused by panning, zooming, or a change to the viewport size/fullscreen.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L98">api/src/map.ts:98</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Emits whenever the viewable map boundaries change, usually caused by panning, zooming, or a change to the viewport size/fullscreen.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>observable: <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="centerchanged" class="tsd-anchor"></a>
+					<h3>center<wbr>Changed</h3>
+					<div class="tsd-signature tsd-kind-icon">center<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L240">api/src/map.ts:240</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Emits whenever the map center has changed.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="click" class="tsd-anchor"></a>
+					<h3>click</h3>
+					<div class="tsd-signature tsd-kind-icon">click<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_events_.mapclickevent.html" class="tsd-signature-type">MapClickEvent</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L194">api/src/map.ts:194</a></li>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L300">api/src/map.ts:300</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Emits when a user clicks anywhere on the map or when an identify operation is performed. This includes identify requests made via the API method <code>identify</code>.</p>
+						</div>
+						<p>It <strong>does not</strong> emit for clicks on overlaying panels or map controls.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="doubleclick" class="tsd-anchor"></a>
+					<h3>double<wbr>Click</h3>
+					<div class="tsd-signature tsd-kind-icon">double<wbr>Click<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L202">api/src/map.ts:202</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Emits when a user double clicks anywhere on the map.</p>
+						</div>
+						<p>It <strong>does not</strong> emit for double clicks on overlaying panels or map controls.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="mousedown" class="tsd-anchor"></a>
+					<h3>mouse<wbr>Down</h3>
+					<div class="tsd-signature tsd-kind-icon">mouse<wbr>Down<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L220">api/src/map.ts:220</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Emits whenever a user left clicks down.</p>
+						</div>
+						<p>It <strong>does not</strong> emit for down left clicks on overlaying panels or map controls.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="mousemove" class="tsd-anchor"></a>
+					<h3>mouse<wbr>Move</h3>
+					<div class="tsd-signature tsd-kind-icon">mouse<wbr>Move<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L212">api/src/map.ts:212</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Emits whenever a users mouse moves over the map.</p>
+						</div>
+						<p>It <strong>does not</strong> emit for mouse movements over overlaying panels or map controls.</p>
+						<p>This observable emits a considerable amount of data, be mindful of performance implications.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="mouseup" class="tsd-anchor"></a>
+					<h3>mouse<wbr>Up</h3>
+					<div class="tsd-signature tsd-kind-icon">mouse<wbr>Up<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_events_.mouseevent.html" class="tsd-signature-type">MouseEvent</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L228">api/src/map.ts:228</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Emits whenever a user lifts a previous down left click.</p>
+						</div>
+						<p>It <strong>does not</strong> emit for mouse lifts over overlaying panels or map controls.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-event tsd-parent-kind-class">
+					<a name="zoomchanged" class="tsd-anchor"></a>
+					<h3>zoom<wbr>Changed</h3>
+					<div class="tsd-signature tsd-kind-icon">zoom<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L234">api/src/map.ts:234</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Emits whenever the map zoom level changes.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_compile" class="tsd-anchor"></a>
+					<h3>$compile</h3>
+					<div class="tsd-signature tsd-kind-icon">$compile<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L307">api/src/map.ts:307</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="panel" class="tsd-anchor"></a>
+					<h3>Panel</h3>
+					<div class="tsd-signature tsd-kind-icon">Panel<span class="tsd-signature-symbol">:</span> <a href="_api_src_panel_index_.panel.html" class="tsd-signature-type">Panel</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L309">api/src/map.ts:309</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="boundschangedobj" class="tsd-anchor"></a>
+					<h3>bounds<wbr>Changed<wbr>Obj</h3>
+					<div class="tsd-signature tsd-kind-icon">bounds<wbr>Changed<wbr>Obj<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L299">api/src/map.ts:299</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="boundsobj" class="tsd-anchor"></a>
+					<h3>bounds<wbr>Obj</h3>
+					<div class="tsd-signature tsd-kind-icon">bounds<wbr>Obj<span class="tsd-signature-symbol">:</span> <a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L298">api/src/map.ts:298</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="extentchanged" class="tsd-anchor"></a>
+					<h3>extent<wbr>Changed</h3>
+					<div class="tsd-signature tsd-kind-icon">extent<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L301">api/src/map.ts:301</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="fgpmapobj" class="tsd-anchor"></a>
+					<h3>fgp<wbr>Map<wbr>Obj</h3>
+					<div class="tsd-signature tsd-kind-icon">fgp<wbr>Map<wbr>Obj<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L297">api/src/map.ts:297</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="filterchanged" class="tsd-anchor"></a>
+					<h3>filter<wbr>Changed</h3>
+					<div class="tsd-signature tsd-kind-icon">filter<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L302">api/src/map.ts:302</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="identifier" class="tsd-anchor"></a>
+					<h3>identifier</h3>
+					<div class="tsd-signature tsd-kind-icon">identifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L296">api/src/map.ts:296</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="layersobj" class="tsd-anchor"></a>
+					<h3>layers<wbr>Obj</h3>
+					<div class="tsd-signature tsd-kind-icon">layers<wbr>Obj<span class="tsd-signature-symbol">:</span> <a href="_api_src_layers_.layergroup.html" class="tsd-signature-type">LayerGroup</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L305">api/src/map.ts:305</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="mapdiv" class="tsd-anchor"></a>
+					<h3>map<wbr>Div</h3>
+					<div class="tsd-signature tsd-kind-icon">map<wbr>Div<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">JQuery</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L183">api/src/map.ts:183</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The main JQuery map element on the host page.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="panelregistryobj" class="tsd-anchor"></a>
+					<h3>panel<wbr>Registry<wbr>Obj</h3>
+					<div class="tsd-signature tsd-kind-icon">panel<wbr>Registry<wbr>Obj<span class="tsd-signature-symbol">:</span> <a href="_api_src_panel_registry_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L304">api/src/map.ts:304</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="simplelayerobj" class="tsd-anchor"></a>
+					<h3>simple<wbr>Layer<wbr>Obj</h3>
+					<div class="tsd-signature tsd-kind-icon">simple<wbr>Layer<wbr>Obj<span class="tsd-signature-symbol">:</span> <a href="_api_src_layers_.simplelayer.html" class="tsd-signature-type">SimpleLayer</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L306">api/src/map.ts:306</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="uiobj" class="tsd-anchor"></a>
+					<h3>ui<wbr>Obj</h3>
+					<div class="tsd-signature tsd-kind-icon">ui<wbr>Obj<span class="tsd-signature-symbol">:</span> <a href="_api_src_ui_.ui.html" class="tsd-signature-type">UI</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L303">api/src/map.ts:303</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="bounds" class="tsd-anchor"></a>
+					<h3>bounds</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> bounds<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L161">api/src/map.ts:161</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the boundary of the map, similar to extent.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="center" class="tsd-anchor"></a>
+					<h3>center</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> center<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L170">api/src/map.ts:170</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="div" class="tsd-anchor"></a>
+					<h3>div</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> div<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">JQuery</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L274">api/src/map.ts:274</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the jQuery element of the main viewer.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">JQuery</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="esrimap" class="tsd-anchor"></a>
+					<h3>esri<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> esriMap<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L289">api/src/map.ts:289</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="exportgenerators" class="tsd-anchor"></a>
+					<h3>export<wbr>Generators</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> exportGenerators<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L151">api/src/map.ts:151</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Expose export generators to allow export plugins to call them.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Object</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-set-signature tsd-parent-kind-class">
+					<a name="fgpmap" class="tsd-anchor"></a>
+					<h3>fgp<wbr>Map</h3>
+					<ul class="tsd-signatures tsd-kind-set-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> fgpMap<span class="tsd-signature-symbol">(</span>fgpMap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L67">api/src/map.ts:67</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Once set, we know the map instance is ready.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>fgpMap: <span class="tsd-signature-type">Object</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="id" class="tsd-anchor"></a>
+					<h3>id</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L166">api/src/map.ts:166</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the id assigned to the viewer.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="innershell" class="tsd-anchor"></a>
+					<h3>inner<wbr>Shell</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> innerShell<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L60">api/src/map.ts:60</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the inner shell (rv-inner-shell) of this Map instance (this is where Panels reside on the Map)</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span></h4>
+							<ul>
+								<li>rv-inner-shell div.</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="layers" class="tsd-anchor"></a>
+					<h3>layers</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> layers<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_layers_.layergroup.html" class="tsd-signature-type">LayerGroup</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L52">api/src/map.ts:52</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_layers_.layergroup.html" class="tsd-signature-type">LayerGroup</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="mapi" class="tsd-anchor"></a>
+					<h3>mapI</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> mapI<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L251">api/src/map.ts:251</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the viewer map instance as an <code>any</code> type for convenience.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="panels" class="tsd-anchor"></a>
+					<h3>panels</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> panels<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_panel_registry_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L282">api/src/map.ts:282</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_panel_registry_.panelregistry.html" class="tsd-signature-type">PanelRegistry</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="simplelayer" class="tsd-anchor"></a>
+					<h3>simple<wbr>Layer</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> simpleLayer<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_layers_.simplelayer.html" class="tsd-signature-type">SimpleLayer</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L73">api/src/map.ts:73</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_layers_.simplelayer.html" class="tsd-signature-type">SimpleLayer</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="ui" class="tsd-anchor"></a>
+					<h3>ui</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> ui<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_src_ui_.ui.html" class="tsd-signature-type">UI</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L278">api/src/map.ts:278</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_api_src_ui_.ui.html" class="tsd-signature-type">UI</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="zoom" class="tsd-anchor"></a>
+					<h3>zoom</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> zoom<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> zoom<span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L264">api/src/map.ts:264</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the current zoom level applied on the map</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L269">api/src/map.ts:269</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Zooms to the level provided.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>to: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="export" class="tsd-anchor"></a>
+					<h3>export</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">export<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L146">api/src/map.ts:146</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Triggers the map export screen.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="fullscreen" class="tsd-anchor"></a>
+					<h3>fullscreen</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">fullscreen<span class="tsd-signature-symbol">(</span>enabled<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L141">api/src/map.ts:141</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Puts the map into full screen mode when enabled is true, otherwise it cancels fullscreen mode.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>enabled: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getextent" class="tsd-anchor"></a>
+					<h3>get<wbr>Extent</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Extent<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L125">api/src/map.ts:125</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the map extent in the native projection (using ESRI JSON format).
+									Note: the extent will not be modified.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="help" class="tsd-anchor"></a>
+					<h3>help</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">help<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L156">api/src/map.ts:156</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Triggers the map help screen.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="identify" class="tsd-anchor"></a>
+					<h3>identify</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">identify<span class="tsd-signature-symbol">(</span>xy<span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L117">api/src/map.ts:117</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Performs an identify operation similar to clicking on the map at the provided xy coordinates.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd><pre><code class="language-js"><span class="hljs-comment">// perform an identify on Toronto, ON</span>
+RAMP.mapInstances[<span class="hljs-number">0</span>].identify([<span class="hljs-number">-79.347015</span>, <span class="hljs-number">42.651070</span>]);</code></pre>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>xy: <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setbounds" class="tsd-anchor"></a>
+					<h3>set<wbr>Bounds</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Bounds<span class="tsd-signature-symbol">(</span>bounds<span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-signature-type">Extent</a>, propagate<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L82">api/src/map.ts:82</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Changes the map boundaries based on the given extent. Any projection supported by Proj4 can be provided.</p>
+								</div>
+								<p>The <code>bounds</code> property cannot be defined with a setter since their types mismatch (Extent vs. XYBounds - a TS issue)</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>bounds: <a href="_api_src_geometry_.xybounds.html" class="tsd-signature-type">XYBounds</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-signature-type">Extent</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> propagate: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setcenter" class="tsd-anchor"></a>
+					<h3>set<wbr>Center</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Center<span class="tsd-signature-symbol">(</span>xy<span class="tsd-signature-symbol">: </span><a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L256">api/src/map.ts:256</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Pans the map to the center point provided.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>xy: <a href="_api_src_geometry_.xy.html" class="tsd-signature-type">XY</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_api_src_geometry_.xyliteral.html" class="tsd-signature-type">XYLiteral</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setextent" class="tsd-anchor"></a>
+					<h3>set<wbr>Extent</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Extent<span class="tsd-signature-symbol">(</span>extent<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-signature-type">Extent</a>, fit<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/spencerwahl/fgpv-vpgf/blob/32935ee/packages/ramp-core/api/src/map.ts#L136">api/src/map.ts:136</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sets the extent of the map. The extent must be in the same spatial reference as the map.
+									Note: the extent will not be modified.</p>
+								</div>
+								<p>The <code>extent</code> property must be provided using standard ESRI JSON format.
+								The <code>fit</code> property is optional (defaults to false). If true, for maps containing tile layers the input extent always shown completely on the map.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>extent: <a href="../interfaces/_api_src_geometry_.extent.html" class="tsd-signature-type">Extent</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> fit: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_events_.html">&quot;api/src/events&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_geometry_.html">&quot;api/src/geometry&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_layers_.html">&quot;api/src/layers&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_legend_.html">&quot;api/src/legend&quot;</a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_api_src_map_.html">&quot;api/src/map&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_panel_registry_.html">&quot;api/src/panel-<wbr>registry&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_panel_button_.html">&quot;api/src/panel/button&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_panel_button_close_.html">&quot;api/src/panel/button.close&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_panel_button_toggle_.html">&quot;api/src/panel/button.toggle&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_panel_element_.html">&quot;api/src/panel/element&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_panel_header_.html">&quot;api/src/panel/header&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_panel_index_.html">&quot;api/src/panel/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_api_src_ui_.html">&quot;api/src/ui&quot;</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_app_seed_.html">&quot;src/app/app-<wbr>seed&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="../modules/_src_app_startup_.html">&quot;src/app/startup&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_api_src_map_.map.html" class="tsd-kind-icon">Map</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#boundschanged" class="tsd-kind-icon">bounds<wbr>Changed</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#centerchanged" class="tsd-kind-icon">center<wbr>Changed</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#click" class="tsd-kind-icon">click</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#doubleclick" class="tsd-kind-icon">double<wbr>Click</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#mousedown" class="tsd-kind-icon">mouse<wbr>Down</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#mousemove" class="tsd-kind-icon">mouse<wbr>Move</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#mouseup" class="tsd-kind-icon">mouse<wbr>Up</a>
+							</li>
+							<li class=" tsd-kind-event tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#zoomchanged" class="tsd-kind-icon">zoom<wbr>Changed</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#_compile" class="tsd-kind-icon">$compile</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#panel" class="tsd-kind-icon">Panel</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#boundschangedobj" class="tsd-kind-icon">bounds<wbr>Changed<wbr>Obj</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#boundsobj" class="tsd-kind-icon">bounds<wbr>Obj</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#extentchanged" class="tsd-kind-icon">extent<wbr>Changed</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#fgpmapobj" class="tsd-kind-icon">fgp<wbr>Map<wbr>Obj</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#filterchanged" class="tsd-kind-icon">filter<wbr>Changed</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#identifier" class="tsd-kind-icon">identifier</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#layersobj" class="tsd-kind-icon">layers<wbr>Obj</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#mapdiv" class="tsd-kind-icon">map<wbr>Div</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#panelregistryobj" class="tsd-kind-icon">panel<wbr>Registry<wbr>Obj</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#simplelayerobj" class="tsd-kind-icon">simple<wbr>Layer<wbr>Obj</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#uiobj" class="tsd-kind-icon">ui<wbr>Obj</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#bounds" class="tsd-kind-icon">bounds</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#center" class="tsd-kind-icon">center</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#div" class="tsd-kind-icon">div</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#esrimap" class="tsd-kind-icon">esri<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#exportgenerators" class="tsd-kind-icon">export<wbr>Generators</a>
+							</li>
+							<li class=" tsd-kind-set-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#fgpmap" class="tsd-kind-icon">fgp<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#innershell" class="tsd-kind-icon">inner<wbr>Shell</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#layers" class="tsd-kind-icon">layers</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#mapi" class="tsd-kind-icon">mapI</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#panels" class="tsd-kind-icon">panels</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#simplelayer" class="tsd-kind-icon">simple<wbr>Layer</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#ui" class="tsd-kind-icon">ui</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#zoom" class="tsd-kind-icon">zoom</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#export" class="tsd-kind-icon">export</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#fullscreen" class="tsd-kind-icon">fullscreen</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#getextent" class="tsd-kind-icon">get<wbr>Extent</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#help" class="tsd-kind-icon">help</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#identify" class="tsd-kind-icon">identify</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#setbounds" class="tsd-kind-icon">set<wbr>Bounds</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#setcenter" class="tsd-kind-icon">set<wbr>Center</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_api_src_map_.map.html#setextent" class="tsd-kind-icon">set<wbr>Extent</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_map_.html#initobservables" class="tsd-kind-icon">init<wbr>Observables</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_api_src_map_.html#isconfigschema" class="tsd-kind-icon">is<wbr>Config<wbr>Schema</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
