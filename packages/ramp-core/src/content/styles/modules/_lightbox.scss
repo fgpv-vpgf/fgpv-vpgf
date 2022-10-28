@@ -10,8 +10,9 @@
         box-shadow: none;
 
         .rv-close {
-            left: 95%;
-            top: rem(0.5);
+            right: 7px;
+            position: absolute;
+            top: 2px;
             background-color: $divider-color-light;
         }
 
