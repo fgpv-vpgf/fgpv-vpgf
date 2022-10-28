@@ -135,7 +135,7 @@ function picture() {
          */
         function process(item) {
             // check if it is a picture
-            const isPicture = /(.*?)\.(jpe?g|png|gif|bmp)$/.test(item);
+            const isPicture = /(.*?)\.(jpe?g|png|gif|bmp)$/.test(item.trim());
             return isPicture ? `<a class="rv-picture-lightbox" href="${item}"><img src="${item}"></img></a>` : item;
         }
     }
