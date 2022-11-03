@@ -49,6 +49,7 @@ function autolink() {
     const defaultOptions = {
         className: 'rv-linkified',
         ignoreTags: ['script'],
+        target: '_blank',
         validate: {
             url: (value) => /^https?:\/\//.test(value), // before converting to a link, ensure that the domain name begins with http:// or https://.
         },
