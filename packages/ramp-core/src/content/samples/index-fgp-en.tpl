@@ -544,6 +544,12 @@
         const baseUrl = window.location.href.split('?')[0] + '?keys={RV_LAYER_LIST}';
         RAMP.mapAdded.subscribe(function (mapi) {
             backToCart.setCatalogueUrl('fgpmap', baseUrl);
+
+            // listener to layers being added.
+            console.log('adding layer added listener now');
+            mapi.layers.layerAdded.subscribe(mylayer => {
+                console.log('Saw Layer Added', mylayer);
+            })
         })
 
         function queryStringToJSON(q) {
@@ -567,6 +573,13 @@
             // console.log(bookmark);
             RV.getMap('fgpmap').initialBookmark(bookmark);
         }
+
+        // RCS fake test
+        setTimeout(()=>{
+            console.log('requesting rcs');
+            RV.getMap('fgpmap').loadRcsLayers(['fake1', 'fake2']);
+        }, 1000);
+
         // Toggle language
         function toggleLanguage(){
             RV.getMap('fgpmap').getBookmark().then(function (bookmark) {

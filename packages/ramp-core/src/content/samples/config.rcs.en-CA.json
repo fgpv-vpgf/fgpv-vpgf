@@ -21,6 +21,7 @@
     "version": "2.0",
     "language": "en",
     "services": {
+        "corsEverywhere": true,
         "proxyUrl": "https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy",
         "exportMapUrl": "https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
         "export": {
