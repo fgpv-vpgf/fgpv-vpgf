@@ -159,11 +159,13 @@ For more information on contributing read the [Contributing Guide](https://fgpv-
 
 The team can be reached at applicationsdecartographieweb-webmappingapplications@ec.gc.ca
 
-## Future Versions
+## Next Version
 
-[RAMP 4](https://github.com/ramp4-pcar4/ramp4-pcar4) is still in development but is shaping up nicely. We hope to have an initial release soon™. Notable changes include:
+[RAMP 4](https://github.com/ramp4-pcar4/ramp4-pcar4) has put out its initial release. Notable changes include:
 
 - Updating the UI framework from Angular 1 to Vue 3
 - Updating the ESRI Mapping API from v3 to v4
 - An application architecture and API that is more open and adjustable
 - UI re-design with mobile use in mind
+
+The [release notes](https://github.com/ramp4-pcar4/ramp4-pcar4/releases/tag/v4.0.0) cover the differences, breaking changes, and feature gaps between this version and RAMP 4.
