@@ -6,12 +6,12 @@ Les commandes de navigation suivantes se trouvent dans le coin inférieur droit 
 
 |Symbol|Nom|Touche clavier|Description|
 |----|----|----|----|
-|![](navigation/fullscreen.png)| Plein écran | | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option « Plein écran » n'est disponible que lorsque la carte est incorporée dans une autre page  |
-|![](navigation/zoomin.png)| Zoom avant | Plus (+) | Zoom avant d'un niveau sur la carte pour afficher un contenu plus détaillé |
-|![](navigation/zoomout.png)| Zoom arrière | Moins (-) | Zoom arrière d'un niveau sur la carte pour afficher un contenu moins détaillé |
-|![](navigation/geolocation.png)| Géolocalisation | | Zoom et se déplace à votre position géographique actuelle |
-|![](navigation/canada.png)| Étendue initiale | | Zoom et déplace la carte afin que l'étendue initiale soit visible |
-|![](navigation/help.png)| Aide | | Ouvre la fenêtre d'aide |
+|![Une icône représentant la fonction « Plein écran »](navigation/fullscreen.png)| Plein écran | | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option « Plein écran » n'est disponible que lorsque la carte est incorporée dans une autre page  |
+|![Une icône représentant la fonction « Zoom avant »](navigation/zoomin.png)| Zoom avant | Plus (+) | Zoom avant d'un niveau sur la carte pour afficher un contenu plus détaillé |
+|![Une icône représentant la fonction « Zoom arrière »](navigation/zoomout.png)| Zoom arrière | Moins (-) | Zoom arrière d'un niveau sur la carte pour afficher un contenu moins détaillé |
+|![Une icône représentant la fonction « Géolocalisation »](navigation/geolocation.png)| Géolocalisation | | Zoom et se déplace à votre position géographique actuelle |
+|![Une icône représentant la fonction « Étendue initiale de la carte »](navigation/canada.png)| Étendue initiale | | Zoom et déplace la carte afin que l'étendue initiale soit visible |
+|![Une icône représentant la fonction « Aide »](navigation/help.png)| Aide | | Ouvre la fenêtre d'aide |
 
 Vous pouvez également parcourir la carte en utilisant les touches fléchées gauche, droite, haut et bas ou en cliquant sur la carte et en la faisant glisser. L'utilisation de la molette de la souris zoomera la carte en avant ou en arrière.
 
@@ -32,7 +32,7 @@ Le sélecteur de « Cartes de base » modifie le fond de carte sous-jacent pour 
 
 __Pour ouvrir le sélecteur de cartes de base:__
 
-![](basemap/open_fr.png)
+![Un graphique représentant la zone de l’interface à sélectionner afin d’ouvrir la fonction de « Sélection de la carte de base »](basemap/open_fr.png)
 
 Ouvrez d'abord le panneau des couches en sélectionnant le bouton « Couches » (montré ci-dessus en rouge). Vous verrez alors le sélecteur de cartes de base apparaître à gauche du bouton couche (montré ci-dessus en bleu). Vous pouvez également ouvrir le sélecteur de cartes de base à partir du menu principal.
 
@@ -43,26 +43,26 @@ Vous aurez à choisir parmi une ou plusieurs cartes de base, groupées par type 
 
 La carte d'aperçu affiche une vue générale de la carte principale à une plus petite échelle. Elle se trouve dans le coin supérieur droit de la carte.
 
-Cliquez sur la carte d'aperçu et faites-la glisser pour modifier l'étendue de la carte principale. En cliquant sur l'icône de bascule (![](overview/toggle.png)) dans le coin supérieur droit de la carte d'aperçu, vous pouvez l'afficher ou la masquer.
+Cliquez sur la carte d'aperçu et faites-la glisser pour modifier l'étendue de la carte principale. En cliquant sur l'icône de bascule (![Une icône représentant la fonction « Basculer l’aperçu de la carte »](overview/toggle.png)) dans le coin supérieur droit de la carte d'aperçu, vous pouvez l'afficher ou la masquer.
 
 
 # Menu principal
 
-![](menu/menu.png) Accédez au menu en cliquant sur le bouton de menu en haut à gauche du visualiseur.
+![Une icône représentant les 3 barres horizontales du coin supérieur droit de la carte qui servent à ouvrir le menu de gauche](menu/menu.png) Accédez au menu en cliquant sur le bouton de menu en haut à gauche du visualiseur.
 
 Il existe une variété d'options et elles sont décrites ci-dessous. Notez que certaines options peuvent ne pas être disponibles ou être présélectionnées en fonction de divers facteurs.
 
 |Symbol|Nom|Description|
 |----|----|----|
-| ![](menu/layers.png) | Couches | Ouvre le panneau des couches |
-| ![](menu/basemap.png) | Cartes de base | Ouvre le panneau de sélection des cartes de base |
-| ![](menu/fullscreen.png) | Plein écran | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option « Plein écran » n'est disponible que lorsque la carte est incorporée dans une autre page|
-| ![](menu/export.png) | Exporter | Ouvre une boîte de dialogue permettant d'exporter la carte sous forme d'image |
-| ![](menu/share.png) | Partager | Ouvre une fenêtre contenant une URL pouvant être partagée|
-| ![](menu/touch.png) | Mode tactile | Augmente la taille des boutons et améliore l'expérience des utilisateurs tactiles |
-| ![](menu/about.png) | À propos de la carte | Ouvre une fenêtre qui donne de l'information supplémentaire sur la carte |
-| ![](menu/help.png) | Aide | Ouvre la fenêtre d'aide |
-| ![](menu/language.png) | Langue | Affiche la liste des langues prises en charge |
+| ![Une icône représentant la fonction « Couches »](menu/layers.png](menu/layers.png) | Couches | Ouvre le panneau des couches |
+| ![Une icône représentant la fonction « Sélection de la carte de base »](menu/basemap.png) | Cartes de base | Ouvre le panneau de sélection des cartes de base |
+| ![Une icône représentant la fonction « Plein écran »](menu/fullscreen.png) | Plein écran | Le plein écran présente le contenu de la carte en utilisant la page entière. L'option « Plein écran » n'est disponible que lorsque la carte est incorporée dans une autre page|
+| ![Une icône représentant la fonction « Exportation »](menu/export.png) | Exporter | Ouvre une boîte de dialogue permettant d'exporter la carte sous forme d'image |
+| ![Une icône représentant la fonction « Partage »](menu/share.png) | Partager | Ouvre une fenêtre contenant une URL pouvant être partagée|
+| ![Une icône représentant la fonction « Mode tactile »](menu/touch.png) | Mode tactile | Augmente la taille des boutons et améliore l'expérience des utilisateurs tactiles |
+| ![Une icône représentant la fonction « À propos »](menu/about.png) | À propos de la carte | Ouvre une fenêtre qui donne de l'information supplémentaire sur la carte |
+| ![Une icône représentant la fonction « Aide »](menu/help.png) | Aide | Ouvre la fenêtre d'aide |
+| ![Une icône représentant la fonction « Langue »](menu/language.png) | Langue | Affiche la liste des langues prises en charge |
 
 
 # Partager
@@ -74,13 +74,13 @@ L'option « Partager » est utilisée pour générer une URL partageable de la c
 
 La liste déroulante « Couches » sert de légende à la carte et liste les couches pouvant être visualisées.
 
-![](layer/layer.png) Accédez à la liste des couches en cliquant sur le bouton « Couches » en haut, à gauche de la partie centrale du visualiseur.
+![Une icône représentant la fonction « Couches »](layer/layer.png) Accédez à la liste des couches en cliquant sur le bouton « Couches » en haut, à gauche de la partie centrale du visualiseur.
 
 Une symbologie est associée à chaque couche. Pour les couches simples (feature layer), une seule icône sera présente à côté du nom de la couche. Pour les couches d'entités complexes (c.-à-d. celles où de multiples symboles sont utilisés par couche), les icônes s'affichent sous la forme d'une pile pouvant être agrandie et réduite. Une fois agrandies, les icônes se retrouvent sous le nom de la couche. Les couches SCW (WMS) peuvent optionnellement posséder une légende graphique qui sera, de la même manière, affichée sous la couche associée.
 
-Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis ![](layer/scale.png)) et offrira une action (![](layer/zoom.png)) afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant, soit un zoom arrière).
+Certaines couches peuvent être visibles uniquement à certains niveaux de zoom. Si une couche n’est pas visible à un niveau de zoom donné, la légende affichera un avis ![[Une icône représentant la fonction qu'un calque ne peut pas être affiché au niveau de zoom actuel](layer/scale.png)) et offrira une action (![Une icône représentant la fonction permettant de faire un zoom pour rendre une couche de carte visible](layer/zoom.png)) afin d’établir une valeur de zoom à laquelle la couche sera visible (cela peut impliquer de faire soit un zoom avant, soit un zoom arrière).
 
-Vous pouvez masquer ou afficher une couche à tout moment en sélectionnant l'icône de l'œil (![](layer/checkbox.png)) à côté de chaque couche.
+Vous pouvez masquer ou afficher une couche à tout moment en sélectionnant l'icône de l'œil (![Une icône représentant la case à cocher servant à activer ou à désactiver une couche](layer/checkbox.png)) à côté de chaque couche.
 
 Il existe cinq types de couches qui peuvent être présentes dans la liste déroulante « Couches » :
 
@@ -98,33 +98,33 @@ Si une couche ne se charge pas correctement, elle sera identifiée par un avis d
 
 # Options des couches
 
-Survolez le nom d'une couche ou activez-la (mettre le « focus ») à l'aide des touches clavier et sélectionnez l'icône de trois points ![](layer_settings/ellipses.png) pour accéder aux options supplémentaires de celle-ci.
+Survolez le nom d'une couche ou activez-la (mettre le « focus ») à l'aide des touches clavier et sélectionnez l'icône de trois points ![Un graphique représentant l’icône des « points de suspension » servant à ouvrir les paramètres de la couche](layer_settings/ellipses.png) pour accéder aux options supplémentaires de celle-ci.
 
 Notez que certaines options peuvent ne pas être offertes en fonction de divers facteurs tels que le type de couche ou la configuration.
 
 |Symbole|Nom|Description|
 |----|----|----|
-| ![](layer_settings/metadata.png) | Métadonnées | Affiche les métadonnées dans un panneau coulissant |
-| ![](layer_settings/settings.png) | Paramètres | Ouvre un panneau coulissant où l’opacité et la zone de délimitation peuvent être ajustées de même que la possibilité d’activer ou non les requêtes |
-| ![](layer_settings/datatable.png) | Tableau de données | Sélectionner pour visualiser les données sous forme de table |
-| ![](layer_settings/layer.png) | Afficher la légende | Agrandit / réduit la liste d'images de la légende |
-| ![](layer_settings/zoomto.png) | Zoomer à la limite | Déplace et zoom la carte afin que la limite de la couche soit en vue |
-| ![](layer_settings/reload.png) | Recharger | Recharge la couche |
-| ![](layer_settings/remove.png) | Retirer | Retire la couche de la carte et de la liste déroulante Couches |
+| ![Une icône représentant la fonction « Métadonnées de la couche »](layer_settings/metadata.png) | Métadonnées | Affiche les métadonnées dans un panneau coulissant |
+| ![Une icône représentant la fonction « Paramètres de la couche »](layer_settings/settings.png) | Paramètres | Ouvre un panneau coulissant où l’opacité et la zone de délimitation peuvent être ajustées de même que la possibilité d’activer ou non les requêtes |
+| ![Une icône représentant la fonction « Tableau de données de la couche »](layer_settings/datatable.png) | Tableau de données | Sélectionner pour visualiser les données sous forme de table |
+| ![Une icône représentant la fonction « Afficher la légende »](layer_settings/layer.png) | Afficher la légende | Agrandit / réduit la liste d'images de la légende |
+| ![Une icône représentant la fonction « Zoom avant sur la couche »](layer_settings/zoomto.png) | Zoomer à la limite | Déplace et zoom la carte afin que la limite de la couche soit en vue |
+| ![Une icône représentant la fonction « Recharger la couche »](layer_settings/reload.png) | Recharger | Recharge la couche |
+| ![Une icône représentant la fonction « Retirer la couche »](layer_settings/remove.png) | Retirer | Retire la couche de la carte et de la liste déroulante Couches |
 
 
 # Sous-menu Couches
 
-![](layer_submenu/menu_fr.png)
+![Un graphique représentant la zone de l’interface à sélectionner pour ouvrir le sous-menu « Couches »](layer_submenu/menu_fr.png)
 
 Fournit des options supplémentaires lorsque la liste déroulante « Couches » ouverte. Le sous-menu est montré en rouge ci-dessus et il a les options suivantes:
 
 |Symbol|Nom|Description|
 |----|----|----|
-| ![](layer_submenu/add.png) | Ajouter une couche | Ajouter une couche basée sur un fichier ou un service |
-| ![](layer_submenu/reorder.png) | Réorganiser les couches | Fournit une solution de remplacement à l'utilisation de la souris pour réorganiser les couches. Lorsque cette option est sélectionnée, les couches ne peuvent être réorganisées avec la souris qu'en maintenant l'icône de poignée à côté de chaque couche. Utile pour les appareils tactiles et les utilisateurs du clavier |
-| ![](layer_submenu/expand.png) | Basculer les groupes | Ouvre ou ferme tous les groupes |
-| ![](layer_submenu/view.png) | Basculer la visibilité | Active ou désactive la visibilité de toutes les couches |
+| ![Une icône représentant la fonction « Ajouter une couche »](layer_submenu/add.png) | Ajouter une couche | Ajouter une couche basée sur un fichier ou un service |
+| ![Une icône représentant la fonction « Modifier l’ordre des couches »](layer_submenu/reorder.png) | Réorganiser les couches | Fournit une solution de remplacement à l'utilisation de la souris pour réorganiser les couches. Lorsque cette option est sélectionnée, les couches ne peuvent être réorganisées avec la souris qu'en maintenant l'icône de poignée à côté de chaque couche. Utile pour les appareils tactiles et les utilisateurs du clavier |
+| ![Une icône représentant la fonction « Développer »](layer_submenu/expand.png) | Basculer les groupes | Ouvre ou ferme tous les groupes |
+| ![Une icône représentant la fonction « Basculer la visibilité »](layer_submenu/view.png) | Basculer la visibilité | Active ou désactive la visibilité de toutes les couches |
 
 
 # Ajouter une couche
@@ -163,32 +163,32 @@ Cliquez sur le bouton de téléchargement dans l'en-tête pour obtenir l'image d
 
 # Tableau de données du Tribunal
 
-![](datatable/overview_fr.png)
+![Un graphique représentant un exemple de la vue Tableau de données](datatable/overview_fr.png)
 
 Le __Tableau de données__ tribunal est indiqué ci-dessus dans son état initial.
 
 En plus des données de défilement, il est possible de :
 - Trier les données en cliquant sur l’en-tête de la colonne. Plusieurs colonnes peuvent être triés en appuyant sur la touche Shift avant de cliquer sur un en-tête de colonne
-- Ouvrir le détail Tribunal correspondant à une ligne donnée en sélectionnant l’icône *détails* (![](datatable/details.png))
-- Déplacer la carte et Zoom sur l’élément correspondant à une ligne donnée en sélectionnant *la fonction de zoom* icône (![](datatable/zoomto.png))
-- Les colonnes en cliquant à côté du titre de la colonne de quart de travail il à gauche ou à droite (![](datatable/reorder.png))
-- Filtre les colonnes par gamme numérique, texte, la sélection ou la date (si la configuration permet). Changements dans le tableau peut également être apportées pour refléter sur la carte en appliquant des filtres de compensation ou de la carte (*appliquer*: ![](datatable/apply.png), *clair*: ![](datatable/clear.png))
-- Afficher ou masquer des colonnes en cliquant sur l’icône *masquer des colonnes* (![](datatable/hideColumns.png))
+- Ouvrir le détail Tribunal correspondant à une ligne donnée en sélectionnant l’icône *détails* (![Une icône représentant la fonction « Détails »](datatable/details.png))
+- Déplacer la carte et Zoom sur l’élément correspondant à une ligne donnée en sélectionnant *la fonction de zoom* icône (![Une icône représentant la fonction « Zoomer sur »](datatable/zoomto.png))
+- Les colonnes en cliquant à côté du titre de la colonne de quart de travail il à gauche ou à droite (![Une icône représentant la fonction « Modifier l’ordre des colonnes »](datatable/reorder.png))
+- Filtre les colonnes par gamme numérique, texte, la sélection ou la date (si la configuration permet). Changements dans le tableau peut également être apportées pour refléter sur la carte en appliquant des filtres de compensation ou de la carte (*appliquer*: ![Une icône représentant la fonction « Appliquer »](datatable/apply.png), *clair*: ![Une icône représentant la fonction « Effacer »](datatable/clear.png))
+- Afficher ou masquer des colonnes en cliquant sur l’icône *masquer des colonnes* (![Une icône représentant la fonction « Masquer les colonnes »](datatable/hideColumns.png))
 - Naviguer dans le tableau à l’aide d’un clavier
 
 Si le nombre de caractères entrés dépasse la largeur de la zone de texte, seuls les caractères visibles sera affiché, suivi par ellipses (...). En sélectionnant le champ avec la souris ou le clavier et le curseur de la souris sur elle, le texte intégral sera affiché dans une infobulle.
 
 Le nombre d’entités dans la couche est affiché dans le coin supérieur gauche de l’écran ci-dessous la couche Titre :
 
-![](datatable/allEntries_fr.png)
+![Un graphique indiquant le nombre d’enregistrements affichés dans un tableau de données](datatable/allEntries_fr.png)
 
 Filtrer les données des résultats dans plus de rétroaction :
 
-![](datatable/filteredEntries_fr.png)
+![Un graphique indiquant le nombre d’enregistrements filtrés affichés dans un tableau de données](datatable/filteredEntries_fr.png)
 
 ### Le tableau de contrôle
 
-![](datatable/tableControls_fr.png)
+![Un graphique représentant les icônes de contrôle de tableau d’un tableau de données](datatable/tableControls_fr.png)
 
 Ce groupe de contrôle est situé dans le coin supérieur droit du tableau de données et a les options suivantes :
 - Recherche mondiale
@@ -203,7 +203,7 @@ Ce groupe de contrôle est situé dans le coin supérieur droit du tableau de do
     - vous permet de choisir les colonnes que vous souhaitez être visibles sur la table
 - Tableau menu (plus d’options)
 
-    ![](datatable/menu_fr.png)
+    ![Un graphique représentant un exemple du menu « Plus d’options » d’un tableau de données](datatable/menu_fr.png)
 
     - Vue partagée
         - tableau hauteur est la moitié de la hauteur de la carte
@@ -230,16 +230,16 @@ Ce groupe de contrôle est situé dans le coin supérieur droit du tableau de do
 Pour chaque colonne dans le tableau de données, il peut y avoir un ensemble de flèches associés à cette colonne qui représente la façon dont il peut être triés et reordered.
 
 __La colonne genre__ : Cliquez sur le titre de la colonne pour trier les colonnes en ordre croissant ou ordre décroissant (pour les données numériques) et par ordre alphabétique (pour le texte des données).
-- une flèche vers le haut (![](datatable/sortAsc.png)) à côté du titre de la colonne indique que la colonne des données sont triées en ordre croissant ou ordre alphabétique
-- une flèche vers le bas (![](datatable/sortDesc.png)) à côté du titre de la colonne indique que la colonne des données sont triés en ordre décroissant ou inverser l’ordre alphabétique
+- une flèche vers le haut (![Une icône représentant la fonction « Tri ascendant »](datatable/sortAsc.png)) à côté du titre de la colonne indique que la colonne des données sont triées en ordre croissant ou ordre alphabétique
+- une flèche vers le bas (![Une icône représentant la fonction « Tri descendant »](datatable/sortDesc.png)) à côté du titre de la colonne indique que la colonne des données sont triés en ordre décroissant ou inverser l’ordre alphabétique
 - aucune flèche vers le bas située à côté du titre de la colonne signifie qu’il n’y a pas de trier appliquées à la colonne
 - tri de colonnes multiples à une fois par quart de travail + colonne sélectionner Nom
     - comment il fonctionne : la prochaine colonne sélectionnée en utilisant l’onglet seront classés selon la dernière colonne sélectionnée de groupes de données identiques
 
 __La colonne de réapprovisionnement__ : Les deux droit / flèches gauche à côté de la colonne Nom sont pour modifier l’ordre d’affichage des colonnes.
-- cliquez sur la flèche vers la droite (![](datatable/rightReorderArrow.png)) pour échanger une colonne avec celle de droite
+- cliquez sur la flèche vers la droite (![Une icône représentant la fonction « Déplacer la colonne vers la droite »](datatable/rightReorderArrow.png)) pour échanger une colonne avec celle de droite
     - la flèche de droite est invalide pour le rightmost colonne du tableau de données
-- cliquez sur la flèche de gauche (![](datatable/leftReorderArrow.png)) pour échanger une colonne avec le sur le côté gauche
+- cliquez sur la flèche de gauche (![Une icône représentant la fonction « Déplacer la colonne vers la gauche »](datatable/leftReorderArrow.png)) pour échanger une colonne avec le sur le côté gauche
     - la flèche de gauche est invalide pour la colonne complètement à gauche du tableau de données
 
 ### Filtrer les données
@@ -255,7 +255,7 @@ Les données peuvent être filtrés par colonne. Une colonne est consultable s�
 
 Certains filtres ne sont pas modifiable; leur valeur ne peut pas être modifiée. Ils sont représentés par une ligne en tirets inférieur à leur valeur.
 
-![](datatable/search_fr.png)
+![Un graphique représentant la zone « Rechercher dans le tableau » du tableau de données](datatable/search_fr.png)
 
 Ce contrôle, qui se trouve dans le coin supérieur droit du tableau de données, permet de filtrer le tableau de données à l’échelle mondiale.
 - Si vous entrez la valeur _Brook_, le tableau de données sera, sélectionnez les données que contient _Brook_ à tout endroit (p. ex. _Corner Brook_ sera sélectionné)
@@ -274,7 +274,7 @@ Pour accéder les boutons et/ou les champs d’entrée de données dans une cell
 
 # Panneau d'information de la sélection interactive
 
-Affiche les données associées à l’élément interactif sélectionné. Vous pouvez y accéder en effectuant une requête d'identification sur la carte et en sélectionnant la couche dans la liste des couches offertes ou en cliquant sur l'icône détails ![](datatable/details.png) dans une table de données.
+Affiche les données associées à l’élément interactif sélectionné. Vous pouvez y accéder en effectuant une requête d'identification sur la carte et en sélectionnant la couche dans la liste des couches offertes ou en cliquant sur l'icône détails ![Une icône représentant la fonction « Détails de la caractéristique »](datatable/details.png) dans une table de données.
 
 
 # Accessibilité
@@ -307,7 +307,7 @@ La carte principale contient une flèche du nord. Celle-ci se situe dans la part
 ### Utilisation générale
 La composante GéoRecherche fonctions pour permettre aux utilisateurs de chercher des endroits au Canada. Lorsque le GéoRecherche cliqué sur l’icône, la demande principale barre est remplacé par un champ de saisie de recherche Mots clés:
 
-![](geosearch/searchbar_fr.png)
+![Un graphique représentant la boîte de recherche « Emplacement »](geosearch/searchbar_fr.png)
 
 #### Appuyé les types de recherche
 
@@ -337,10 +337,10 @@ __Adresse municipale__ : Recherche en utilisant les adresses de la rue direct n�
 - Inscrivez toute adresse municipale valide ne devrait pas retourner les résultats
 
 ### Recherche géolocalisée filtrage
-Au moment de chercher un lieu, un des résultats s’affiche sous la case de recherche. Les résultats de ce tribunal contient deux boîtes de liste déroulante qui vous permettent de filtrer les résultats de la recherche par leur __province__ et par leur __type__ (Lake, ville, rivière, etc.). À la droite de ces deux boîtes est un __effacer les filtres__ ![](datatable/clear.png) lorsque l’on clique sur le bouton supprime le filtre sélectionné les options.
+Au moment de chercher un lieu, un des résultats s’affiche sous la case de recherche. Les résultats de ce tribunal contient deux boîtes de liste déroulante qui vous permettent de filtrer les résultats de la recherche par leur __province__ et par leur __type__ (Lake, ville, rivière, etc.). À la droite de ces deux boîtes est un __effacer les filtres__ ![Une icône représentant la fonction « Effacer »](datatable/clear.png) lorsque l’on clique sur le bouton supprime le filtre sélectionné les options.
 
-![](geosearch/geofilter_fr.png)
+![Un graphique représentant la fonction de filtre de la boîte de recherche « Emplacement »](geosearch/geofilter_fr.png)
 
 Au bas du panneau des résultats, il y a une case à cocher étiquetés __visible sur la carte__. Cette case sera filtrer les résultats à seulement démontrer des endroits qui sont actuellement visibles sur la carte. Déplacer la carte vers ou sortie de zoom avec cette case sélectionné sera automatiquement mise à jour les résultats pour afficher les emplacements qui sont sur la carte.
 
-![](geosearch/visiblemap_fr.png)
+![Un graphique représentant la fonction de « Basculer la visibilité » de la boîte de recherche « Emplacement »](geosearch/visiblemap_fr.png)

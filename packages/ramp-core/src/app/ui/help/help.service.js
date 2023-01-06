@@ -210,11 +210,11 @@ function helpService($mdDialog, events, configService, referenceService) {
             const renderer = new marked.Renderer();
             // make it easier to use images in markdown by prepending path to href if href is not an external source
             // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
-            renderer.image = (href, title) => {
+            renderer.image = (href, title, text) => {
                 if (href.indexOf('http') === -1) {
                     href = `help/${foldername}/images/` + href;
                 }
-                return `<img src="${href}" alt="${title}">`;
+                return `<img src="${href}" alt="${text}">`;
             };
 
             const mdLocation = `help/${foldername}/${configService.getSync.language}.md`;
