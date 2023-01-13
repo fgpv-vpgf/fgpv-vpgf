@@ -6,12 +6,12 @@ The following navigation controls can be found in the bottom right corner of the
 
 |Symbol|Name|Key Binding|Description|
 |----|----|----|----|
-|![](navigation/fullscreen.png)| Fullscreen | | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page  |
-|![](navigation/zoomin.png)| Zoom in | Plus (+) | Zoom in one level on the map to see more detailed content |
-|![](navigation/zoomout.png)| Zoom out | Minus (-) | Zoom out one level on the map to see less detailed content  |
-|![](navigation/geolocation.png)| Geolocation | | Zoom and pan to your current geographical location |
-|![](navigation/canada.png)| Initial extent | | Zoom and pan map such that initial extent is visible |
-|![](navigation/help.png)| Help | | Open the help dialog |
+|![The icon representing the fullscreen function](navigation/fullscreen.png)| Fullscreen | | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page  |
+|![The icon representing the Zoom In function](navigation/zoomin.png)| Zoom in | Plus (+) | Zoom in one level on the map to see more detailed content |
+|![The icon representing the Zoom Out function](navigation/zoomout.png)| Zoom out | Minus (-) | Zoom out one level on the map to see less detailed content  |
+|![The icon representing the Geolocation function](navigation/geolocation.png)| Geolocation | | Zoom and pan to your current geographical location |
+|![The icon representing the Initial map extent function](navigation/canada.png)| Initial extent | | Zoom and pan map such that initial extent is visible |
+|![The icon representing the help function](navigation/help.png)| Help | | Open the help dialog |
 
 You can also pan the map by using your left, right, up and down arrow keys, or by click-holding on the map and dragging. Using the mouse scroll wheel while hovering over the map will zoom the map in/out.
 
@@ -32,7 +32,7 @@ The basemap selector modifies the underlying basemap to provide a variety of geo
 
 __To open the basemap selector:__
 
-![](basemap/open.png)
+![A graphic representing the area of the interface to select to open the basemap selector function](basemap/open.png)
 
 First open the layers panel by selecting the layer button (shown above in red). You will then see the basemap selector appear to the left of the layer button (shown above in blue). You can also open the basemap selector from within the main menu.
 
@@ -43,26 +43,26 @@ You'll be presented with one or more basemaps to choose from, separated by their
 
 The overview map displays a generalised view of the main map at a smaller scale. It can be found in the top right corner of the map.
 
-Click-hold on the overview map and drag it to change the extent of the main map. Clicking on the toggle icon (![](overview/toggle.png)) in the top right corner of the overview map will expand or contract it.
+Click-hold on the overview map and drag it to change the extent of the main map. Clicking on the toggle icon (![An icon representing the "Overview Map toggle" function](overview/toggle.png)) in the top right corner of the overview map will expand or contract it.
 
 
 # Main Menu
 
-![](menu/menu.png) Access the menu by clicking on the menu button near the top left of the viewer.
+![An icon representing the 3 horizontal bars in the upper right of the map that open the left menu](menu/menu.png) Access the menu by clicking on the menu button near the top left of the viewer.
 
 There are a variety of options described below. Note that some options may not be available or are preselected depending on various factors.
 
 |Symbol|Name|Description|
 |----|----|----|
-| ![](menu/layers.png) | Layers | Opens the layer panel |
-| ![](menu/basemap.png) | Basemap | Opens the basemap selection panel |
-| ![](menu/fullscreen.png) | Full Screen | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
-| ![](menu/export.png) | Export | Opens the export image dialog  |
-| ![](menu/share.png) | Share | Opens the share a url dialog |
-| ![](menu/touch.png) | Touch Mode | Increases button sizes and generally improves the experience for touch users |
-| ![](menu/about.png) | About Map | Opens a dialog window that provides additional information on the map  |
-| ![](menu/help.png) | Help | Opens the help dialog |
-| ![](menu/language.png) | Language | Displays a list of supported languages you can switch to |
+| ![An icon representing the "Layers" function](menu/layers.png) | Layers | Opens the layer panel |
+| ![An icon representing "Basemap selector" function](menu/basemap.png) | Basemap | Opens the basemap selection panel |
+| ![An icon representing the "Full screen" function](menu/fullscreen.png) | Full Screen | Full screen presents map content using the entire page. Full screen option is only available when the map is embedded into another page |
+| ![An icon representing the "Export" function](menu/export.png) | Export | Opens the export image dialog  |
+| ![An icon representing the "Share" function](menu/share.png) | Share | Opens the share a url dialog |
+| ![An icon representing "Touch mode" function](menu/touch.png) | Touch Mode | Increases button sizes and generally improves the experience for touch users |
+| ![An icon representing "About" function](menu/about.png) | About Map | Opens a dialog window that provides additional information on the map  |
+| ![An icon representing "Help" function](menu/help.png) | Help | Opens the help dialog |
+| ![An icon representing "Language"](menu/language.png) | Language | Displays a list of supported languages you can switch to |
 
 
 # Share
@@ -74,13 +74,13 @@ Share is used to generate a shareable URL of the current map state with selected
 
 The Layer dropdown serves as a map legend and lists the layers available to display in the map.
 
-![](layer/layer.png) Access the layer list by clicking on the layer button in the top, left of center portion of the viewer.
+![An icon representing the "Layers" function](layer/layer.png) Access the layer list by clicking on the layer button in the top, left of center portion of the viewer.
 
 Each layer has some symbology associated with it. For simple feature layers a single icon will be present next to the layer name. For complex feature layers (i.e. those with multiple symbols used per layer) the icon will show as a stack that can be toggled open and closed which is expanded beneath the layer name. WMS layers may optionally have a graphical legend defined, if one is present it will be displayed in the same drop down manner.
 
-Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display an icon (![](layer/scale.png)). Further, a zoom to the nearest valid level button will be displayed (![](layer/zoom.png)).
+Some layers may only be visible at certain zoom levels. If a layer is not visible at a given zoom level the legend will display an icon (![An icon representing that a layer cannot be viewed at the current zoom level](layer/scale.png)). Further, a zoom to the nearest valid level button will be displayed (![An icon representing the function to zoom to make a map layer visible](layer/zoom.png)).
 
-You can toggle the visibility of the layer at any time by selecting the checkbox (![](layer/checkbox.png)) next to each layer.
+You can toggle the visibility of the layer at any time by selecting the checkbox (![An icon of a checkbox to represent toggling a layer on or off](layer/checkbox.png)) next to each layer.
 
 There are five types of layers that can reside in the Legend dropdown:
 
@@ -98,33 +98,33 @@ Note that if a layer fails to load correctly it will be identified by an error n
 
 # Layer Settings
 
-While hovering over a layer or tabbing to one, select the three dots icon ![](layer_settings/ellipses.png) to make the settings menu appear.
+While hovering over a layer or tabbing to one, select the three dots icon ![A graphic representing the "3 dots" icon to open the Layer settings](layer_settings/ellipses.png) to make the settings menu appear.
 
 Note that some settings may not be available depending on various factors such as layer type or configuration.
 
 |Symbol|Name|Description|
 |----|----|----|
-| ![](layer_settings/metadata.png) | Metadata | Display relevant metadata in a slideout panel |
-| ![](layer_settings/settings.png) | Settings | Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
-| ![](layer_settings/datatable.png) | Datatable | Select to view data in table format |
-| ![](layer_settings/layer.png) | Show legend | Expands/Collapses the legend image stack  |
-| ![](layer_settings/zoomto.png) | Zoom to layer boundary | Pans and zooms the map so that the layer boundary is in view |
-| ![](layer_settings/reload.png) | Reload | Reloads the layer |
-| ![](layer_settings/remove.png) | Remove | Remove the layer from the map and legend |
+| ![An icon representing the "Layer Metadata" function](layer_settings/metadata.png) | Metadata | Display relevant metadata in a slideout panel |
+| ![An icon representing the "Layer Settings" function](layer_settings/settings.png) | Settings | Opens slideout panel where bounding box and queryable data can be toggled as well as the ability to adjust opacity amount |
+| ![An icon representing the "Layer Data Table" function](layer_settings/datatable.png) | Datatable | Select to view data in table format |
+| ![An icon representing the "Show Legend" function](layer_settings/layer.png) | Show legend | Expands/Collapses the legend image stack  |
+| ![An icon representing the "Layer Zoom To" function](layer_settings/zoomto.png) | Zoom to layer boundary | Pans and zooms the map so that the layer boundary is in view |
+| ![An icon representing the "Layer Reload" function](layer_settings/reload.png) | Reload | Reloads the layer |
+| ![An icon representing the "Layer Remove" function](layer_settings/remove.png) | Remove | Remove the layer from the map and legend |
 
 
 # Layer Submenu
 
-![](layer_submenu/menu.png)
+![A graphic representing the area of the interface to select to open the Layers submenu](layer_submenu/menu.png)
 
 Provides additional layer options when the layer panel is open. It is shown in red above. It has the following features:
 
 |Symbol|Name|Description|
 |----|----|----|
-| ![](layer_submenu/add.png) | Add Layer | Menu options to add a file or service based layer |
-| ![](layer_submenu/reorder.png) | Reorder Layers | Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |
-| ![](layer_submenu/expand.png) | Toggle Groups | Opens or closes all groups |
-| ![](layer_submenu/view.png) | Toggle Visibility | Enables or disables the visibility for all layers  |
+| ![An icon representing the "Add Layer" function](layer_submenu/add.png) | Add Layer | Menu options to add a file or service based layer |
+| ![An icon representing the "Reorder Layers" function](layer_submenu/reorder.png) | Reorder Layers | Provides an alternative to the click-hold and drag reordering already available. When selected, layers are only reorderable by holding onto the handle icon next to each layer. Most useful for touch devices |
+| ![An icon representing the "Expand" function](layer_submenu/expand.png) | Toggle Groups | Opens or closes all groups |
+| ![An icon representing the "Toggle Visibility" function](layer_submenu/view.png) | Toggle Visibility | Enables or disables the visibility for all layers  |
 
 
 # Add Layer
@@ -163,32 +163,32 @@ Click on the download button in the header to get the final generated map image.
 
 # Data Table Panel
 
-![](datatable/overview_en.png)
+![A graphic representing an example of a Data Table view](datatable/overview_en.png)
 
 The __Data Table__ panel is shown above in its initial state.
 
 In addition to scrolling data, it is possible to:
 - Sort the data by clicking the header of the column. Multiple columns can be sorted by holding down shift before clicking a column header
-- Open the detail panel corresponding to a given row by selecting the *Details* icon (![](datatable/details.png))
-- Position the map view to the location of the feature corresponding to a given row by selecting the *Zoom To Feature* icon (![](datatable/zoomto.png))
-- Move the columns by clicking beside the column title to shift it left or right (![](datatable/reorder.png))
-- Filter the columns by numerical range, text, selection or date (if the configuration allows it). Changes in the table can also be made to reflect on the map by applying or clearing filters from map (*apply*: ![](datatable/apply.png), *clear*: ![](datatable/clear.png))
-- Show and/or hide columns by clicking on the *Hide Columns* icon (![](datatable/hideColumns.png))
+- Open the detail panel corresponding to a given row by selecting the *Details* icon (![An icon representing the "Details" function](datatable/details.png))
+- Position the map view to the location of the feature corresponding to a given row by selecting the *Zoom To Feature* icon (![An icon representing the "Zoom to" function](datatable/zoomto.png))
+- Move the columns by clicking beside the column title to shift it left or right (![An icon representing the "Reorder columns" function](datatable/reorder.png))
+- Filter the columns by numerical range, text, selection or date (if the configuration allows it). Changes in the table can also be made to reflect on the map by applying or clearing filters from map (*apply*: ![An icon representing the "Apply" function](datatable/apply.png), *clear*: ![An icon representing the "Clear" function](datatable/clear.png))
+- Show and/or hide columns by clicking on the *Hide Columns* icon (![An icon representing the "Hide columns" function](datatable/hideColumns.png))
 - Navigate the table using a keyboard
 
 If the number of characters entered exceeds the width of the text box, only the visible characters will be displayed, followed by ellipses (...). By selecting the field with the mouse or the keyboard and hovering over it, the full text will be displayed in a tooltip.
 
 The number of features in the layer is displayed in the top left corner below the layer title:
 
-![](datatable/allEntries_en.png)
+![A graphic representing the number of records displayed in a data table](datatable/allEntries_en.png)
 
 Filtering the data results in more feedback:
 
-![](datatable/filteredEntries_en.png)
+![A graphic representing the number of filtered records displayed in a data table](datatable/filteredEntries_en.png)
 
 ### Table Controls
 
-![](datatable/tableControls_en.png)
+![A graphic representing the Table control icons in a data table](datatable/tableControls_en.png)
 
 This control group is located in the upper right-hand corner of the data table and has the following options:
 - Global Search
@@ -203,7 +203,7 @@ This control group is located in the upper right-hand corner of the data table a
     - allows you to choose which columns you want to be visible on the table
 - Table Menu (More Options)
 
-    ![](datatable/menu_en.png)
+    ![A graphic representing an example of a data table "More options" menu](datatable/menu_en.png)
 
     - Split View
         - table occupies the upper half of the map area
@@ -230,16 +230,16 @@ This control group is located in the upper right-hand corner of the data table a
 For each column in the data table, there may be a set of arrows associated with that column which represents how it can be sorted and reordered.
 
 __Column Sort__: Click on the column title to sort the columns in ascending/descending order (for numerical data) and alphabetical order (for text data).
-- an upward arrow (![](datatable/sortAsc.png)) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
-- a downward arrow (![](datatable/sortDesc.png)) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
+- an upward arrow (![An icon representing the "Sort Ascending" function](datatable/sortAsc.png)) next to the column title indicates that the column data is being sorted in ascending order or alphabetical order
+- a downward arrow (![An icon representing the "Sort Descending" function](datatable/sortDesc.png)) next to the column title indicates that the column data is being sorted in descending order or reverse alphabetical order
 - no arrow next to the column title means that there is no sort applied to current column
 - sort multiple columns at once using shift + select column names
     - how it works: the next selected column using tab will be sorted according to the last selected column's groups of identical data
 
 __Column Reorder__: The two right/left arrows next to the column name are for reordering the columns.
-- click the right arrow (![](datatable/rightReorderArrow.png)) to swap a column with the one on the right
+- click the right arrow (![An icon representing the "Move Column Right" function](datatable/rightReorderArrow.png)) to swap a column with the one on the right
     - the right arrow is disabled for the rightmost column of a data table
-- click the left arrow (![](datatable/leftReorderArrow.png)) to swap a column with the one on the left
+- click the left arrow (![An icon representing the "Move Column Left" function](datatable/leftReorderArrow.png)) to swap a column with the one on the left
     - the left arrow is disabled for the leftmost column of a data table
 
 ### Filter data
@@ -255,7 +255,7 @@ Data can be filtered by column. A column is searchable if there is an input fiel
 
 Some filters are not editable; Their value can not be changed. They are represented by a dashed line below their value.
 
-![](datatable/search_en.png)
+![A graphic representing the "Search table" area of the data table](datatable/search_en.png)
 
 This control, which is found in the upper right corner of the data table, allows to filter the data table globally.
 - If you enter the _Brook_ value, the data table will select the data that contains _Brook_ at any location (e.g. _Corner Brook_ will be selected)
@@ -274,7 +274,7 @@ To access the buttons and/or input fields within a cell, make sure the cell is h
 
 # Feature Details Panel
 
-Displays the data associated with a selected feature. This can be accessed by either performing an identify query on the map and selecting the layer from the list of available layers, or by clicking on the details icon ![](datatable/details.png) in a data table.
+Displays the data associated with a selected feature. This can be accessed by either performing an identify query on the map and selecting the layer from the list of available layers, or by clicking on the details icon ![An icon representing the "Feature details" function](datatable/details.png) in a data table.
 
 
 # Accessibility
@@ -287,11 +287,11 @@ Keyboard functionality is provided as an alternative for users who are unable to
 
 When the map gains focus, a crosshairs marker is displayed in the center of the map. Use the __arrow__ keys to move the map and __+__ / __-__ keys to zoom in and out. Press __Enter__ to select a feature under the crosshairs and display associated data in the Details panel.
 
-![](accessibility/crosshairs.png)
+![A graphic representing the crosshairs used for accessing data on the map](accessibility/crosshairs.png)
 
 Tooltips will be shown for supported features when the crosshairs marker is positioned over them.
 
-![](accessibility/crosshairs_tooltip.png)
+![A graphic representing the crosshairs after they have moved over a feature on the map](accessibility/crosshairs_tooltip.png)
 
 
 # Load Times / Unanticipated Behaviour
@@ -309,7 +309,7 @@ Unanticipated behaviour may occur if any map interactions occur before data is f
 
 # North Arrow
 
-![](north_arrow/arrow.png)
+![A graphic representing the North arrow on the map](north_arrow/arrow.png)
 
 The main map contains a north arrow. It can be found at the top of the map. It will move horizontally on the screen such that it always intersects with an imaginary straight line that passes over the center of the map and the north pole.
 
@@ -319,7 +319,7 @@ The main map contains a north arrow. It can be found at the top of the map. It w
 ### General Use
 The geosearch component functions to allow users to search for places in Canada. When the geosearch icon is clicked, the main application bar is replaced with an input field for search keywords:
 
-![](geosearch/searchbar_en.png)
+![A graphic representing the Location search box](geosearch/searchbar_en.png)
 
 #### Supported Search Types
 
@@ -349,10 +349,10 @@ __Street address__: Search using direct street addresses is not supported by geo
 - entering any valid street address should not return any results
 
 ### Geosearch Filtering
-When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![](datatable/clear.png) button, which when clicked clears the selected filter options.
+When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![An icon representing the "Clear Filters" function](datatable/clear.png) button, which when clicked clears the selected filter options.
 
-![](geosearch/geofilter_en.png)
+![A graphic representing the filtering function of the Location search](geosearch/geofilter_en.png)
 
 At the bottom of the results panel, there is a checkbox labeled __visible on map__. Checking this box will further filter the results to only show locations that are currently visible on the map. Moving the map around or zooming in/out with this box selected will automatically update the results to display locations that are on the map.
 
-![](geosearch/visiblemap_en.png)
+![A graphic representing the visibility toggle function of the Location search](geosearch/visiblemap_en.png)
