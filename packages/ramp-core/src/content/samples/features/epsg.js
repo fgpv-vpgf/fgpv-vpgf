@@ -30,7 +30,7 @@ window.customEPSG = {
         }
 
         return new Promise(function (resolve, reject) {
-            $.get('http://epsg.io/' + matcher[1] + '.proj4')
+            $.get('https://epsg.io/' + matcher[1] + '.proj4')
                 .done(resolve)
                 .fail(reject);
         });

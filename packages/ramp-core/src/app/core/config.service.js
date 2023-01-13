@@ -138,6 +138,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 return this.config;
             }
 
+            /*
             if (typeof this.rcsEndpoint === 'undefined') {
                 throw new Error(
                     'RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property'
@@ -145,6 +146,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
             }
 
             const endpoint = this.rcsEndpoint.endsWith('/') ? this.rcsEndpoint : this.rcsEndpoint + '/';
+*/
             const results = {};
             let rcsLang = this.language.split('-')[0];
 
@@ -155,9 +157,41 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 rcsLang = 'en';
             }
 
-            return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(
-                (resp) => {
+            //             return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(
+            //    (resp) => {
+
+            return new Promise((fakeResolve) => {
+                setTimeout(() => {
+                    // mimic RCS waiting for a return
+                    fakeResolve();
+                }, 500);
+            }).then(
+                () => {
                     const result = [];
+
+                    // pretend we got data back
+                    var resp = {
+                        data: [
+                            {
+                                layers: [
+                                    {
+                                        id: 'rcs.fake1.en',
+                                        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6',
+                                        layerType: 'esriFeature',
+                                    },
+                                ],
+                            },
+                            {
+                                layers: [
+                                    {
+                                        id: 'rcs.fake2.en',
+                                        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/8',
+                                        layerType: 'esriFeature',
+                                    },
+                                ],
+                            },
+                        ],
+                    };
 
                     // there is an array of layer configs in resp.data.
                     // moosh them into one single layer array on the result
