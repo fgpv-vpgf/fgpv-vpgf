@@ -10,7 +10,7 @@ geoapi('http://js.arcgis.com/3.14/', window).then(function (api) {
     var config1 = {
         id: 'dog',
         name: 'Tile Test',
-        url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Graticule/MapServer',
+        url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Graticule/MapServer',
 
         metadataUrl: 'http://www.github.com',
         layerType: 'esriTile',

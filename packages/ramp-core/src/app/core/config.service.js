@@ -569,7 +569,7 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                                 id: 'CBCT',
                                 layerType: 'esriFeature',
                                 url:
-                                    'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/' +
+                                    'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/' +
                                     (lang === 'fr' ? 'CBCT' : 'CBMT') +
                                     '3978/MapServer',
                             },
