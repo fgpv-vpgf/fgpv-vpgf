@@ -1968,7 +1968,7 @@
                         },
                         "geoSuggest": {
                             "type": "string",
-                            "description": "Endpoint url for geoSuggest service"
+                            "description": "Endpoint url for geoSuggest service. This is no longer used."
                         },
                         "provinces": {
                             "type": "string",
@@ -1980,7 +1980,7 @@
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["geoNames", "geoLocation", "geoSuggest", "provinces", "types"]
+                    "required": ["geoNames", "geoLocation", "provinces", "types"]
                 }
             },
             "additionalProperties": false,

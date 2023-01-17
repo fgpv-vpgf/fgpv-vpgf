@@ -3359,7 +3359,6 @@ function ConfigObjectFactory(Geo, gapiService, common, events, $rootScope) {
                     // required geo search services
                     'geoNames',
                     'geoLocation',
-                    'geoSuggest',
                     'provinces',
                     'types',
                 ]);
