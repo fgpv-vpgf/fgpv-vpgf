@@ -384,7 +384,7 @@
                     {
                         "id": "CBMT",
                         "layerType": "esriFeature",
-                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer"
+                        "url": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -398,7 +398,7 @@
                     {
                         "id": "SMR",
                         "layerType": "esriFeature",
-                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer"
+                        "url": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -412,7 +412,7 @@
                     {
                         "id": "CBME_CBCE_HS_RO_3978",
                         "layerType": "esriFeature",
-                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
+                        "url": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -426,7 +426,7 @@
                     {
                         "id": "CBMT_CBCT_GEOM_3978",
                         "layerType": "esriFeature",
-                        "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
+                        "url": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer"
                     }
                 ],
                 "tileSchemaId": "EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978"
@@ -528,7 +528,7 @@
                     "ymax": 682193,
                     "ymin": 583440,
                     "wkid": 3978,
-                    "thumbnailUrl": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
+                    "thumbnailUrl": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268"
                 },
                 {
                     "title-en-CA": "Gulf of St Lawrence",
@@ -538,7 +538,7 @@
                     "ymax": 682193,
                     "ymin": 583440,
                     "wkid": 3978,
-                    "thumbnailUrl": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270"
+                    "thumbnailUrl": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270"
                 },
                 {
                     "title-en-CA": "Lake Grandmesnil and surrounding lakes",
@@ -548,7 +548,7 @@
                     "ymax": 682193,
                     "ymin": 583440,
                     "wkid": 3978,
-                    "thumbnailUrl": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/269"
+                    "thumbnailUrl": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/269"
                 },
                 {
                     "title-en-CA": "Lake Piraube and surrounding lakes",
@@ -558,7 +558,7 @@
                     "ymax": 632193,
                     "ymin": 333440,
                     "wkid": 3978,
-                    "thumbnailUrl": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/267"
+                    "thumbnailUrl": "https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/267"
                 }
             ]
         }
