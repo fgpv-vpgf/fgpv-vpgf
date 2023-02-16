@@ -32,7 +32,7 @@
         "colourpicker": "github:fgpv-vpgf/colourpicker#2464e48ac0f373055dcdbe2fb0f8b3ab72244fef",
         "csvtojson": "1.1.11",
         "dotjem-angular-tree": "github:dotJEM/angular-tree",
-        "file-saver": "2.0.0",
+        "file-saver": "2.0.5",
         "html2canvas": "github:fgpv-vpgf/html2canvas#v1.0.0-rc.1-patch",
         "imports-loader": "0.8.0",
         "jquery": "3.4.1",
