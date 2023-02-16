@@ -50,7 +50,7 @@ specifiers:
   dotjem-angular-tree: github:dotJEM/angular-tree
   eslint-plugin-no-null: ^1.0.2
   file-loader: 4.2.0
-  file-saver: 2.0.0
+  file-saver: 2.0.5
   fs-extra: 7.0.1
   glob: 7.1.3
   html-loader: 0.5.5
@@ -156,7 +156,7 @@ dependencies:
   dotjem-angular-tree: github.com/dotJEM/angular-tree/1819b5150c3da8523629760667a1112cbb18a316
   eslint-plugin-no-null: 1.0.2
   file-loader: 4.2.0
-  file-saver: 2.0.0
+  file-saver: 2.0.5
   fs-extra: 7.0.1
   glob: 7.1.3
   html-loader: 0.5.5
@@ -910,6 +910,7 @@ packages:
 
   /acorn-dynamic-import/3.0.0:
     resolution: {integrity: sha512-zVWV8Z8lislJoOKKqdNMOB+s6+XV5WERty8MnKBeFgwA+19XJjJHs2RP5dzM57FftIs+jQnRToLiWazKr6sSWg==}
+    deprecated: This is probably built in to whatever tool you're using. If you still need it... idk
     dependencies:
       acorn: 5.7.4
     dev: false
@@ -3513,7 +3514,7 @@ packages:
     dev: false
 
   /css-color-names/0.0.4:
-    resolution: {integrity: sha1-gIrcLnnPhHOAabZGyyDsJ762KeA=}
+    resolution: {integrity: sha512-zj5D7X1U2h2zsXOAM8EyUREBnnts6H+Jm+d1M2DbiQQcUtnqgQsMrdo8JW9R80YFUmIdBZeMu5wvYM7hcgWP/Q==}
     dev: false
 
   /css-declaration-sorter/4.0.1:
@@ -3525,7 +3526,7 @@ packages:
     dev: false
 
   /css-line-break/1.0.1:
-    resolution: {integrity: sha1-GfIGOjPpX7KDG4ZEbAuAwYivRQo=}
+    resolution: {integrity: sha512-Y/Us0vILnzQj21UxqoZTLaHGrePQKXcZygQIoxNmpII06LJVCgB2sFKmD7PItNDHIAqHWjrmJPVohIywWYKAmQ==}
     dependencies:
       base64-arraybuffer: 0.1.5
     dev: false
@@ -5023,8 +5024,8 @@ packages:
       webpack: 4.39.1
     dev: false
 
-  /file-saver/2.0.0:
-    resolution: {integrity: sha512-cYM1ic5DAkg25pHKgi5f10ziAM7RJU37gaH1XQlyNDrtUnzhC/dfoV9zf2OmF0RMKi42jG5B0JWBnPQqyj/G6g==}
+  /file-saver/2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
     dev: false
 
   /file-uri-to-path/1.0.0:
@@ -6234,7 +6235,7 @@ packages:
       lodash: 4.17.21
       mute-stream: 0.0.7
       run-async: 2.4.1
-      rxjs: 6.4.0
+      rxjs: 6.6.7
       string-width: 2.1.1
       strip-ansi: 5.2.0
       through: 2.3.8
@@ -8351,7 +8352,7 @@ packages:
     dev: false
 
   /mute-stream/0.0.7:
-    resolution: {integrity: sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=}
+    resolution: {integrity: sha512-r65nCZhrbXXb6dXOACihYApHw2Q6pV0M3V0PSxd74N0+D8nzAdEAITq2oAjA1jVnKI+tGvEBUpqiMh0+rW6zDQ==}
     dev: false
 
   /mute-stream/0.0.8:
@@ -8623,7 +8624,7 @@ packages:
     dev: false
 
   /normalize-url/1.9.1:
-    resolution: {integrity: sha1-LMDWazHqIwNkWENuNiDYWVTGbDw=}
+    resolution: {integrity: sha512-A48My/mtCklowHBlI8Fq2jFWK4tX4lJ5E6ytFsSOq1fzpvT0SQSgKhSg7lN5c2uYFOrUAOQp6zhhJnpp1eMloQ==}
     engines: {node: '>=4'}
     dependencies:
       object-assign: 4.1.1
@@ -11506,7 +11507,7 @@ packages:
     dev: false
 
   /taffydb/2.6.2:
-    resolution: {integrity: sha1-fLy2S1oUG2ou/CxdLGe04VCyomg=}
+    resolution: {integrity: sha512-y3JaeRSplks6NYQuCOj3ZFMO3j60rTwbuKCvZxsAraGYH2epusatvZ0baZYA01WsGqJBq/Dl6vOrMUJqyMj8kA==}
     dev: false
 
   /tapable/1.1.3:
@@ -11584,7 +11585,7 @@ packages:
       worker-farm: 1.7.0
     dev: false
 
-  /terser-webpack-plugin/1.4.1_webpack@4.28.3:
+  /terser-webpack-plugin/1.4.1_webpack@4.39.1:
     resolution: {integrity: sha512-ZXmmfiwtCLfz8WKZyYUuuHf3dMYEjg8NrjHMb0JqHVHVOSkzp3cW2/XG1fP3tRhqEqSzMwzzRQGtAPbs4Cncxg==}
     engines: {node: '>= 6.9.0'}
     peerDependencies:
@@ -11597,13 +11598,13 @@ packages:
       serialize-javascript: 1.9.1
       source-map: 0.6.1
       terser: 4.8.1
-      webpack: 4.28.3
+      webpack: 4.39.1
       webpack-sources: 1.4.3
       worker-farm: 1.7.0
     dev: false
 
-  /terser-webpack-plugin/1.4.1_webpack@4.39.1:
-    resolution: {integrity: sha512-ZXmmfiwtCLfz8WKZyYUuuHf3dMYEjg8NrjHMb0JqHVHVOSkzp3cW2/XG1fP3tRhqEqSzMwzzRQGtAPbs4Cncxg==}
+  /terser-webpack-plugin/1.4.5_webpack@4.28.3:
+    resolution: {integrity: sha512-04Rfe496lN8EYruwi6oPQkG0vo8C+HT49X687FZnpPF0qMAIHONI6HEXYPKDOE8e5HjXTyKfqRd/agHtH0kOtw==}
     engines: {node: '>= 6.9.0'}
     peerDependencies:
       webpack: ^4.0.0
@@ -11612,7 +11613,25 @@ packages:
       find-cache-dir: 2.1.0
       is-wsl: 1.1.0
       schema-utils: 1.0.0
-      serialize-javascript: 1.9.1
+      serialize-javascript: 4.0.0
+      source-map: 0.6.1
+      terser: 4.8.1
+      webpack: 4.28.3
+      webpack-sources: 1.4.3
+      worker-farm: 1.7.0
+    dev: false
+
+  /terser-webpack-plugin/1.4.5_webpack@4.39.1:
+    resolution: {integrity: sha512-04Rfe496lN8EYruwi6oPQkG0vo8C+HT49X687FZnpPF0qMAIHONI6HEXYPKDOE8e5HjXTyKfqRd/agHtH0kOtw==}
+    engines: {node: '>= 6.9.0'}
+    peerDependencies:
+      webpack: ^4.0.0
+    dependencies:
+      cacache: 12.0.4
+      find-cache-dir: 2.1.0
+      is-wsl: 1.1.0
+      schema-utils: 1.0.0
+      serialize-javascript: 4.0.0
       source-map: 0.6.1
       terser: 4.8.1
       webpack: 4.39.1
@@ -12065,7 +12084,7 @@ packages:
     dev: false
 
   /tty-browserify/0.0.0:
-    resolution: {integrity: sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=}
+    resolution: {integrity: sha512-JVa5ijo+j/sOoHGjw0sxw734b1LhBkQ3bvUGNdxnVXDCX81Yx7TFgnZygxrIIWn23hbfTaMYLwRmAxFyDuFmIw==}
     dev: false
 
   /tunnel-agent/0.6.0:
@@ -12909,7 +12928,7 @@ packages:
       node-libs-browser: 2.2.1
       schema-utils: 0.4.7
       tapable: 1.1.3
-      terser-webpack-plugin: 1.4.1_webpack@4.28.3
+      terser-webpack-plugin: 1.4.5_webpack@4.28.3
       watchpack: 1.7.5
       webpack-sources: 1.4.3
     dev: false
@@ -12939,7 +12958,7 @@ packages:
       node-libs-browser: 2.2.1
       schema-utils: 1.0.0
       tapable: 1.1.3
-      terser-webpack-plugin: 1.4.1_webpack@4.39.1
+      terser-webpack-plugin: 1.4.5_webpack@4.39.1
       watchpack: 1.7.5
       webpack-sources: 1.4.3
     dev: false
@@ -13476,7 +13495,7 @@ packages:
     dev: false
 
   file:projects/ramp-core.tgz:
-    resolution: {integrity: sha512-2+CCX0pjIoaqsJIBRZmJvnJ/yp2++dE9T/W5mqwSWNr9Nhx69ovF6gmnPY8vkvksL3BeT1yQ7FOc7Tb09XkaMA==, tarball: file:projects/ramp-core.tgz}
+    resolution: {integrity: sha512-8JVmBKplmCwS+Kw1zqNa2VaZ/PsJdOXRXtnycK28x/qcsLf1xM8t7n2I7YbWSfRk8en5RfYOE55hSX3E07FdbQ==, tarball: file:projects/ramp-core.tgz}
     name: '@rush-temp/ramp-core'
     version: 0.0.0
     dependencies:
@@ -13510,7 +13529,7 @@ packages:
       eslint: 6.3.0
       eslint-loader: 2.2.1_eslint@6.3.0+webpack@4.39.1
       file-loader: 4.2.0_webpack@4.39.1
-      file-saver: 2.0.0
+      file-saver: 2.0.5
       fs-extra: 7.0.1
       glob: 7.1.3
       html-loader: 0.5.5
