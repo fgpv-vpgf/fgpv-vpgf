@@ -68,7 +68,7 @@ function tableService(
 
     // array who contains filters (use to show/hide apply on map button)
     let filtersObject;
-
+    console.warn('let me TABLE a suggestion...');
     init();
 
     return service;
