@@ -61,3 +61,4 @@ jobs:
                   cp -R docs build
               env:
                   NODE_OPTIONS: '--max-old-space-size=8192'
+                  BROWSERSLIST_IGNORE_OLD_DATA: 1
