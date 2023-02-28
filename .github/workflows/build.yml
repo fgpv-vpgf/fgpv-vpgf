@@ -55,7 +55,7 @@ jobs:
               shell: bash
               run: |
                   node common/scripts/install-run-rush.js install
-                  node common/scripts/install-run-rush.js rebuild --verbose
+                  node common/scripts/install-run-rush.js rebuild --verbose &>/dev/null
                   cd packages/ramp-core
                   npm run docs
                   cp -R docs build
