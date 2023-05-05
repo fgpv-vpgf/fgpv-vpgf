@@ -346,7 +346,12 @@ function layerSource($q, gapiService, Geo, LayerBlueprint, ConfigObject, configS
                 if (layer.parentLayerId === -1) {
                     return 0;
                 } else {
-                    return calculateLevel(layers[layer.parentLayerId], layers) + 1;
+                    return (
+                        calculateLevel(
+                            layers.find((l) => l.id === layer.parentLayerId),
+                            layers
+                        ) + 1
+                    );
                 }
             }
         }

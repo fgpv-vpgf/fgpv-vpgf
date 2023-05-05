@@ -191,6 +191,7 @@
                 <option value="config/config-sample-91.json">91. Custom Symbology Stacks</option>
                 <option value="config/config-sample-92.json">92. Third Basemap Schema using WKT</option>
                 <option value="config/config-sample-93.json">93. Dynamic Layer with 'stateOnly' set to true</option>
+                <option value="config/config-sample-94.json">93. Dynamic Layer with reordered indexes</option>
             </select>
         </div>
 
