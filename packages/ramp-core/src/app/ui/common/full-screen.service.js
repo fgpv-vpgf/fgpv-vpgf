@@ -87,7 +87,7 @@ function fullScreenService($rootElement, configService, $interval, events, $time
     function _enterFullScreen() {
         lastKnownCenter = configService.getSync.map.instance.extent.getCenter();
         const body = angular.element('body');
-        const shellNode = angular.element('rv-shell');
+        const shellNode = $rootElement.find('rv-shell');
         body.attr('style', 'width: 100%; height: 100%');
         $rootElement.attr('style', `overflow: visible; z-index: ${FULL_SCREEN_Z_INDEX};`);
         $rootElement.addClass('rv-full-screen-element');
@@ -109,7 +109,7 @@ function fullScreenService($rootElement, configService, $interval, events, $time
     function _exitFullScreen() {
         lastKnownCenter = configService.getSync.map.instance.extent.getCenter();
         const body = angular.element('body');
-        const shellNode = angular.element('rv-shell');
+        const shellNode = $rootElement.find('rv-shell');
         body.attr('style', '');
         $rootElement.attr('style', '');
         shellNode.attr('style', '');
