@@ -28,6 +28,13 @@ export class PanelRowsManager {
         // Filter all rows when visibility is off and none when it's on
         // Requires a separate check since it's not handled as a filter change
         this.layerVisibilityObserver = this.legendBlock.visibilityChanged.subscribe((visibility) => {
+            const proxy = this.legendBlock.proxyWrapper;
+            if (proxy.layerConfig.initialFilteredQuery && visibility) {
+                const filter = proxy.filterState;
+                const type = filter.coreFilterTypes.SYMBOL;
+                filter.setSql(type, proxy.layerConfig.initialFilteredQuery);
+            }
+
             this.validOids = visibility ? undefined : [];
             this.externalFilter = !visibility;
             this.updateGridFilters();

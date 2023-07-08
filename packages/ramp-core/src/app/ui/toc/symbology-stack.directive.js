@@ -171,7 +171,7 @@ function rvSymbologyStack($rootScope, $rootElement, $q, Geo, configService, anim
             self.block.visibilityChanged.subscribe((val) => {
                 // make sure this doesn't fire if an individual symbology being toggled triggered visibilityChanged
                 // only toggle when toggling visibility on after all symbology have been turned off
-                if (!self.stackToggled) {
+                if (self.block.proxyWrapper.layerConfig.toggleSymbology && !self.stackToggled) {
                     const query = val ? '' : '1=2';
                     if (self.block.proxyWrapper.isActiveState) {
                         // layer is loaded, apply stuff now
