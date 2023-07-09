@@ -53,8 +53,9 @@
         ></rv-svg>
         <rv-svg ng-if="!symbol.image" class="rv-symbol-graphic" src="symbol.svgcode"></rv-svg>
 
-        <div class="rv-symbol-label-container">
+        <div class="rv-symbol-label-container" ng-mouseenter="self.setTruncated($event, symbol)">
             <span class="rv-symbol-label">{{ symbol.name }}</span>
+            <md-tooltip ng-show="symbol.isNameTruncated">{{ symbol.name }}</md-tooltip>
         </div>
 
         <md-button

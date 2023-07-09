@@ -16,6 +16,7 @@ class ToggleSymbol {
     constructor(symbol) {
         this.isSelected = true;
         this.symbol = symbol;
+        this.isNameTruncated = false;
     }
 
     click() {
@@ -67,7 +68,7 @@ function rvSymbologyStack($rootScope, $rootElement, $q, Geo, configService, anim
             container: '=?',
         },
         link: link,
-        controller: () => {},
+        controller: Controller,
         controllerAs: 'self',
         bindToController: true,
     };
@@ -1057,4 +1058,24 @@ function symbologyStack($q, $rootScope, ConfigObject, gapiService) {
     }
 
     return SymbologyStack;
+}
+
+function Controller() {
+    const self = this;
+
+    self.setTruncated = setTruncated;
+
+    /**
+     * Set the symbol.isNameTruncated to True if name is truncated
+     *
+     * @function setTruncated
+     * @private
+     * @param{event} evt event when being hovered
+     * @param{ToggleSymbol} symbol being hovered
+     */
+    function setTruncated(evt, symbol) {
+        const target = evt.currentTarget.children[0];
+
+        symbol.isNameTruncated = target.scrollWidth > target.clientWidth;
+    }
 }
