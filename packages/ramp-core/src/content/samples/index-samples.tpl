@@ -192,6 +192,7 @@
                 <option value="config/config-sample-92.json">92. Third Basemap Schema using WKT</option>
                 <option value="config/config-sample-93.json">93. Dynamic Layer with 'stateOnly' set to true</option>
                 <option value="config/config-sample-94.json">94. Dynamic Layer with reordered indexes</option>
+                <option value="config/config-sample-95.json">95. Test Storylines</option>
             </select>
         </div>
 
