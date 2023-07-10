@@ -67,7 +67,7 @@ RAMPInstance.mapAdded.subscribe((mapInstance) => {
 (<any>jQuery).expr.filters.offscreen = function (el: any) {
     const elem = <any>jQuery(el);
     const position = elem.position();
-    const rvShell = <any>jQuery('rv-shell').first();
+    const rvShell = elem.closest('rv-shell');
 
     return (
         position.left + <any>elem.width() > rvShell.width() ||
