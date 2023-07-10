@@ -34,10 +34,10 @@
             {
                 "id": "EXT_NRCAN_Lambert_3978",
                 "default": {
-                    "xmin": -2708115.892600119,
-                    "ymin": 514762.05160443636,
-                    "xmax": 2135091.7104817545,
-                    "ymax": 3630898.4922106513
+                    "xmin": -1991097.88,
+                    "ymin": -140121.23,
+                    "xmax": -86094.07,
+                    "ymax": 1288631.62
                 },
                 "spatialReference": {
                     "wkid": 3978
@@ -271,7 +271,7 @@
                 "children": [
                     {
                         "symbologyExpanded": true,
-                        "layerId": "Priority species***60"
+                        "layerId": "Priority species***13df5407"
                     }
                 ]
             }
@@ -279,11 +279,11 @@
         "layers": [
             {
                 "layerType": "esriFeature",
-                "toggleSymbology": true,
+                "toggleSymbology": false,
                 "refreshInterval": 0,
                 "expectedResponseTime": 4000,
                 "tolerance": 5,
-                "initialFilteredQuery": "CommName_E IN ('Barren-ground Caribou')",
+                "initialFilteredQuery": "CommName_E IN ('Greater Sage-grouse')",
                 "outfields": "CosewicID,SciName,CommName_E,Population_E,Subspecies_E,COSEWIC_Status,SARA_Status,RDoc_Name_E,SiteID,Range_Name_E,Range_Comment_E,ProvTerr_E,CommNamePop_E",
                 "controls": [
                     "opacity",
@@ -293,7 +293,6 @@
                     "snapshot",
                     "boundaryZoom",
                     "refresh",
-                    "reload",
                     "remove",
                     "settings",
                     "data",
@@ -449,7 +448,7 @@
                 },
                 "url": "https://maps-cartes.ec.gc.ca/arcgis/rest/services/CWS_SCF/PrioritySpecies/MapServer/0",
                 "name": "Priority species",
-                "id": "Priority species***60"
+                "id": "Priority species***13df5407"
             }
         ],
         "tileSchemas": [
@@ -616,12 +615,7 @@
         "fullscreen": true,
         "navBar": {
             "zoom": "buttons",
-            "extra": [
-                "fullscreen",
-                "geoLocator",
-                "home",
-                "help"
-            ]
+            "extra": ["fullscreen", "geoLocator", "home", "help"]
         },
         "appBar": {
             "basemap": true,
@@ -633,15 +627,7 @@
             "folderName": "default"
         },
         "sideMenu": {
-            "items": [
-                [
-                    "fullscreen",
-                    "export",
-                    "touch",
-                    "help",
-                    "about"
-                ]
-            ],
+            "items": [["fullscreen", "export", "touch", "help", "about"]],
             "logo": false
         },
         "legend": {
@@ -759,10 +745,7 @@
             "open": true,
             "autorun": false,
             "loop": false,
-            "controls": [
-                "lock",
-                "delay"
-            ],
+            "controls": ["lock", "delay"],
             "params": {
                 "type": "number",
                 "rangeType": "dual",
@@ -823,17 +806,7 @@
         "draw": {
             "enable": false,
             "open": true,
-            "tools": [
-                "picker",
-                "point",
-                "polyline",
-                "polygon",
-                "edit",
-                "measure",
-                "extent",
-                "write",
-                "read"
-            ]
+            "tools": ["picker", "point", "polyline", "polygon", "edit", "measure", "extent", "write", "read"]
         },
         "thematicSlider": {
             "enable": false,
