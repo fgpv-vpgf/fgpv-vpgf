@@ -166,11 +166,15 @@ function rvSymbologyStack($rootScope, $rootElement, $q, Geo, configService, anim
 
         // wire up a listener on the visibility change of the legend block
         if (self.block && self.block.visibilityChanged) {
-            // change all symbology stack to toggled/untoggled if top layer is visible/invisible
+            // change all symbology stack to toggled/untoggled (only if individual symbols can be toggled) if top layer is visible/invisible
             // TODO update this code when issue 3152 is implemented
             self.block.visibilityChanged.subscribe((val) => {
                 // make sure this doesn't fire if an individual symbology being toggled triggered visibilityChanged
                 // only toggle when toggling visibility on after all symbology have been turned off
+                // first half of 'if' statement is included to ensure that individual symbols can be toggled
+                // if not, then we don't want to mess with the visibility of individual symbols, only the actual layer
+                // since individual symbols can not be toggled, we never run into the case where we need to 'revert' their visibility
+                // everything will happen by default when layer visibility is toggled
                 if (self.block.proxyWrapper.layerConfig.toggleSymbology && !self.stackToggled) {
                     const query = val ? '' : '1=2';
                     if (self.block.proxyWrapper.isActiveState) {

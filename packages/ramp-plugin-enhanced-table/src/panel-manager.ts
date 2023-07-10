@@ -198,13 +198,6 @@ export class PanelManager {
                 }
             };
 
-            const proxy = this.legendBlock.proxyWrapper;
-            if (proxy.layerConfig.initialFilteredQuery) {
-                const filter = proxy.filterState;
-                const type = filter.coreFilterTypes.SYMBOL;
-                filter.setSql(type, proxy.layerConfig.initialFilteredQuery);
-            }
-
             // set filter change flag to true
             // also hide cell tooltips because focus is lost on cells when filters are changed
             this.tableOptions.onFilterChanged = (event) => {
