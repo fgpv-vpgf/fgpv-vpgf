@@ -106,6 +106,11 @@ function picture() {
             items = items.map(stringify);
         } else {
             items = stringify(items);
+
+            // for a single item, if it is not a representation of an image file return
+            if (typeof items === 'string' && !isPicture(items)) {
+                return items;
+            }
         }
 
         items = items.toString().split(';');
@@ -135,9 +140,16 @@ function picture() {
          * @return {String} picture element
          */
         function process(item) {
-            // check if it is a picture
-            const isPicture = /(.*?)\.(jpe?g|png|gif|bmp)$/.test(item.trim());
-            return isPicture ? `<a class="rv-picture-lightbox" href="${item}"><img src="${item}"></img></a>` : item;
+            return isPicture(item) ? `<a class="rv-picture-lightbox" href="${item}"><img src="${item}"></img></a>` : item;
+        }
+
+        /**
+         * Checks if item is a picture
+         * @param {String} item string
+         * @return {Boolean} returns whether item is an image file that should be converted into an <img> element.
+         */
+        function isPicture(item) {
+            return typeof item !== 'string' || /(.*?)\.(jpe?g|png|gif|bmp)$/.test(item.trim());
         }
     }
 }
