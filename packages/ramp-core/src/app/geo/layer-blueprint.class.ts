@@ -587,9 +587,9 @@ function LayerBlueprint(
             this._urlWrapper = new UrlWrapper(this.config.url);
 
             // get start index and limit set on the url
-            const { startindex, limit } = this._urlWrapper.queryMap;
+            const { offset, limit } = this._urlWrapper.queryMap;
 
-            return this._getWFSData(-1, parseInt(startindex) || 0, parseInt(limit) || 1000);
+            return this._getWFSData(-1, parseInt(offset) || 0, parseInt(limit) || 1000);
         }
 
         /**
@@ -622,7 +622,7 @@ function LayerBlueprint(
          *
          *
          * @param {number} [totalCount=-1] the total number of items available on that service
-         * @param {number} [startindex=0] the index to start the querying from. default 0
+         * @param {number} [offset=0] the index to start the querying from. default 0
          * @param {number} [limit=1000] the limit of how many results we want returned. default 10
          * @param {WFSData} [wfsData={
          *                 type: 'FeatureCollection',
@@ -633,14 +633,14 @@ function LayerBlueprint(
          */
         async _getWFSData(
             totalCount: number = -1,
-            startindex: number = 0,
+            offset: number = 0,
             limit: number = 1000,
             wfsData: WFSData = {
                 type: 'FeatureCollection',
                 features: [],
             }
         ): Promise<any> {
-            let newQueryMap: QueryMap = { startindex: startindex.toString(), limit: limit.toString() };
+            let newQueryMap: QueryMap = { offset: offset.toString(), limit: limit.toString() };
 
             // it seems that some WFS services do not return the number of matched records with every request
             // so, we need to get that explicitly first
@@ -667,16 +667,16 @@ function LayerBlueprint(
             // save the total number of records and start downloading the data
             if (totalCount === -1) {
                 totalCount = response.data.numberMatched;
-                return this._getWFSData(totalCount, startindex, limit, wfsData);
+                return this._getWFSData(totalCount, offset, limit, wfsData);
             }
 
             wfsData.features = [...wfsData.features, ...data.features]; // update the received features array
 
             // check if all the requested features are downloaded
-            if (data.features.length < totalCount - startindex) {
+            if (data.features.length < totalCount - offset) {
                 // the limit is either 1k or the number of remaining features
-                const limit = Math.min(1000, totalCount - startindex - data.features.length);
-                return this._getWFSData(totalCount, data.features.length + startindex, limit, wfsData);
+                const limit = Math.min(1000, totalCount - offset - data.features.length);
+                return this._getWFSData(totalCount, data.features.length + offset, limit, wfsData);
             } else {
                 if (
                     this.config.xyInAttribs &&
