@@ -905,6 +905,9 @@ HTMLElement.prototype.focus = $.fn.focus = function () {
     }
 };
 
+jQuery.Event.prototype.originalStopImmediatePropagation = jQuery.Event.prototype.stopImmediatePropagation;
+jQuery.Event.prototype.originalStopPropagation = jQuery.Event.prototype.stopPropagation;
+jQuery.Event.prototype.originalPreventDefault = jQuery.Event.prototype.preventDefault;
 // these event functions are disabled for events stemming from within a viewer. Angular material was, for
 // example, preventing mouse clicks from bubbling for mouse clicks on menu items. In general we want to always
 // see events then decide if they require action
