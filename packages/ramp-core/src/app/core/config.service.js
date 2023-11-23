@@ -134,15 +134,15 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
          * @return {Promise}              resolves with config object (or undefined if not defined) when rcs lookup is complete
          */
         processRCS(bookmarkInfo) {
-            if (this._rcsKeys.length === 0) {
-                return this.config;
-            }
+            // if (this._rcsKeys.length === 0) {
+            //     return this.config;
+            // }
 
-            if (typeof this.rcsEndpoint === 'undefined') {
-                throw new Error(
-                    'RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property'
-                );
-            }
+            // if (typeof this.rcsEndpoint === 'undefined') {
+            //     throw new Error(
+            //         'RCS keys provided with no endpoint. Set on HTML element through rv-service-endpoint property'
+            //     );
+            // }
 
             const endpoint = this.rcsEndpoint.endsWith('/') ? this.rcsEndpoint : this.rcsEndpoint + '/';
             const results = {};
@@ -155,8 +155,29 @@ function configService($q, $rootElement, $http, $translate, events, gapiService,
                 rcsLang = 'en';
             }
 
-            return $http.get(`${endpoint}v2/docs/${rcsLang}/${this._rcsKeys.join(',')}`).then(
+            const dataStuff = [
+                {
+                    layers: [
+                        {
+                            isTimeAware: false,
+                            layerType: 'esriDynamic',
+                            service_url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer',
+                            name: 'Echo Geo',
+                            id: 'rcs.f4c51eaa-a6ca-48b9-a1fc-b0651da20509.en',
+                            url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/EcoGeo/EcoGeo/MapServer',
+                            layerEntries: [
+                                {
+                                    index: 5,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+
+            return Promise.resolve({ data: dataStuff }).then(
                 (resp) => {
+                    console.log('Result', resp);
                     const result = [];
 
                     // there is an array of layer configs in resp.data.
