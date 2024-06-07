@@ -1,5 +1,18 @@
 # RAMP2 FGP Visualiser / Visualisateur pour la PGF PCAR2
 
+## Next Version
+
+Version 2 / Version 3 is now retired. We do not expect any further updates, and a number of the underlying libraries are depreciated as well. New visitors are encouraged to consider [RAMP 4](https://github.com/ramp4-pcar4/ramp4-pcar4). Notable changes include:
+
+- Updating the UI framework from Angular 1 to Vue 3
+- Updating the ESRI Mapping API from v3 to v4
+- An application architecture and API that is more open and adjustable
+- UI re-design with mobile use in mind
+
+The [initial release notes](https://github.com/ramp4-pcar4/ramp4-pcar4/releases/tag/v4.0.0) cover the differences, breaking changes, and feature gaps for anyone considering migrating an existing RAMP2 project.
+
+## RAMP-PCAR FGPV-VPGF
+
 The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.0 "AA" compliant common viewer platform for the Government of Canada. 
 
 > This is an unsupported product. If you require a supported version please contact applicationsdecartographieweb-webmappingapplications@ec.gc.ca for a cost estimate. The software and code samples available on this website are provided "as is" without warranty of any kind, either express or implied. Use at your own risk. Access to this GitHub repository could become unavailable at any point in time. 
@@ -159,13 +172,3 @@ For more information on contributing read the [Contributing Guide](https://fgpv-
 
 The team can be reached at applicationsdecartographieweb-webmappingapplications@ec.gc.ca
 
-## Next Version
-
-[RAMP 4](https://github.com/ramp4-pcar4/ramp4-pcar4) has put out its initial release. Notable changes include:
-
-- Updating the UI framework from Angular 1 to Vue 3
-- Updating the ESRI Mapping API from v3 to v4
-- An application architecture and API that is more open and adjustable
-- UI re-design with mobile use in mind
-
-The [release notes](https://github.com/ramp4-pcar4/ramp4-pcar4/releases/tag/v4.0.0) cover the differences, breaking changes, and feature gaps between this version and RAMP 4.
