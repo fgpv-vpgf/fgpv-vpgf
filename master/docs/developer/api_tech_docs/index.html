@@ -172,8 +172,9 @@ etc.</code></pre><p>For more rush commands or general reading: <a href="https://
   <span class="hljs-attr">integrity</span>=<span class="hljs-string">"sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="</span>
   <span class="hljs-attr">crossorigin</span>=<span class="hljs-string">"anonymous"</span>
 &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-comment">&lt;!-- Polyfill script here --&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"/js/rv-main.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<p>See the <a href="https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/mapauthor/intro?id=adding-the-viewer-to-a-page">doc page</a> for a list of recommended polyfills. In these modern times you may decide it is no longer needed, as most browsers now have built-in support.</p>
 				<p>Now that you have the required files on your page we should add the map element.</p>
 				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>
   <span class="hljs-attr">is</span>=<span class="hljs-string">"rv-map"</span>
