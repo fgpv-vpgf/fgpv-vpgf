@@ -41,7 +41,7 @@
         </noscript>
     </div>
 
-    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
+    
 
     <% for (var index in htmlWebpackPlugin.files.js) { %>
         <% if (webpackConfig.output.crossOriginLoading) { %>

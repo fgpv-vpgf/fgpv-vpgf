@@ -136,9 +136,11 @@ Then you want to include those files on your page, along with jQuery and the nee
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
   crossorigin="anonymous"
 ></script>
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
+<!-- Polyfill script here -->
 <script src="/js/rv-main.js"></script>
 ```
+
+See the [doc page](https://fgpv-vpgf.github.io/fgpv-vpgf/master/docs/#/mapauthor/intro?id=adding-the-viewer-to-a-page) for a list of recommended polyfills. In these modern times you may decide it is no longer needed, as most browsers now have built-in support.
 
 Now that you have the required files on your page we should add the map element.
 

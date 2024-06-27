@@ -1,5 +1,5 @@
 /**
- * This file contains polyfills for features not supported by the polyfill.io service or are custom implementations for our use cases.
+ * This file contains polyfills for features not supported by the a certain service or are custom implementations for our use cases.
  *
  * In general you should check that a feature is missing from the browser before polyfilling it.
  */

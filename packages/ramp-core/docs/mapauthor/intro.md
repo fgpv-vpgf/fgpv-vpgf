@@ -24,15 +24,9 @@ The first thing we'll need to do is to download a copy of the viewer's code. Vis
 
 To load the viewer on a webpage, a few things are required on the host page:
 
-- A script tag which contains the polyfills for the page. This should be placed in the body section of the host page near the end. This must be placed above `rv-main.js`. One option is to use a call to polyfill.io; it is a simple way to get polyfills, but makes your site dependent on the service being functional.
-
-  ```html
-  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=default,Object.entries,Object.values,Array.prototype.find,Array.prototype.findIndex,Array.prototype.values,Array.prototype.includes,HTMLCanvasElement.prototype.toBlob,String.prototype.repeat,String.prototype.codePointAt,String.fromCodePoint,NodeList.prototype.@@iterator,Promise,Promise.prototype.finally"></script>
-  ```
-
-    - If you'd prefer to load polyfills from an alternate source then the following is a list of all required polyfills:
-
-     Array.isArray, Array.prototype.every, Array.prototype.filter, Array.prototype.forEach, Array.prototype.indexOf, Array.prototype.lastIndexOf, Array.prototype.map, Array.prototype.reduce, Array.prototype.reduceRight, Array.prototype.some, atob, CustomEvent, Date.now, Date.prototype.toISOString, Document, document.querySelector, document.visibilityState, DOMTokenList, Element, Element.prototype.classList, Element.prototype.cloneNode, Element.prototype.closest, Element.prototype.matches, Event, Event.DOMContentLoaded, Event.focusin, Event.hashchange, Function.prototype.bind, JSON, Object.assign, Object.create, Object.defineProperties, Object.defineProperty, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.keys, requestAnimationFrame, String.prototype.includes, String.prototype.trim, Window, XMLHttpRequest, ~html5-elements, Object.entries, Object.values, Array.prototype.find, Array.prototype.findIndex, Array.prototype.values, Array.prototype.includes, HTMLCanvasElement.prototype.toBlob, String.prototype.repeat, String.prototype.codePointAt, String.fromCodePoint, NodeList.prototype.@@iterator, Promise, Promise.prototype.finally
+- A script tag which contains the polyfills for the page. This should be placed in the body section of the host page near the end. This must be placed above `rv-main.js`. In current times, you may decide this is not required as most browsers support these. Suggested polyfills:
+    
+    Array.isArray, Array.prototype.every, Array.prototype.filter, Array.prototype.forEach, Array.prototype.indexOf, Array.prototype.lastIndexOf, Array.prototype.map, Array.prototype.reduce, Array.prototype.reduceRight, Array.prototype.some, atob, CustomEvent, Date.now, Date.prototype.toISOString, Document, document.querySelector, document.visibilityState, DOMTokenList, Element, Element.prototype.classList, Element.prototype.cloneNode, Element.prototype.closest, Element.prototype.matches, Event, Event.DOMContentLoaded, Event.focusin, Event.hashchange, Function.prototype.bind, JSON, Object.assign, Object.create, Object.defineProperties, Object.defineProperty, Object.getOwnPropertyNames, Object.getPrototypeOf, Object.keys, requestAnimationFrame, String.prototype.includes, String.prototype.trim, Window, XMLHttpRequest, ~html5-elements, Object.entries, Object.values, Array.prototype.find, Array.prototype.findIndex, Array.prototype.values, Array.prototype.includes, HTMLCanvasElement.prototype.toBlob, String.prototype.repeat, String.prototype.codePointAt, String.fromCodePoint, NodeList.prototype.@@iterator, Promise, Promise.prototype.finally
 
 - A script tag which loads `rv-main.js`. This should be placed in the `body` section of the host page near the end. It should also be placed before any of the host page scripts that interact with the external API.
 
@@ -382,7 +376,7 @@ Legends and layers can be loaded in and out, but full configs are harder to relo
 
 With 3.0 there are some legacy API (`RV`) features that aren't yet present on the new API (`RAMP`). It should be noted however that the legacy API (`RV`) is deprecated and should only be used if there is no equivalent present on `RAMP` yet.
 
-If your page will be served over HTTPS you should specify all endpoints, and load all scripts from outside sources using HTTPS and not HTTP. For instance the call to polyfill.io in the earlier example is HTTPS.
+If your page will be served over HTTPS you should specify all endpoints, and load all scripts from outside sources using HTTPS and not HTTP.
 
 ## Helpful links
 
